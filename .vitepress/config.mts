@@ -23,6 +23,7 @@ function getSidebarItems(subdir: string) {
 const topLevel = [
   { text: 'About', link: '/about', items: [] },
   { text: 'Advocacy', link: '/advocacy', items: [] },
+  { text: 'Projects', link: '/projects', items: [] },
 ]
 
 // https://vitepress.dev/reference/site-config
@@ -35,6 +36,11 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'About', link: '/about/' },
+      { text: 'Projects', items: [
+        { text: 'ODE4EC-AMS', link: '/projects/ams/' },
+        { text: 'ODE4EC-DIG', link: '/projects/dig/' },
+        { text: 'ODE4EC-PIV', link: '/projects/piv/' },
+      ]},
       { text: 'Advocacy', link: '/advocacy/' },
       { text: 'News', link: '/news/' },
       { text: 'Events', link: '/events/' },
@@ -60,6 +66,30 @@ export default defineConfig({
         ...topLevel,
         { text: 'News', link: '/news/', items: [] },
         { text: 'Events', link: '/events/', items: getSidebarItems('events/posts') },
+      ],
+      '/projects/ams/': [
+        {
+          text: 'ODE4EC-AMS',
+          items: [
+            { text: 'Overview', link: '/projects/ams/' },
+          ],
+        },
+      ],
+      '/projects/dig/': [
+        {
+          text: 'ODE4EC-DIG',
+          items: [
+            { text: 'Overview', link: '/projects/dig/' },
+          ],
+        },
+      ],
+      '/projects/piv/': [
+        {
+          text: 'ODE4EC-PIV',
+          items: [
+            { text: 'Overview', link: '/projects/piv/' },
+          ],
+        },
       ],
     },
 
