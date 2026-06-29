@@ -22,6 +22,9 @@ hero:
     - theme: alt
       text: Advocacy
       link: /advocacy
+    - theme: brand
+      text: Projects
+      link: /projects
 
 features:
   - icon: 🌐
