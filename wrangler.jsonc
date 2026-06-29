@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "ode4ec-eu",
+  "name": "ode4ec-website",
   "compatibility_date": "2026-06-29",
   "observability": {
     "enabled": true
