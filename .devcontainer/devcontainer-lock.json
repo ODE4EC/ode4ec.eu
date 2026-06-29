@@ -1,0 +1,9 @@
+{
+  "features": {
+    "ghcr.io/devcontainers-extra/features/vue-cli:2": {
+      "version": "2.0.16",
+      "resolved": "ghcr.io/devcontainers-extra/features/vue-cli@sha256:ff0cbfded89c67b36e55876c01b11a9f2a3292d1f724ecf0a837a0df5b9f6668",
+      "integrity": "sha256:ff0cbfded89c67b36e55876c01b11a9f2a3292d1f724ecf0a837a0df5b9f6668"
+    }
+  }
+}
