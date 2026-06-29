@@ -1,6 +1,11 @@
 ---
 title: Three ODE4EC projects selected for funding
 date: 2025-12-04
+tags:
+  - announcements
+  - ode4ec-ams
+  - ode4ec-dig
+  - ode4ec-piv
 ---
 
 # Three ODE4EC projects selected for funding
