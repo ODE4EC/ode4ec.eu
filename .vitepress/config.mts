@@ -80,6 +80,7 @@ export default defineConfig({
           text: 'ODE4EC-DIG',
           items: [
             { text: 'Overview', link: '/projects/dig/' },
+            { text: 'Partners', link: '/projects/dig/partners' },
           ],
         },
       ],

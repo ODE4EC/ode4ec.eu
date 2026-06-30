@@ -6,6 +6,10 @@ import './style.css'
 import NewsPreview from './NewsPreview.vue'
 import EventsPreview from './EventsPreview.vue'
 import PostTags from './PostTags.vue'
+import Card from './Card.vue'
+import CardGrid from './CardGrid.vue'
+import KeyFact from './KeyFact.vue'
+import KeyFacts from './KeyFacts.vue'
 
 export default {
   extends: DefaultTheme,
@@ -17,5 +21,9 @@ export default {
   enhanceApp({ app }) {
     app.component('NewsPreview', NewsPreview)
     app.component('EventsPreview', EventsPreview)
+    app.component('Card', Card)
+    app.component('CardGrid', CardGrid)
+    app.component('KeyFact', KeyFact)
+    app.component('KeyFacts', KeyFacts)
   }
 } satisfies Theme

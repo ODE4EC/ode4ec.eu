@@ -5,7 +5,7 @@
     "wrangler": "^4.105.0"
   },
   "scripts": {
-    "dev": "vitepress dev",
+    "dev": "vitepress dev --host",
     "build": "vitepress build",
     "preview": "npm run build && wrangler dev",
     "deploy": "npm run build && wrangler deploy"
