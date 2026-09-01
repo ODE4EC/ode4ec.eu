@@ -81,9 +81,24 @@ Open, standards-based design infrastructure in the critical stages of the EDA fl
 
 ## Contacts
 
-Project coordinator | Luís Miguel Pinho | luis.pinho@inesctec.pt
+<CardGrid>
 
-Technical manager | Stefan Wallentowitz | stefan.wallentowitz@hm.edu
+<Card title="Luís Miguel Pinho" link="mailto:luis.pinho@inesctec.pt" linkText="luis.pinho@inesctec.pt">
 
-Project manager | João Moreira | joao.moreira@inesctec.pt
+Project Coordinator, INESC TEC
 
+</Card>
+
+<Card title="Stefan Wallentowitz" link="mailto:stefan.wallentowitz@hm.edu" linkText="stefan.wallentowitz@hm.edu">
+
+Technical Manager, Munich University of Applied Sciences
+
+</Card>
+
+<Card title="João Moreira" link="mailto:joao.moreira@inesctec.pt" linkText="joao.moreira@inesctec.pt">
+
+Project Manager, INESC TEC
+
+</Card>
+
+</CardGrid>

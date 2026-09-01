@@ -90,6 +90,7 @@ export default defineConfig({
           items: [
             { text: 'Overview', link: '/projects/piv/' },
             { text: 'Partners', link: '/projects/piv/partners' },
+            { text: 'Funding', link: '/projects/piv/funding'}
           ],
         },
       ],
