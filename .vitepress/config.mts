@@ -89,6 +89,7 @@ export default defineConfig({
           text: 'ODE4EC-PIV',
           items: [
             { text: 'Overview', link: '/projects/piv/' },
+            { text: 'Partners', link: '/projects/piv/partners' },
           ],
         },
       ],
