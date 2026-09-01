@@ -122,7 +122,7 @@ Taastrup, Denmark
 
 </Card>
 
-<Card title="E4 Computer Engineering" logo="/img/partners/e4.svg" flag="🇮🇹">
+<Card title="E4 Computer Engineering" logo="/img/partners/e4.png" flag="🇮🇹">
 
 Scandiano, Italy
 
