@@ -45,17 +45,33 @@ defineProps<{
 <style scoped>
 .Card {
   display: block;
-  border: 1px solid var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
   border-radius: 12px;
   height: 100%;
   background-color: var(--vp-c-bg-soft);
   text-decoration: none;
   color: inherit;
-  transition: border-color 0.25s, background-color 0.25s;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 1px 2px rgba(2, 8, 20, 0.05),
+    0 8px 20px rgba(2, 8, 20, 0.06);
+  transition: border-color 0.25s, background-color 0.25s, transform 0.25s, box-shadow 0.25s;
+}
+
+.dark .Card {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 2px 4px rgba(0, 0, 0, 0.25),
+    0 10px 24px rgba(0, 0, 0, 0.3);
 }
 
 .Card.link:hover {
   border-color: var(--vp-c-brand-1);
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 4px 8px rgba(2, 8, 20, 0.07),
+    0 16px 36px rgba(2, 8, 20, 0.12);
 }
 
 .box {

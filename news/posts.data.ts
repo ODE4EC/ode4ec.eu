@@ -5,6 +5,7 @@ export interface Post {
   url: string
   date: string
   tags: string[]
+  image?: string
 }
 
 declare const data: Post[]
@@ -20,6 +21,7 @@ export default createContentLoader('news/posts/*.md', {
         ? new Date(page.frontmatter.date).toISOString().slice(0, 10)
         : '',
         tags: page.frontmatter.tags ?? [],
+        image: page.frontmatter.image,
       }))
       .sort((a, b) => (a.date > b.date ? -1 : 1))
   }

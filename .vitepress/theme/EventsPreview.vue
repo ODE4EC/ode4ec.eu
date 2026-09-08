@@ -3,71 +3,130 @@ import { data } from '../../events/events.data.ts'
 </script>
 
 <template>
-  <div class="events-preview">
-    <h2>Upcoming Events</h2>
+  <section class="ode-events">
+    <div class="ode-events__inner">
+      <p class="ode-events__eyebrow">What's next</p>
+      <h2 class="ode-events__heading">Upcoming Events</h2>
 
-    <template v-if="data.upcoming.length">
-      <ul>
-        <li v-for="event in data.upcoming" :key="event.url">
-          <span class="date">{{ event.date }}</span>
-          <span>
-            <a :href="event.url">{{ event.title }}</a>
-            <span v-if="event.location" class="location"> · {{ event.location }}</span>
-          </span>
+      <ul v-if="data.upcoming.length" class="ode-events__list">
+        <li v-for="event in data.upcoming" :key="event.url" class="ode-events__item">
+          <a :href="event.url" class="ode-events__row">
+            <span class="ode-events__date">{{ event.date }}</span>
+            <span class="ode-events__title">{{ event.title }}</span>
+            <span v-if="event.location" class="ode-events__location">{{ event.location }}</span>
+            <span class="ode-events__arrow" aria-hidden="true">→</span>
+          </a>
         </li>
       </ul>
-    </template>
+      <p v-else class="ode-events__empty">No upcoming events right now — check back soon.</p>
 
-    <a href="/events/" class="all-link">All events →</a>
-  </div>
+      <a href="/events/" class="ode-events__all">All events →</a>
+    </div>
+  </section>
 </template>
 
 <style scoped>
-.events-preview {
-  max-width: 960px;
+.ode-events {
+  padding: 24px 24px 64px;
+}
+
+@media (min-width: 640px) {
+  .ode-events { padding: 32px 48px 80px; }
+}
+
+.ode-events__inner {
+  max-width: 1152px;
   margin: 0 auto;
-  padding: 0 24px;
 }
 
-.events-preview h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  border-top: 1px solid var(--vp-c-divider);
-  padding-top: 2rem;
+.ode-events__eyebrow {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--vp-c-brand-1);
+  margin: 0 0 14px;
 }
 
-.events-preview h3 {
-  font-size: 1rem;
-  color: var(--vp-c-text-2);
-  margin: 1rem 0 0.5rem;
+.ode-events__heading {
+  margin: 0 0 28px;
+  border: none;
+  padding: 26px 0 0;
+  font-size: 1.7rem;
 }
 
-.events-preview ul {
+.ode-events__list {
   list-style: none;
+  margin: 0;
   padding: 0;
-  margin: 0 0 1rem;
 }
 
-.events-preview li {
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--vp-c-divider);
+.ode-events__item + .ode-events__item {
+  border-top: 1px solid var(--vp-c-divider);
+}
+
+.ode-events__row {
   display: flex;
-  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 16px;
+  padding: 18px 14px;
+  margin: 0 -14px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: background-color 0.2s;
 }
 
-.date {
-  color: var(--vp-c-text-2);
+.ode-events__row:hover {
+  background: var(--vp-c-bg-soft);
+}
+
+.ode-events__date {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-brand-soft);
+  padding: 4px 10px;
+  border-radius: 999px;
   white-space: nowrap;
-  font-size: 0.9rem;
 }
 
-.location {
+.ode-events__title {
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+}
+
+.ode-events__row:hover .ode-events__title {
+  color: var(--vp-c-brand-1);
+}
+
+.ode-events__location {
   color: var(--vp-c-text-2);
-  font-size: 0.9rem;
+  font-size: 14px;
 }
 
-.all-link {
-  font-size: 0.9rem;
+.ode-events__arrow {
+  margin-left: auto;
+  color: var(--vp-c-text-3);
+  transition: color 0.2s, transform 0.2s;
+}
+
+.ode-events__row:hover .ode-events__arrow {
+  color: var(--vp-c-brand-1);
+  transform: translateX(3px);
+}
+
+.ode-events__empty {
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+}
+
+.ode-events__all {
+  display: inline-block;
+  margin-top: 24px;
+  font-size: 14px;
+  font-weight: 500;
   color: var(--vp-c-brand-1);
 }
 </style>

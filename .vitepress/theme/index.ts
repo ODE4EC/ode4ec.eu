@@ -10,6 +10,10 @@ import Card from './Card.vue'
 import CardGrid from './CardGrid.vue'
 import KeyFact from './KeyFact.vue'
 import KeyFacts from './KeyFacts.vue'
+import Hero from './Hero.vue'
+import Features from './Features.vue'
+import ProjectsPreview from './ProjectsPreview.vue'
+import PartnersMap from './PartnersMap.vue'
 
 export default {
   extends: DefaultTheme,
@@ -25,5 +29,9 @@ export default {
     app.component('CardGrid', CardGrid)
     app.component('KeyFact', KeyFact)
     app.component('KeyFacts', KeyFacts)
+    app.component('Hero', Hero)
+    app.component('Features', Features)
+    app.component('ProjectsPreview', ProjectsPreview)
+    app.component('PartnersMap', PartnersMap)
   }
 } satisfies Theme

@@ -30,6 +30,11 @@ const topLevel = [
 export default defineConfig({
   title: "ODE4EC",
   description: "This is the central website for projects under the ODE4EC umbrella.",
+  head: [
+    ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
+    ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
+    ['link', { href: 'https://fonts.googleapis.com/css2?family=Domine:wght@400;600;700&display=swap', rel: 'stylesheet' }],
+  ],
   themeConfig: {
     logo: '/img/ode4ec-logo.svg',
 
@@ -54,6 +59,23 @@ export default defineConfig({
       ],
       '/advocacy': [
         ...topLevel,
+        { text: 'News', link: '/news/', items: [] },
+        { text: 'Events', link: '/events/', items: [] },
+      ],
+      // Without this key the projects index had no sidebar at all, which made
+      // the whole side navigation vanish when landing on /projects/.
+      '/projects/': [
+        { text: 'About', link: '/about', items: [] },
+        { text: 'Advocacy', link: '/advocacy', items: [] },
+        {
+          text: 'Projects',
+          link: '/projects',
+          items: [
+            { text: 'ODE4EC-AMS', link: '/projects/ams/' },
+            { text: 'ODE4EC-DIG', link: '/projects/dig/' },
+            { text: 'ODE4EC-PIV', link: '/projects/piv/' },
+          ],
+        },
         { text: 'News', link: '/news/', items: [] },
         { text: 'Events', link: '/events/', items: [] },
       ],

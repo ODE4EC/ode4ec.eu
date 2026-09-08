@@ -1,47 +1,14 @@
 /**
- * Customize default theme styling by overriding CSS variables:
+ * ODE4EC theme — circuit-board identity.
+ *
+ * Visual language: intertwining circuit traces with rounded, metro-map-like
+ * routing and via/pad dots. Strictly two accent families: the logo blue
+ * (#004494 and tints) and the logo gold (#ffd617). Gold is decorative only,
+ * never body text.
+ *
+ * VitePress variable reference:
  * https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css
  */
-
-/**
- * Colors
- *
- * Each colors have exact same color scale system with 3 levels of solid
- * colors with different brightness, and 1 soft color.
- *
- * - `XXX-1`: The most solid color used mainly for colored text. It must
- *   satisfy the contrast ratio against when used on top of `XXX-soft`.
- *
- * - `XXX-2`: The color used mainly for hover state of the button.
- *
- * - `XXX-3`: The color for solid background, such as bg color of the button.
- *   It must satisfy the contrast ratio with pure white (#ffffff) text on
- *   top of it.
- *
- * - `XXX-soft`: The color used for subtle background such as custom container
- *   or badges. It must satisfy the contrast ratio when putting `XXX-1` colors
- *   on top of it.
- *
- *   The soft color must be semi transparent alpha channel. This is crucial
- *   because it allows adding multiple "soft" colors on top of each other
- *   to create an accent, such as when having inline code block inside
- *   custom containers.
- *
- * - `default`: The color used purely for subtle indication without any
- *   special meanings attached to it such as bg color for menu hover state.
- *
- * - `brand`: Used for primary brand colors, such as link text, button with
- *   brand theme, etc.
- *
- * - `tip`: Used to indicate useful information. The default theme uses the
- *   brand color for this by default.
- *
- * - `warning`: Used to indicate warning to the users. Used in custom
- *   container, badges, etc.
- *
- * - `danger`: Used to show error, or dangerous message to the users. Used
- *   in custom container, badges, etc.
- * -------------------------------------------------------------------------- */
 
 :root {
   --vp-c-default-1: var(--vp-c-gray-1);
@@ -49,10 +16,26 @@
   --vp-c-default-3: var(--vp-c-gray-3);
   --vp-c-default-soft: var(--vp-c-gray-soft);
 
-  --vp-c-brand-1: var(--vp-c-indigo-1);
-  --vp-c-brand-2: var(--vp-c-indigo-2);
-  --vp-c-brand-3: var(--vp-c-indigo-3);
-  --vp-c-brand-soft: var(--vp-c-indigo-soft);
+  /* ODE4EC brand blue, taken directly from the logo (#004494). */
+  --vp-c-brand-1: #004494;
+  --vp-c-brand-2: #0a5abf;
+  --vp-c-brand-3: #0768d1;
+  --vp-c-brand-soft: rgba(0, 68, 148, 0.12);
+
+  /* ODE4EC brand gold, the logo's "4" — used sparingly as an accent, never for body text. */
+  --ode-c-accent-1: #ffd617;
+  --ode-c-accent-soft: rgba(255, 214, 23, 0.18);
+
+  /* A lighter trace blue used for decorative circuitry on dark boards. */
+  --ode-c-trace-blue: #7fb0ff;
+
+  /* The dark "board" background the hero and the first homepage section share.
+     Always dark, independent of the color scheme. */
+  --ode-c-board: #001f47;
+  --ode-c-board-deep: #00122a;
+
+  /* Soft blue-tinted panel background for subtle band separation on inner pages. */
+  --ode-c-bg-tint: #f2f6fb;
 
   --vp-c-tip-1: var(--vp-c-brand-1);
   --vp-c-tip-2: var(--vp-c-brand-2);
@@ -68,6 +51,16 @@
   --vp-c-danger-2: var(--vp-c-red-2);
   --vp-c-danger-3: var(--vp-c-red-3);
   --vp-c-danger-soft: var(--vp-c-red-soft);
+}
+
+.dark {
+  /* Lighter tints of the same blue so text/links keep contrast on dark backgrounds. */
+  --vp-c-brand-1: #7fb0ff;
+  --vp-c-brand-2: #5c98f2;
+  --vp-c-brand-3: #2f6fd6;
+  --vp-c-brand-soft: rgba(127, 176, 255, 0.16);
+
+  --ode-c-bg-tint: #131b2c;
 }
 
 /**
@@ -87,38 +80,6 @@
 }
 
 /**
- * Component: Home
- * -------------------------------------------------------------------------- */
-
-:root {
-  --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(
-    120deg,
-    #bd34fe 30%,
-    #41d1ff
-  );
-
-  --vp-home-hero-image-background-image: linear-gradient(
-    -45deg,
-    #bd34fe 50%,
-    #47caff 50%
-  );
-  --vp-home-hero-image-filter: blur(44px);
-}
-
-@media (min-width: 640px) {
-  :root {
-    --vp-home-hero-image-filter: blur(56px);
-  }
-}
-
-@media (min-width: 960px) {
-  :root {
-    --vp-home-hero-image-filter: blur(68px);
-  }
-}
-
-/**
  * Component: Custom Block
  * -------------------------------------------------------------------------- */
 
@@ -130,6 +91,26 @@
 }
 
 /**
+ * Typography
+ *
+ * Domine is the serif used in the ODE4EC wordmark itself (see the logo's
+ * "ODE4EC" lettering). Using it for headings ties every page back to the logo.
+ * -------------------------------------------------------------------------- */
+
+:root {
+  --vp-font-family-heading: 'Domine', Georgia, 'Times New Roman', serif;
+}
+
+h1,
+h2,
+h3,
+.VPHero .name,
+.VPHero .text,
+.VPNavBarTitle .title {
+  font-family: var(--vp-font-family-heading);
+}
+
+/**
  * Component: Algolia
  * -------------------------------------------------------------------------- */
 
@@ -138,12 +119,89 @@
 }
 
 .VPHome {
-  margin-bottom: 28px !important;
+  margin-bottom: 0 !important;
 }
 
 .VPDoc .content {
   padding-bottom: 24px !important;
 }
+
+/**
+ * Navbar
+ *
+ * Kept quiet: the only themed touch is a short gold trace under the active
+ * item, ending in a pad dot — a hint of circuitry without shouting.
+ * -------------------------------------------------------------------------- */
+
+.VPNavBarMenuLink {
+  position: relative;
+}
+
+.VPNavBarMenuLink.active {
+  color: var(--vp-c-brand-1) !important;
+}
+
+.VPNavBarMenuLink.active::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  bottom: 9px;
+  width: 18px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--ode-c-accent-1);
+}
+
+/**
+ * Component: Nav-over-hero
+ *
+ * VitePress already renders the navbar transparent when `layout: home` and the
+ * page is scrolled to the very top (`.VPNavBar.home.top`, see VPNavBar.vue).
+ * But its text colors are still the theme-reactive `--vp-c-text-1`, which
+ * would be unreadable in light mode since our homepage hero is always dark
+ * regardless of the site's light/dark toggle. Force light text only for that
+ * one state; every other page/scroll position keeps normal theme colors.
+ *
+ * Note: plain links are `.VPNavBarMenuLink` but dropdowns (e.g. "Projects")
+ * are `.VPFlyout` buttons, and the mobile menu is `.VPNavBarHamburger` —
+ * all three need the override or they stay grey over the dark hero.
+ * -------------------------------------------------------------------------- */
+
+.VPNavBar.home.top,
+.VPNavBar.home.top .wrapper,
+.VPNavBar.home.top .content-body,
+.VPNavBar.home.top .divider,
+.VPNavBar.home.top .divider-line {
+  background: transparent !important;
+}
+
+.VPNavBar.home.top .VPNavBarMenuLink,
+.VPNavBar.home.top .VPFlyout .button .text,
+.VPNavBar.home.top .VPFlyout .button .vpi-chevron-down,
+.VPNavBar.home.top .title,
+.VPNavBar.home.top .VPNavBarSocialLinks a {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.VPNavBar.home.top .VPNavBarMenuLink.active,
+.VPNavBar.home.top .VPNavBarMenuLink:hover,
+.VPNavBar.home.top .VPFlyout:hover .button .text,
+.VPNavBar.home.top .VPFlyout .button:hover .text {
+  color: var(--ode-c-accent-1) !important;
+}
+
+.VPNavBar.home.top .VPNavBarHamburger .top,
+.VPNavBar.home.top .VPNavBarHamburger .middle,
+.VPNavBar.home.top .VPNavBarHamburger .bottom {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+}
+
+/**
+ * Sidebar
+ *
+ * The active page gets a small via/pad dot on the left — same motif as the
+ * traces elsewhere, brand blue only.
+ * -------------------------------------------------------------------------- */
 
 .VPSidebar .group + .group {
   border-top: none !important;
@@ -154,10 +212,91 @@
   padding-bottom: 4px !important;
 }
 
-@media (max-width: 639px) {
-  .VPHero .image-src {
-    max-width: 160px;
-    max-height: 160px;
-  }
+.VPSidebarItem .item {
+  position: relative;
 }
 
+.VPSidebarItem .item .link:hover .text {
+  color: var(--vp-c-brand-1);
+}
+
+.VPSidebarItem.is-active > .item .link .text {
+  color: var(--vp-c-brand-1) !important;
+  font-weight: 600;
+}
+
+.VPSidebarItem.is-active > .item::before {
+  content: '';
+  position: absolute;
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--vp-c-bg-alt);
+  border: 2px solid var(--vp-c-brand-1);
+}
+
+/**
+ * Doc pages
+ *
+ * Page titles get a short two-tone trace (blue → gold) underneath; h2s get
+ * a small blue trace ending in a gold via dot. One consistent style, no
+ * color rotation.
+ * -------------------------------------------------------------------------- */
+
+.vp-doc h1 {
+  position: relative;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+
+.vp-doc h1::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 120px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--vp-c-brand-2) 0 70%, var(--ode-c-accent-1) 70% 100%);
+}
+
+.vp-doc h2 {
+  border-top: none;
+  position: relative;
+  margin-top: 44px;
+  padding-top: 20px;
+}
+
+/* the trace… */
+.vp-doc h2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--vp-c-brand-2);
+}
+
+/* …ending in a gold via */
+.vp-doc h2::after {
+  content: '';
+  position: absolute;
+  top: -3.5px;
+  left: 44px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--vp-c-bg);
+  border: 2.5px solid var(--ode-c-accent-1);
+}
+
+/* Tables: tinted header row instead of the default plain one. */
+.vp-doc th {
+  background-color: var(--vp-c-brand-soft);
+  color: var(--vp-c-text-1);
+}

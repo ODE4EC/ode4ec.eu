@@ -6,6 +6,8 @@ title: ODE4EC-DIG Partners
 
 ODE4EC-DIG is a pan-European consortium of 23 organizations across 10 countries.
 
+<PartnersMap project="dig" />
+
 <CardGrid>
 
 <Card title="Politecnico di Milano" logo="/img/partners/polimi.svg" flag="🇮🇹">
