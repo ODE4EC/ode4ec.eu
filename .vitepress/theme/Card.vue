@@ -24,8 +24,8 @@ defineProps<{
     :rel="rel"
   >
     <article class="box">
-      <div v-if="logo" class="logo">
-        <img :src="logo" :alt="title" />
+      <div v-if="logo || flag" class="logo">
+        <img v-if="logo" :src="logo" :alt="title" />
         <span v-if="flag" class="flag">{{ flag }}</span>
       </div>
       <div v-else-if="icon" class="icon" v-html="icon"></div>
