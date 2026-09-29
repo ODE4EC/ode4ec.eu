@@ -65,7 +65,7 @@ function scrollToNext() {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(180deg, #060f22 0%, #092a66 45%, var(--ode-c-board) 100%);
+  background: linear-gradient(180deg, var(--ode-c-board-top) 0%, var(--ode-c-board-mid) 45%, var(--ode-c-board) 100%);
 }
 
 .ode-hero__halo {
@@ -101,7 +101,7 @@ function scrollToNext() {
   padding: 44px 32px;
   color: #fff;
   text-align: center;
-  background: linear-gradient(168deg, #102c5c 0%, #0a2148 55%, #081b3c 100%);
+  background: linear-gradient(168deg, var(--ode-c-panel-top) 0%, var(--ode-c-panel) 55%, var(--ode-c-panel-deep) 100%);
   border: 1px solid rgba(140, 175, 240, 0.28);
   border-top-color: rgba(255, 255, 255, 0.22);
   border-radius: 18px;
@@ -123,8 +123,8 @@ function scrollToNext() {
   width: 11px;
   background: repeating-linear-gradient(
     180deg,
-    #ffe158 0 4px,
-    #b8990e 4px 10px,
+    var(--ode-c-gold-light) 0 4px,
+    var(--ode-c-gold-dark) 4px 10px,
     transparent 10px 38px
   );
   opacity: 0.9;
@@ -142,8 +142,8 @@ function scrollToNext() {
   height: 11px;
   background: repeating-linear-gradient(
     90deg,
-    #ffe158 0 4px,
-    #b8990e 4px 10px,
+    var(--ode-c-gold-light) 0 4px,
+    var(--ode-c-gold-dark) 4px 10px,
     transparent 10px 38px
   );
   opacity: 0.9;
@@ -169,7 +169,7 @@ function scrollToNext() {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #0e2a58, #04102a);
+  background: radial-gradient(circle at 35% 35%, var(--ode-c-panel), var(--ode-c-board-deep));
   box-shadow:
     inset 0 1.5px 3px rgba(0, 0, 0, 0.8),
     0 1px 0 rgba(255, 255, 255, 0.08);
@@ -195,7 +195,7 @@ function scrollToNext() {
   font-weight: 700;
   margin: 0 0 14px;
   padding-bottom: 18px;
-  background: linear-gradient(120deg, #7fb0ff 15%, #ffd617 100%);
+  background: linear-gradient(120deg, var(--ode-c-trace-blue) 15%, var(--ode-c-accent-1) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -264,8 +264,8 @@ function scrollToNext() {
 }
 
 .ode-btn--gold {
-  background: linear-gradient(180deg, #ffe158 0%, #ffd617 45%, #edbf00 100%);
-  color: #00122a;
+  background: linear-gradient(180deg, var(--ode-c-gold-light) 0%, var(--ode-c-accent-1) 45%, var(--ode-c-gold-shade) 100%);
+  color: var(--ode-c-board-deep);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.45),
     inset 0 -2px 0 rgba(0, 0, 0, 0.18),

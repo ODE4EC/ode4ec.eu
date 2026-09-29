@@ -363,7 +363,7 @@ const countryCount = computed(() => new Set(sites.value.map((s) => s.country)).s
 }
 
 .pmap__land {
-  fill: #123564;
+  fill: var(--ode-c-board-land);
 }
 
 .pmap__borders {
@@ -407,7 +407,7 @@ const countryCount = computed(() => new Set(sites.value.map((s) => s.country)).s
 }
 
 .pmap__site--hover .pmap__marker {
-  fill: #fff2b8;
+  fill: var(--ode-c-pin-hot);
 }
 
 .pmap__site--hover .pmap__ring {

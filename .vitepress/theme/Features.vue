@@ -97,7 +97,7 @@
 
 /* Solid, beveled panels — no transparency. */
 .ode-feature {
-  background: linear-gradient(170deg, #0e2c5c 0%, #082049 100%);
+  background: linear-gradient(170deg, var(--ode-c-panel-top) 0%, var(--ode-c-panel-deep) 100%);
   border: 1px solid rgba(140, 175, 240, 0.22);
   border-top-color: rgba(255, 255, 255, 0.16);
   border-radius: 14px;

@@ -26,6 +26,11 @@
   --ode-c-accent-1: #ffd617;
   --ode-c-accent-soft: rgba(255, 214, 23, 0.18);
 
+  /* Gold shades for bevels and pins: highlight, shade, and dark metal. */
+  --ode-c-gold-light: #ffe158;
+  --ode-c-gold-shade: #edbf00;
+  --ode-c-gold-dark: #b8990e;
+
   /* Circuit traces on the dark boards: a light and a deep blue, plus gold. */
   --ode-c-trace-blue: #7fb0ff;
   --ode-c-trace-deep: #4a7fd9;
@@ -40,6 +45,16 @@
   /* The dark "board" background the hero and the first homepage section share.
      Always dark, independent of the color scheme. */
   --ode-c-board: #001f47;
+  --ode-c-board-top: #060f22;
+  --ode-c-board-mid: #092a66;
+
+  /* Solid navy panels sitting on a board (the chip card, feature cards). */
+  --ode-c-panel-top: #102c5c;
+  --ode-c-panel: #0a2148;
+  --ode-c-panel-deep: #081b3c;
+
+  /* Land on the partners map. */
+  --ode-c-board-land: #123564;
   --ode-c-board-deep: #00122a;
 
   /* Soft blue-tinted panel background for subtle band separation on inner pages. */
@@ -173,6 +188,10 @@ h3,
  * Note: plain links are `.VPNavBarMenuLink` but dropdowns (e.g. "Projects")
  * are `.VPFlyout` buttons, and the mobile menu is `.VPNavBarHamburger` —
  * all three need the override or they stay grey over the dark hero.
+ *
+ * Below 960px the navbar is static, sitting above the hero rather than over
+ * it, so "transparent" would show the page background (white in light mode)
+ * behind the light text. There it takes the hero's top color instead.
  * -------------------------------------------------------------------------- */
 
 .VPNavBar.home.top,
@@ -181,6 +200,12 @@ h3,
 .VPNavBar.home.top .divider,
 .VPNavBar.home.top .divider-line {
   background: transparent !important;
+}
+
+@media (max-width: 959.98px) {
+  .VPNavBar.home.top {
+    background: var(--ode-c-board-top) !important;
+  }
 }
 
 .VPNavBar.home.top .VPNavBarMenuLink,
@@ -353,4 +378,16 @@ h3,
 .vp-doc th {
   background-color: var(--vp-c-brand-soft);
   color: var(--vp-c-text-1);
+}
+
+/**
+ * Reduced motion: homepage cards keep their hover color change but don't lift.
+ * -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .ode-feature:hover,
+  .ode-project:hover,
+  .ode-news__card:hover {
+    transform: none !important;
+  }
 }

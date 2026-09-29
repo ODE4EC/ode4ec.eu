@@ -1,12 +1,38 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { data as posts } from '../../news/posts.data.ts'
 
+const latest = posts.slice(0, 10)
 const track = ref<HTMLElement | null>(null)
+const atStart = ref(true)
+const atEnd = ref(false)
 
+// Step by exactly one card (its width plus the track gap).
 function scrollByCards(dir: number) {
-  track.value?.scrollBy({ left: dir * 340, behavior: 'smooth' })
+  const el = track.value
+  const first = el?.firstElementChild as HTMLElement | null
+  if (!el || !first) return
+  const step = first.offsetWidth + parseFloat(getComputedStyle(el).columnGap || '0')
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  el.scrollBy({ left: dir * step, behavior: reduce ? 'auto' : 'smooth' })
 }
+
+function updateEnds() {
+  const el = track.value
+  if (!el) return
+  atStart.value = el.scrollLeft <= 2
+  atEnd.value = el.scrollLeft + el.clientWidth >= el.scrollWidth - 2
+}
+
+let resizeObserver: ResizeObserver | null = null
+onMounted(() => {
+  updateEnds()
+  if (track.value) {
+    resizeObserver = new ResizeObserver(updateEnds)
+    resizeObserver.observe(track.value)
+  }
+})
+onBeforeUnmount(() => resizeObserver?.disconnect())
 </script>
 
 <template>
@@ -18,39 +44,72 @@ function scrollByCards(dir: number) {
           <h2 class="ode-section-heading ode-heading ode-news__heading">News &amp; Updates</h2>
         </div>
         <div class="ode-news__controls">
-          <button class="ode-news__nav-btn" type="button" aria-label="Scroll left" @click="scrollByCards(-1)">‹</button>
-          <button class="ode-news__nav-btn" type="button" aria-label="Scroll right" @click="scrollByCards(1)">›</button>
+          <button
+            class="ode-news__nav-btn"
+            type="button"
+            aria-label="Previous news"
+            aria-controls="ode-news-track"
+            :disabled="atStart"
+            @click="scrollByCards(-1)"
+          >‹</button>
+          <button
+            class="ode-news__nav-btn"
+            type="button"
+            aria-label="Next news"
+            aria-controls="ode-news-track"
+            :disabled="atEnd"
+            @click="scrollByCards(1)"
+          >›</button>
         </div>
       </div>
 
-      <div v-if="posts.length" ref="track" class="ode-news__track">
-        <a v-for="post in posts.slice(0, 10)" :key="post.url" :href="post.url" class="ode-news__card">
-          <div class="ode-news__media">
-            <img v-if="post.image" :src="post.image" alt="" loading="lazy" />
-            <svg v-else class="ode-news__media-fallback" viewBox="0 0 320 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-              <rect width="320" height="150" fill="#0a2455" />
-              <g fill="none" stroke-linecap="round">
-                <path d="M-10,40 L120,40 Q136,40 136,56 L136,160" stroke="#ffd617" stroke-width="3" opacity="0.7" />
-                <path d="M-10,70 L90,70 Q106,70 106,86 L106,160" stroke="#7fb0ff" stroke-width="3" opacity="0.5" />
-                <path d="M330,30 L230,30 Q214,30 214,46 L214,160" stroke="#7fb0ff" stroke-width="3" opacity="0.5" />
-                <path d="M330,60 L260,60 Q244,60 244,76 L244,160" stroke="#ffd617" stroke-width="3" opacity="0.45" />
-              </g>
-              <circle cx="60" cy="40" r="3.5" fill="#ffd617" opacity="0.85" />
-              <circle cx="290" cy="30" r="3.5" fill="#7fb0ff" opacity="0.8" />
-              <g transform="translate(150,84)">
-                <rect x="3" y="5" width="36" height="36" rx="5" fill="#000b1e" opacity="0.5" />
-                <rect width="40" height="40" rx="5" fill="#12305f" stroke="rgba(160,190,240,0.4)" stroke-width="1.5" />
-                <circle cx="8" cy="8" r="2.5" fill="#ffd617" />
-              </g>
-            </svg>
-            <span class="ode-news__date">{{ post.date }}</span>
-          </div>
-          <div class="ode-news__body">
-            <h3>{{ post.title }}</h3>
-            <span class="ode-news__more">Read more →</span>
-          </div>
-        </a>
-      </div>
+      <ul
+        v-if="latest.length"
+        id="ode-news-track"
+        ref="track"
+        class="ode-news__track"
+        aria-label="Latest news"
+        @scroll.passive="updateEnds"
+      >
+        <li v-for="post in latest" :key="post.url" class="ode-news__item">
+          <a :href="post.url" class="ode-news__card">
+            <div class="ode-news__media">
+              <img v-if="post.image" :src="post.image" alt="" loading="lazy" />
+              <svg v-else class="ode-news__media-fallback" viewBox="0 0 320 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                <!-- a miniature of the homepage board: 45° buses into a chip -->
+                <rect class="nf-bg" width="320" height="150" />
+                <g fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path class="nf-gold" d="M-10,30 L90,30 L126,66 L132,66" />
+                  <path class="nf-blue" d="M-10,40 L86,40 L122,76 L132,76" />
+                  <path class="nf-deep" d="M-10,50 L82,50 L118,86 L132,86" />
+                  <path class="nf-blue" d="M188,66 L194,66 L230,30 L330,30" />
+                  <path class="nf-gold" d="M188,76 L198,76 L234,40 L330,40" />
+                  <path class="nf-deep" d="M188,86 L214,86 L240,112 L240,160" />
+                  <path class="nf-gold" d="M160,104 L160,160" />
+                </g>
+                <circle class="nf-via nf-via--gold" cx="48" cy="30" r="3.5" />
+                <circle class="nf-via nf-via--blue" cx="282" cy="30" r="3.5" />
+                <g class="nf-pin">
+                  <rect x="132" y="64" width="8" height="4" rx="1" />
+                  <rect x="132" y="74" width="8" height="4" rx="1" />
+                  <rect x="132" y="84" width="8" height="4" rx="1" />
+                  <rect x="180" y="64" width="8" height="4" rx="1" />
+                  <rect x="180" y="74" width="8" height="4" rx="1" />
+                  <rect x="180" y="84" width="8" height="4" rx="1" />
+                  <rect x="158" y="96" width="4" height="8" rx="1" />
+                </g>
+                <rect class="nf-chip" x="138" y="54" width="44" height="44" rx="5" />
+                <circle class="nf-pin" cx="146" cy="62" r="2.2" />
+              </svg>
+              <time class="ode-news__date" :datetime="post.date">{{ post.date }}</time>
+            </div>
+            <div class="ode-news__body">
+              <h3>{{ post.title }}</h3>
+              <span class="ode-news__more">Read more →</span>
+            </div>
+          </a>
+        </li>
+      </ul>
 
       <a href="/news/" class="ode-news__all">All news →</a>
     </div>
@@ -107,7 +166,17 @@ function scrollByCards(dir: number) {
   transition: border-color 0.2s, color 0.2s, background-color 0.2s;
 }
 
-.ode-news__nav-btn:hover {
+.ode-news__nav-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.ode-news__nav-btn:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+}
+
+.ode-news__nav-btn:hover:not(:disabled) {
   border-color: var(--vp-c-brand-1);
   color: var(--vp-c-brand-1);
 }
@@ -120,6 +189,17 @@ function scrollByCards(dir: number) {
   padding: 4px 4px 16px;
   margin: 0 -4px;
   scrollbar-width: none;
+  list-style: none;
+}
+
+.ode-news__item {
+  flex: 0 0 280px;
+  scroll-snap-align: start;
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .ode-news__item { flex-basis: 320px; }
 }
 
 .ode-news__track::-webkit-scrollbar {
@@ -127,8 +207,7 @@ function scrollByCards(dir: number) {
 }
 
 .ode-news__card {
-  scroll-snap-align: start;
-  flex: 0 0 280px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   background: var(--vp-c-bg-soft);
@@ -149,10 +228,6 @@ function scrollByCards(dir: number) {
     0 12px 28px rgba(0, 0, 0, 0.35);
 }
 
-@media (min-width: 640px) {
-  .ode-news__card { flex-basis: 320px; }
-}
-
 .ode-news__card:hover {
   transform: translateY(-4px);
   border-color: var(--vp-c-brand-1);
@@ -169,7 +244,7 @@ function scrollByCards(dir: number) {
 .ode-news__media {
   position: relative;
   height: 150px;
-  background: #0a2455;
+  background: var(--ode-c-panel);
 }
 
 .ode-news__media img,
@@ -180,13 +255,28 @@ function scrollByCards(dir: number) {
   display: block;
 }
 
+/* fallback art (no post image): colors from the board tokens */
+.nf-bg { fill: var(--ode-c-panel); }
+.nf-gold { stroke: var(--ode-c-accent-1); opacity: 0.75; }
+.nf-blue { stroke: var(--ode-c-trace-blue); opacity: 0.55; }
+.nf-deep { stroke: var(--ode-c-trace-deep); opacity: 0.75; }
+.nf-via { fill: var(--ode-c-panel); stroke-width: 2; }
+.nf-via--gold { stroke: var(--ode-c-accent-1); }
+.nf-via--blue { stroke: var(--ode-c-trace-blue); }
+.nf-pin { fill: var(--ode-c-accent-1); }
+.nf-chip {
+  fill: var(--ode-c-panel-top);
+  stroke: rgba(160, 190, 240, 0.4);
+  stroke-width: 1.5;
+}
+
 .ode-news__date {
   position: absolute;
   left: 14px;
   bottom: 12px;
   font-size: 12px;
   font-weight: 600;
-  color: #00122a;
+  color: var(--ode-c-board-deep);
   background: var(--ode-c-accent-1);
   padding: 4px 10px;
   border-radius: 999px;

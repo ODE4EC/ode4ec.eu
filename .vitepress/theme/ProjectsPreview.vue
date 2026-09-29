@@ -119,6 +119,11 @@ const projects = [
     0 12px 28px rgba(0, 0, 0, 0.35);
 }
 
+.ode-project:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 3px;
+}
+
 .ode-project:hover {
   transform: translateY(-4px);
   border-color: var(--vp-c-brand-1);
@@ -137,8 +142,8 @@ const projects = [
   height: 12px;
   background: repeating-linear-gradient(
     90deg,
-    #ffe158 0 3px,
-    #c7a50d 3px 8px,
+    var(--ode-c-gold-light) 0 3px,
+    var(--ode-c-gold-dark) 3px 8px,
     transparent 8px 30px
   );
   border-radius: 2px 2px 0 0;
@@ -180,7 +185,7 @@ const projects = [
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;
-  color: var(--vp-c-text-3);
+  color: var(--vp-c-text-2);
   text-transform: uppercase;
 }
 
