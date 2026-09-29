@@ -3,10 +3,7 @@
 layout: home
 ---
 
-<Hero />
-
-<div id="ode-hero-next"></div>
-<Features />
+<HomeBoard />
 
 <ProjectsPreview />
 

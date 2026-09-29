@@ -1,17 +1,5 @@
 <template>
   <section class="ode-features">
-    <!-- The two wires leaving the hero chip (gold at 38.75%, blue at 61.25%)
-         run down behind the cards, then bend and exit through the page sides
-         — no dangling ends. Rounded elbows are drawn with CSS borders. -->
-    <div class="ode-features__traces" aria-hidden="true">
-      <i class="ode-ft ode-ft--gold ode-ft__vert" />
-      <i class="ode-ft ode-ft--gold ode-ft__elbow" />
-      <i class="ode-ft ode-ft--gold ode-ft__horiz" />
-      <i class="ode-ft ode-ft--blue ode-ft__vert" />
-      <i class="ode-ft ode-ft--blue ode-ft__elbow" />
-      <i class="ode-ft ode-ft--blue ode-ft__horiz" />
-    </div>
-
     <div class="ode-features__inner">
       <p class="ode-eyebrow">The initiative</p>
       <h2 class="ode-section-heading ode-heading ode-features__heading">Why ODE4EC</h2>
@@ -52,10 +40,9 @@
 </template>
 
 <style scoped>
+/* Full-bleed and the circuit traces come from the wrapping HomeBoard. */
 .ode-features {
   position: relative;
-  margin-left: var(--vp-offset, calc(50% - 50vw));
-  margin-right: var(--vp-offset, calc(50% - 50vw));
   background: var(--ode-c-board);
   padding: 64px 24px 240px;
 }
@@ -64,79 +51,13 @@
   .ode-features { padding: 72px 48px 260px; }
 }
 
-.ode-features__traces {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.ode-ft {
-  position: absolute;
-  display: block;
-}
-
-/* gold wire: continues down, bends, exits stage left */
-.ode-ft--gold { color: rgba(255, 214, 23, 0.8); }
-.ode-ft--gold.ode-ft__vert {
-  left: 38.75%;
-  top: 0;
-  bottom: 148px;
-  width: 4px;
-  margin-left: -2px;
-  background: currentColor;
-}
-.ode-ft--gold.ode-ft__elbow {
-  left: calc(38.75% - 46px);
-  bottom: 104px;
-  width: 48px;
-  height: 48px;
-  border-right: 4px solid currentColor;
-  border-bottom: 4px solid currentColor;
-  border-bottom-right-radius: 48px;
-}
-.ode-ft--gold.ode-ft__horiz {
-  left: 0;
-  bottom: 104px;
-  width: calc(38.75% - 44px);
-  height: 4px;
-  background: currentColor;
-}
-
-/* blue wire: continues down, bends, exits stage right */
-.ode-ft--blue { color: rgba(127, 176, 255, 0.6); }
-.ode-ft--blue.ode-ft__vert {
-  left: 61.25%;
-  top: 0;
-  bottom: 108px;
-  width: 4px;
-  margin-left: -2px;
-  background: currentColor;
-}
-.ode-ft--blue.ode-ft__elbow {
-  left: calc(61.25% - 2px);
-  bottom: 64px;
-  width: 48px;
-  height: 48px;
-  border-left: 4px solid currentColor;
-  border-bottom: 4px solid currentColor;
-  border-bottom-left-radius: 48px;
-}
-.ode-ft--blue.ode-ft__horiz {
-  left: calc(61.25% + 44px);
-  right: 0;
-  bottom: 64px;
-  height: 4px;
-  background: currentColor;
-}
-
 .ode-features__fade {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
   height: 170px;
-  background: linear-gradient(180deg, rgba(0, 31, 71, 0) 0%, var(--vp-c-bg) 100%);
+  background: linear-gradient(180deg, transparent 0%, var(--vp-c-bg) 100%);
 }
 
 .ode-features__inner {

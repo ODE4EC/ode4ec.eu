@@ -26,8 +26,13 @@
   --ode-c-accent-1: #ffd617;
   --ode-c-accent-soft: rgba(255, 214, 23, 0.18);
 
-  /* A lighter trace blue used for decorative circuitry on dark boards. */
+  /* Circuit traces on the dark boards: a light and a deep blue, plus gold. */
   --ode-c-trace-blue: #7fb0ff;
+  --ode-c-trace-deep: #4a7fd9;
+
+  /* Chip pins: unwired, and lit by a passing signal. */
+  --ode-c-pin-dim: #9c8420;
+  --ode-c-pin-hot: #fff3b0;
 
   /* The dark "board" background the hero and the first homepage section share.
      Always dark, independent of the color scheme. */
