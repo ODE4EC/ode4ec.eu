@@ -392,7 +392,6 @@ h3,
 
 @media (prefers-reduced-motion: reduce) {
   .ode-feature:hover,
-  .ode-project:hover,
   .ode-news__card:hover {
     transform: none !important;
   }

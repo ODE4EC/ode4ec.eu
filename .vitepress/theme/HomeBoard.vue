@@ -1,18 +1,25 @@
 <script setup lang="ts">
-// The homepage "board": Hero + Features on one dark PCB, with a single
-// circuit overlay drawn in real pixels behind both. The overlay measures the
-// chip card and the Features cards, so its pins sit exactly on the card
-// edges and every trace lands on a pin at any viewport size. Signal packets
-// travel along the traces (circuit/packets.ts) while the board is visible.
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
+// The homepage "board": Hero + Features on one dark PCB, then the project
+// cards on the page below, with a single circuit overlay drawn in real
+// pixels behind all of them. The overlay measures the chip card, the Features
+// cards and the project cards, so its pins sit exactly on the card edges and
+// every trace lands on a pin at any viewport size; the chip's two output
+// feeds run on into the project cards. Signal packets travel along the
+// traces (circuit/packets.ts) while the board is visible.
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useId, watch } from 'vue'
 import Hero from './Hero.vue'
 import Features from './Features.vue'
+import ProjectsPreview from './ProjectsPreview.vue'
 import { buildCircuit, type Circuit, type Rect } from './circuit/layout'
 import { PacketEngine } from './circuit/packets'
 
 const root = ref<HTMLElement | null>(null)
 const wires = ref<SVGSVGElement | null>(null)
 const size = ref({ w: 0, h: 0 })
+/** the band where the dark board fades into the page */
+const fade = ref({ top: 0, bottom: 0 })
+const maskId = `ode-board-page-${useId()}`
+const TONES = ['deep', 'blue', 'gold'] as const
 // Empty on the server and on first client render (hydration must match);
 // filled in after mount.
 const circuit = shallowRef<Circuit | null>(null)
@@ -23,6 +30,8 @@ function measure() {
   const chipEl = el.querySelector('.ode-hero__content')
   const heroEl = el.querySelector('.ode-hero')
   const cardEls = [...el.querySelectorAll('.ode-feature')]
+  const projectEls = [...el.querySelectorAll('.ode-project')]
+  const fadeEl = el.querySelector('.ode-features__fade')
   if (!chipEl || !heroEl || !cardEls.length) return
 
   const box = el.getBoundingClientRect()
@@ -39,6 +48,10 @@ function measure() {
     : [12, box.width - 12]
 
   size.value = { w: box.width, h: box.height }
+  if (fadeEl) {
+    const f = rel(fadeEl.getBoundingClientRect())
+    fade.value = { top: f.y, bottom: f.y + f.h }
+  }
   circuit.value = buildCircuit({
     width: box.width,
     height: box.height,
@@ -46,6 +59,7 @@ function measure() {
     heroBottom: hero.y + hero.h,
     feedXs,
     gridBottom: Math.max(...cards.map((c) => c.y + c.h)),
+    cards: projectEls.map((c) => rel(c.getBoundingClientRect())),
   })
 }
 
@@ -78,7 +92,7 @@ watch(circuit, async (c) => {
   if (!c || !wires.value) return
   engine.attach(
     wires.value,
-    c.traces.map((t) => ({ id: t.id, len: t.len, flow: t.flow, pinId: t.pinId })),
+    c.traces.map((t) => ({ id: t.id, len: t.len, flow: t.flow, pinId: t.pinId, endPinId: t.endPinId })),
   )
   if (running.value) engine.start()
 })
@@ -95,7 +109,7 @@ function burst() {
   const now = performance.now()
   if (now - lastBurst < 1200) return
   lastBurst = now
-  engine.burst(['feed-a', 'feed-b'])
+  engine.burst(circuit.value?.traces.filter((t) => t.feed).map((t) => t.id) ?? [])
 }
 
 let resizeObserver: ResizeObserver | null = null
@@ -149,8 +163,30 @@ onBeforeUnmount(() => {
       aria-hidden="true"
       focusable="false"
     >
+      <defs>
+        <linearGradient :id="`${maskId}-grad`" gradientUnits="userSpaceOnUse" x1="0" x2="0" :y1="fade.top" :y2="fade.bottom">
+          <stop offset="0" stop-color="#000" />
+          <stop offset="1" stop-color="#fff" />
+        </linearGradient>
+        <mask :id="maskId" maskUnits="userSpaceOnUse" x="0" y="0" :width="size.w" :height="size.h">
+          <rect x="0" y="0" :width="size.w" :height="size.h" :fill="`url(#${maskId}-grad)`" />
+        </mask>
+      </defs>
+
+      <!-- grouped by tone so that feed branches sharing a route draw as one
+           trace (opacity is applied per group, not per path) -->
       <g class="ode-board__traces">
-        <path v-for="t in circuit.traces" :key="t.id" :d="t.d" :class="`tone--${t.tone}`" />
+        <g v-for="tone in TONES" :key="tone" :class="`tone--${tone}`">
+          <path v-for="t in circuit.traces.filter((x) => x.tone === tone)" :key="t.id" :d="t.d" />
+        </g>
+      </g>
+      <!-- light mode only: past the board's fade the feeds run over the light
+           page, where the board's pale trace colors vanish; redraw them in
+           deeper tones, masked in across the fade -->
+      <g class="ode-board__page-traces" :mask="`url(#${maskId})`">
+        <g v-for="tone in TONES" :key="tone" :class="`tone--${tone}`">
+          <path v-for="t in circuit.traces.filter((x) => x.feed && x.tone === tone)" :key="t.id" :d="t.d" />
+        </g>
       </g>
       <g class="ode-board__vias">
         <circle v-for="(v, i) in circuit.vias" :key="i" :cx="v.x" :cy="v.y" r="4" :class="`tone--${v.tone}`" />
@@ -163,7 +199,7 @@ onBeforeUnmount(() => {
             v-for="k in t.feed ? 3 : 1"
             :key="k"
             class="ode-packet"
-            :class="`tone--${t.tone}`"
+            :class="[`tone--${t.tone}`, { 'ode-packet--feed': t.feed }]"
             :data-packet="t.id"
             style="visibility: hidden"
           >
@@ -177,7 +213,7 @@ onBeforeUnmount(() => {
           v-for="p in circuit.pins"
           :key="p.id"
           class="ode-pin"
-          :class="{ 'ode-pin--wired': p.wired }"
+          :class="{ 'ode-pin--wired': p.wired, 'ode-pin--card': p.group === 'card' }"
           :data-pin="p.id"
         >
           <rect
@@ -215,6 +251,11 @@ onBeforeUnmount(() => {
       </template>
     </Hero>
     <Features />
+    <!-- same box as VitePress's home content container, so Projects stays
+         aligned with the sections that follow the board -->
+    <div class="ode-board__container">
+      <ProjectsPreview :wired="!!circuit" />
+    </div>
   </div>
 </template>
 
@@ -257,7 +298,23 @@ onBeforeUnmount(() => {
   to { opacity: 1; }
 }
 
-.ode-board__traces path {
+.ode-board__container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (min-width: 640px) {
+  .ode-board__container { padding: 0 48px; }
+}
+
+@media (min-width: 960px) {
+  .ode-board__container { padding: 0 64px; }
+}
+
+.ode-board__traces path,
+.ode-board__page-traces path {
   fill: none;
   stroke-width: 2.5;
   stroke-linecap: round;
@@ -267,6 +324,18 @@ onBeforeUnmount(() => {
 .ode-board__traces .tone--gold { stroke: var(--ode-c-accent-1); opacity: 0.72; }
 .ode-board__traces .tone--blue { stroke: var(--ode-c-trace-blue); opacity: 0.5; }
 .ode-board__traces .tone--deep { stroke: var(--ode-c-trace-deep); opacity: 0.7; }
+
+.ode-board__page-traces {
+  display: none;
+}
+
+:root:not(.dark) .ode-board__page-traces {
+  display: inline;
+}
+
+.ode-board__page-traces .tone--gold { stroke: var(--ode-c-gold-shade); opacity: 0.9; }
+.ode-board__page-traces .tone--blue { stroke: var(--vp-c-brand-2); opacity: 0.6; }
+.ode-board__page-traces .tone--deep { stroke: var(--vp-c-brand-3); opacity: 0.7; }
 
 .ode-board__vias circle {
   fill: var(--ode-c-board);
@@ -329,8 +398,22 @@ onBeforeUnmount(() => {
 .ode-packet.tone--blue path,
 .ode-packet.tone--deep path { stroke: var(--ode-c-packet-blue); }
 
+/* feed packets reach the light page in light mode: give them a saturated core */
+:root:not(.dark) .ode-packet--feed.tone--gold .ode-packet__core { stroke: var(--ode-c-gold-shade); }
+:root:not(.dark) .ode-packet--feed.tone--blue .ode-packet__core { stroke: var(--vp-c-brand-3); }
+
+/* project-card pins on the light page need deeper golds */
+:root:not(.dark) .ode-pin--card .ode-pin__body {
+  fill: var(--ode-c-gold-dark);
+}
+
+:root:not(.dark) .ode-pin--card.ode-pin--wired .ode-pin__body {
+  fill: var(--ode-c-gold-shade);
+}
+
 @media (max-width: 639px) {
-  .ode-board__traces path {
+  .ode-board__traces path,
+  .ode-board__page-traces path {
     stroke-width: 2;
   }
 }

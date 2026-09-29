@@ -28,6 +28,8 @@ export type Tone = 'gold' | 'blue' | 'deep'
 export interface Pin {
   id: string
   side: Side
+  /** the central chip, or one of the project cards */
+  group: 'chip' | 'card'
   /** drawn rectangle */
   x: number
   y: number
@@ -46,6 +48,8 @@ export interface Trace {
   pinId: string
   /** 'in': signals travel from the board edge into the chip; 'out': the reverse */
   flow: 'in' | 'out'
+  /** for traces that end on another pin (a project card's), that pin */
+  endPinId?: string
   /** the two traces that continue down through the Features section */
   feed?: boolean
 }
@@ -65,6 +69,8 @@ export interface BoardLayout {
   feedXs: [number, number]
   /** y just below the Features cards */
   gridBottom: number
+  /** the project cards the feeds continue into (may be empty) */
+  cards: Rect[]
 }
 
 export interface Circuit {
@@ -151,7 +157,7 @@ function clean(pts: Pt[]) {
 // ---------------------------------------------------------------------------
 // pins
 
-function pinsOnSide(chip: Rect, side: Side, pitch: number): Pin[] {
+function pinsOnSide(chip: Rect, side: Side, pitch: number, prefix = '', group: Pin['group'] = 'chip'): Pin[] {
   const horizontal = side === 'top' || side === 'bottom'
   const edgeLen = horizontal ? chip.w : chip.h
   const count = Math.max(0, Math.floor((edgeLen - 2 * CORNER_INSET) / pitch) + 1)
@@ -163,20 +169,20 @@ function pinsOnSide(chip: Rect, side: Side, pitch: number): Pin[] {
     // pins are drawn 3px under the card edge so they read as attached to it
     if (side === 'top') {
       const x = chip.x + along
-      pin = { id: '', side, x: x - PIN_W / 2, y: chip.y - PIN_LEN, w: PIN_W, h: PIN_LEN + 3, tip: { x, y: chip.y - PIN_LEN }, wired: false }
+      pin = { id: '', group, side, x: x - PIN_W / 2, y: chip.y - PIN_LEN, w: PIN_W, h: PIN_LEN + 3, tip: { x, y: chip.y - PIN_LEN }, wired: false }
     } else if (side === 'bottom') {
       const x = chip.x + along
       const y = chip.y + chip.h
-      pin = { id: '', side, x: x - PIN_W / 2, y: y - 3, w: PIN_W, h: PIN_LEN + 3, tip: { x, y: y + PIN_LEN }, wired: false }
+      pin = { id: '', group, side, x: x - PIN_W / 2, y: y - 3, w: PIN_W, h: PIN_LEN + 3, tip: { x, y: y + PIN_LEN }, wired: false }
     } else if (side === 'left') {
       const y = chip.y + along
-      pin = { id: '', side, x: chip.x - PIN_LEN, y: y - PIN_W / 2, w: PIN_LEN + 3, h: PIN_W, tip: { x: chip.x - PIN_LEN, y }, wired: false }
+      pin = { id: '', group, side, x: chip.x - PIN_LEN, y: y - PIN_W / 2, w: PIN_LEN + 3, h: PIN_W, tip: { x: chip.x - PIN_LEN, y }, wired: false }
     } else {
       const y = chip.y + along
       const x = chip.x + chip.w
-      pin = { id: '', side, x: x - 3, y: y - PIN_W / 2, w: PIN_LEN + 3, h: PIN_W, tip: { x: x + PIN_LEN, y }, wired: false }
+      pin = { id: '', group, side, x: x - 3, y: y - PIN_W / 2, w: PIN_LEN + 3, h: PIN_W, tip: { x: x + PIN_LEN, y }, wired: false }
     }
-    pin.id = `${side}-${i}`
+    pin.id = `${prefix}${side}-${i}`
     pins.push(pin)
   }
   return pins
@@ -335,8 +341,16 @@ export function buildCircuit(L: BoardLayout): Circuit {
     bottomFan(bottom.slice(nb - 4, nb - 1), 1, 'br')
   }
 
-  // feeds: two outputs that leave the hero and run down through Features
-  // (between its cards, or in the margins on narrow screens), then exit sideways
+  // project cards: chip-style pins along their top and bottom edges
+  const cardTops = L.cards.map((r, ci) => {
+    const topPins = pinsOnSide(r, 'top', 18, `c${ci}-`, 'card')
+    out.pins.push(...topPins, ...pinsOnSide(r, 'bottom', 18, `c${ci}-`, 'card'))
+    return topPins
+  })
+
+  // feeds: two outputs that leave the hero, run down through Features
+  // (between its cards, or in the margins on narrow screens), then down the
+  // page margins and along a rail into the project cards' top pins
   {
     const lo = compact ? 1 : 5
     const hi = compact ? nb - 2 : nb - 6
@@ -345,26 +359,76 @@ export function buildCircuit(L: BoardLayout): Circuit {
       candidates.filter((p) => p !== not).reduce((a, b) => (Math.abs(b.tip.x - x) < Math.abs(a.tip.x - x) ? b : a))
     const pinA = nearest(L.feedXs[0])
     const pinB = nearest(L.feedXs[1], pinA)
-    const feed = (pin: Pin, x: number, dir: -1 | 1, tone: Tone, id: string) => {
+
+    const cards = L.cards
+    const inRow = cards.length === 3 && Math.abs(cards[0].y - cards[2].y) < 2
+    const pick = (ci: number, frac: number) => {
+      const tops = cardTops[ci]
+      return tops?.length ? tops[Math.round((tops.length - 1) * frac)] : null
+    }
+    // three in a row: gold feeds AMS + DIG, blue feeds PIV + DIG;
+    // stacked: gold drops into the 1st and 3rd card, blue into the 2nd
+    const goldTargets = (inRow ? [pick(0, 0.5), pick(1, 0.3)] : [pick(0, 0.3), pick(2, 0.3)]).filter(Boolean) as Pin[]
+    const blueTargets = (inRow ? [pick(2, 0.5), pick(1, 0.7)] : [pick(1, 0.7)]).filter(Boolean) as Pin[]
+    const leftX = cards.length ? Math.min(...cards.map((c) => c.x)) : 24
+    const rightX = cards.length ? Math.max(...cards.map((c) => c.x + c.w)) : W - 24
+
+    const TURN = 26
+    /** rail height above a card's pin tips, and the 45° part of the drop */
+    const RAIL = 26
+    const DROP = 14
+
+    const feed = (pin: Pin, x: number, dir: -1 | 1, tone: Tone, id: string, targets: Pin[], marginX: number) => {
       const t = pin.tip
       const dx = x - t.x
       const jogY = Math.max(t.y + 30, L.heroBottom - 80 - Math.abs(dx))
       const downTo = L.gridBottom + 24
-      const turn = 26
-      const pts = clean([
-        t,
-        { x: t.x, y: jogY },
-        { x, y: jogY + Math.abs(dx) },
-        { x, y: downTo },
-        { x: x + dir * turn, y: downTo + turn },
-        { x: dir < 0 ? -BLEED : W + BLEED, y: downTo + turn },
-      ])
+      const head: Pt[] = [t, { x: t.x, y: jogY }, { x, y: jogY + Math.abs(dx) }, { x, y: downTo }]
       pin.wired = true
-      out.traces.push({ id, d: pathD(pts), len: polylineLength(pts), tone, pinId: pin.id, flow: 'out', feed: true })
-      out.vias.push({ ...pts[3], tone })
+      out.vias.push({ ...head[3], tone })
+
+      if (!targets.length) {
+        const pts = clean([...head, { x: x + dir * TURN, y: downTo + TURN }, { x: dir < 0 ? -BLEED : W + BLEED, y: downTo + TURN }])
+        out.traces.push({ id, d: pathD(pts), len: polylineLength(pts), tone, pinId: pin.id, flow: 'out', feed: true })
+        return
+      }
+
+      // out to the page margin (already there on narrow screens)
+      const path = [...head]
+      if (Math.abs(x - marginX) > 2 * TURN) {
+        path.push(
+          { x: x + dir * TURN, y: downTo + TURN },
+          { x: marginX - dir * TURN, y: downTo + TURN },
+          { x: marginX, y: downTo + 2 * TURN },
+        )
+      }
+      // one trace per target: identical up to its drop, so shared runs draw as one
+      targets.forEach((target, k) => {
+        const tip = target.tip
+        const railY = tip.y - RAIL
+        const pts = clean([
+          ...path,
+          { x: marginX, y: railY - TURN },
+          { x: marginX - dir * TURN, y: railY },
+          { x: tip.x + dir * DROP, y: railY },
+          { x: tip.x, y: railY + DROP },
+          tip,
+        ])
+        target.wired = true
+        out.traces.push({
+          id: `${id}-${k}`,
+          d: pathD(pts),
+          len: polylineLength(pts),
+          tone,
+          pinId: pin.id,
+          endPinId: target.id,
+          flow: 'out',
+          feed: true,
+        })
+      })
     }
-    feed(pinA, L.feedXs[0], -1, 'gold', 'feed-a')
-    feed(pinB, L.feedXs[1], 1, 'blue', 'feed-b')
+    feed(pinA, L.feedXs[0], -1, 'gold', 'feed-a', goldTargets, leftX / 2)
+    feed(pinB, L.feedXs[1], 1, 'blue', 'feed-b', blueTargets, W - (W - rightX) / 2)
   }
 
   return out

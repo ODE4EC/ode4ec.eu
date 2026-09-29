@@ -5,7 +5,5 @@ layout: home
 
 <HomeBoard />
 
-<ProjectsPreview />
-
 <EventsPreview />
 <NewsPreview />

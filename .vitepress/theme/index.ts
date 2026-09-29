@@ -11,7 +11,6 @@ import CardGrid from './CardGrid.vue'
 import KeyFact from './KeyFact.vue'
 import KeyFacts from './KeyFacts.vue'
 import HomeBoard from './HomeBoard.vue'
-import ProjectsPreview from './ProjectsPreview.vue'
 import PartnersMap from './PartnersMap.vue'
 
 export default {
@@ -29,7 +28,6 @@ export default {
     app.component('KeyFact', KeyFact)
     app.component('KeyFacts', KeyFacts)
     app.component('HomeBoard', HomeBoard)
-    app.component('ProjectsPreview', ProjectsPreview)
     app.component('PartnersMap', PartnersMap)
   }
 } satisfies Theme

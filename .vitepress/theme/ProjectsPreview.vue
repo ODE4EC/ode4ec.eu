@@ -1,4 +1,9 @@
 <script setup lang="ts">
+defineProps<{
+  /** true once HomeBoard draws the real pins and feeds these cards */
+  wired?: boolean
+}>()
+
 const projects = [
   {
     code: 'AMS',
@@ -25,7 +30,7 @@ const projects = [
 </script>
 
 <template>
-  <section class="ode-projects">
+  <section class="ode-projects" :class="{ 'ode-projects--wired': wired }">
     <div class="ode-projects__inner">
       <p class="ode-eyebrow">The projects</p>
       <h2 class="ode-section-heading ode-heading ode-projects__heading">Three projects, one environment</h2>
@@ -71,7 +76,8 @@ const projects = [
 }
 
 .ode-projects__sub {
-  margin: 0 0 40px;
+  /* room for the circuit rail that runs above the cards' pins */
+  margin: 0 0 56px;
   max-width: 60ch;
   font-size: 15px;
   line-height: 1.6;
@@ -80,7 +86,8 @@ const projects = [
 
 .ode-projects__grid {
   display: grid;
-  gap: 20px;
+  /* stacked cards: room for pins above and below, and the rail between */
+  gap: 64px;
 }
 
 @media (min-width: 768px) {
@@ -90,10 +97,13 @@ const projects = [
   }
 }
 
-/* Each project card is a chip package: solid beveled body, gold pin strip
-   along the top edge, via dot next to the silkscreen code. */
+/* Each project card is a chip package: solid beveled body, pins along the
+   top and bottom edges (drawn by HomeBoard, with the chip's feeds landing on
+   the top ones), via dot next to the silkscreen code. Cards don't lift on
+   hover: a chip moving off its pins would look detached. */
 .ode-project {
   position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   padding: 28px 26px 22px;
@@ -108,7 +118,7 @@ const projects = [
     inset 0 -2px 0 rgba(0, 0, 0, 0.06),
     0 1px 2px rgba(2, 8, 20, 0.06),
     0 10px 24px rgba(2, 8, 20, 0.08);
-  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .dark .ode-project {
@@ -125,7 +135,6 @@ const projects = [
 }
 
 .ode-project:hover {
-  transform: translateY(-4px);
   border-color: var(--vp-c-brand-1);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.5),
@@ -148,6 +157,11 @@ const projects = [
   );
   border-radius: 2px 2px 0 0;
   opacity: 0.9;
+}
+
+/* pre-hydration / no-JS fallback only */
+.ode-projects--wired .ode-project__pins {
+  display: none;
 }
 
 .ode-project__head {

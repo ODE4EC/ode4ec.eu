@@ -14,6 +14,8 @@ export interface PacketTraceMeta {
   len: number
   flow: 'in' | 'out'
   pinId: string
+  /** pin at the far end, for 'out' traces that land on another pin */
+  endPinId?: string
 }
 
 interface Slot {
@@ -24,6 +26,7 @@ interface Slot {
 
 interface EngineTrace extends PacketTraceMeta {
   pin: Element | null
+  endPin: Element | null
   slots: Slot[]
   nextAt: number
 }
@@ -54,6 +57,7 @@ export class PacketEngine {
     this.traces = metas.map((m) => ({
       ...m,
       pin: root.querySelector(`[data-pin="${m.pinId}"]`),
+      endPin: m.endPinId ? root.querySelector(`[data-pin="${m.endPinId}"]`) : null,
       slots: [...root.querySelectorAll<SVGGElement>(`g[data-packet="${m.id}"]`)].map((g) => ({
         g,
         paths: [...g.querySelectorAll('path')],
@@ -137,7 +141,7 @@ export class PacketEngine {
       slot.anims?.forEach((a) => a.cancel())
       slot.anims = null
       slot.g.style.visibility = 'hidden'
-      if (t.flow === 'in') this.heat(t.pin)
+      this.heat(t.flow === 'in' ? t.pin : t.endPin)
     }
   }
 
@@ -165,6 +169,7 @@ export class PacketEngine {
         s.g.style.visibility = 'hidden'
       }
       t.pin?.classList.remove('is-hot')
+      t.endPin?.classList.remove('is-hot')
     }
   }
 }
