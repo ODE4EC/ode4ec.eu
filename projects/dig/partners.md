@@ -106,7 +106,7 @@ Paris, France
 
 </Card>
 
-<Card title="Kepler" icon="🇫🇷">
+<Card title="Kepler" flag="🇫🇷">
 
 Palaiseau, France
 

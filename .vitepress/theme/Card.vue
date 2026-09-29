@@ -11,6 +11,8 @@ defineProps<{
   linkText?: string
   target?: string
   rel?: string
+  /** Plate behind the logo: 'light' (default) or 'dark' for light-colored logos. */
+  logoPlate?: 'light' | 'dark'
   /** Heading level for the title; defaults to h3 so cards nest under a page's h2s. */
   headingLevel?: 2 | 3 | 4
 }>()
@@ -27,7 +29,11 @@ defineProps<{
   >
     <article class="box">
       <div v-if="logo || flag" class="logo">
-        <img v-if="logo" :src="logo" :alt="title ? '' : 'Logo'" />
+        <!-- logos sit on their own light plate: most partner logos are dark
+             artwork made for white backgrounds, unreadable on a dark card -->
+        <span v-if="logo" class="logo-plate" :class="{ 'logo-plate--dark': logoPlate === 'dark' }">
+          <img :src="logo" :alt="title ? '' : 'Logo'" />
+        </span>
         <span v-if="flag" class="flag">{{ flag }}</span>
       </div>
       <div v-else-if="icon" class="icon" v-html="icon"></div>
@@ -116,16 +122,35 @@ defineProps<{
   position: relative;
   display: flex;
   align-items: center;
-  height: 48px;
+  min-height: 48px;
   margin-bottom: 16px;
 }
 
+.logo-plate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 164px;
+  height: 60px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border: 1px solid var(--ode-c-logo-plate-border);
+  border-radius: 8px;
+  background: var(--ode-c-logo-plate);
+}
+
+.logo-plate--dark {
+  border-color: transparent;
+  background: var(--ode-c-board);
+}
+
 .logo img {
-  max-height: 48px;
-  max-width: 140px;
-  width: auto;
+  display: block;
+  /* a definite height lets dimensionless SVGs size from their viewBox */
+  height: 40px;
+  width: 100%;
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
 }
 
 .flag {
