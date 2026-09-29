@@ -112,7 +112,7 @@ Madrid, Spain
 
 </Card>
 
-<Card title="Synective Labs" logo="/img/partners/sl.png" logoPlate="dark" flag="🇸🇪">
+<Card title="Synective Labs" logo="/img/partners/sl-dark.png" flag="🇸🇪">
 
 Göteborg, Sweden
 

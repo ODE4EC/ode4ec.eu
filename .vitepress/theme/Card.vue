@@ -11,8 +11,6 @@ defineProps<{
   linkText?: string
   target?: string
   rel?: string
-  /** Plate behind the logo: 'light' (default) or 'dark' for light-colored logos. */
-  logoPlate?: 'light' | 'dark'
   /** Heading level for the title; defaults to h3 so cards nest under a page's h2s. */
   headingLevel?: 2 | 3 | 4
 }>()
@@ -31,7 +29,7 @@ defineProps<{
       <div v-if="logo || flag" class="logo">
         <!-- logos sit on their own light plate: most partner logos are dark
              artwork made for white backgrounds, unreadable on a dark card -->
-        <span v-if="logo" class="logo-plate" :class="{ 'logo-plate--dark': logoPlate === 'dark' }">
+        <span v-if="logo" class="logo-plate">
           <img :src="logo" :alt="title ? '' : 'Logo'" />
         </span>
         <span v-if="flag" class="flag">{{ flag }}</span>
@@ -137,11 +135,6 @@ defineProps<{
   border: 1px solid var(--ode-c-logo-plate-border);
   border-radius: 8px;
   background: var(--ode-c-logo-plate);
-}
-
-.logo-plate--dark {
-  border-color: transparent;
-  background: var(--ode-c-board);
 }
 
 .logo img {
