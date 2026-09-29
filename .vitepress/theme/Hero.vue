@@ -46,6 +46,8 @@ function scrollToNext() {
       </div>
     </div>
 
+    <slot name="controls" />
+
     <button class="ode-hero__scroll-cue" type="button" @click="scrollToNext">
       <span>Scroll</span>
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">

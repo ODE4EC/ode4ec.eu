@@ -2,13 +2,16 @@
 // The homepage "board": Hero + Features on one dark PCB, with a single
 // circuit overlay drawn in real pixels behind both. The overlay measures the
 // chip card and the Features cards, so its pins sit exactly on the card
-// edges and every trace lands on a pin at any viewport size.
-import { onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
+// edges and every trace lands on a pin at any viewport size. Signal packets
+// travel along the traces (circuit/packets.ts) while the board is visible.
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import Hero from './Hero.vue'
 import Features from './Features.vue'
 import { buildCircuit, type Circuit, type Rect } from './circuit/layout'
+import { PacketEngine } from './circuit/packets'
 
 const root = ref<HTMLElement | null>(null)
+const wires = ref<SVGSVGElement | null>(null)
 const size = ref({ w: 0, h: 0 })
 // Empty on the server and on first client render (hydration must match);
 // filled in after mount.
@@ -52,9 +55,69 @@ function scheduleMeasure() {
   frame = requestAnimationFrame(measure)
 }
 
+// --- signal packets ---------------------------------------------------------
+
+const MOTION_KEY = 'ode-board-motion'
+
+const engine = new PacketEngine()
+const mounted = ref(false)
+const reducedMotion = ref(false)
+const userPaused = ref(false)
+const inView = ref(true)
+const pageVisible = ref(true)
+
+const running = computed(
+  () => mounted.value && !reducedMotion.value && !userPaused.value && inView.value && pageVisible.value,
+)
+
+watch(running, (on) => (on ? engine.start() : engine.stop()))
+
+// rebind the engine to the freshly rendered packet slots after every layout
+watch(circuit, async (c) => {
+  await nextTick()
+  if (!c || !wires.value) return
+  engine.attach(
+    wires.value,
+    c.traces.map((t) => ({ id: t.id, len: t.len, flow: t.flow, pinId: t.pinId })),
+  )
+  if (running.value) engine.start()
+})
+
+function toggleMotion() {
+  userPaused.value = !userPaused.value
+  try {
+    localStorage.setItem(MOTION_KEY, userPaused.value ? 'paused' : 'playing')
+  } catch {}
+}
+
+let lastBurst = 0
+function burst() {
+  const now = performance.now()
+  if (now - lastBurst < 1200) return
+  lastBurst = now
+  engine.burst(['feed-a', 'feed-b'])
+}
+
 let resizeObserver: ResizeObserver | null = null
+let intersectionObserver: IntersectionObserver | null = null
+let motionQuery: MediaQueryList | null = null
+
+const onMotionChange = () => (reducedMotion.value = !!motionQuery?.matches)
+const onVisibilityChange = () => (pageVisible.value = document.visibilityState === 'visible')
 
 onMounted(() => {
+  try {
+    userPaused.value = localStorage.getItem(MOTION_KEY) === 'paused'
+  } catch {}
+  motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+  onMotionChange()
+  motionQuery.addEventListener('change', onMotionChange)
+  document.addEventListener('visibilitychange', onVisibilityChange)
+  onVisibilityChange()
+  intersectionObserver = new IntersectionObserver(([entry]) => (inView.value = entry.isIntersecting))
+  intersectionObserver.observe(root.value!)
+  mounted.value = true
+
   measure()
   resizeObserver = new ResizeObserver(scheduleMeasure)
   resizeObserver.observe(root.value!)
@@ -67,13 +130,18 @@ onMounted(() => {
 onBeforeUnmount(() => {
   cancelAnimationFrame(frame)
   resizeObserver?.disconnect()
+  intersectionObserver?.disconnect()
+  motionQuery?.removeEventListener('change', onMotionChange)
+  document.removeEventListener('visibilitychange', onVisibilityChange)
+  engine.destroy()
 })
 </script>
 
 <template>
-  <div ref="root" class="ode-board">
+  <div ref="root" class="ode-board" :class="{ 'ode-board--paused': userPaused }">
     <svg
       v-if="circuit"
+      ref="wires"
       class="ode-board__wires"
       :width="size.w"
       :height="size.h"
@@ -87,6 +155,23 @@ onBeforeUnmount(() => {
       <g class="ode-board__vias">
         <circle v-for="(v, i) in circuit.vias" :key="i" :cx="v.x" :cy="v.y" r="4" :class="`tone--${v.tone}`" />
       </g>
+      <!-- packet slots: hidden until the engine sends one down the trace;
+           the feeds get extra slots for the CTA burst -->
+      <g class="ode-board__packets">
+        <template v-for="t in circuit.traces" :key="`p-${t.id}`">
+          <g
+            v-for="k in t.feed ? 3 : 1"
+            :key="k"
+            class="ode-packet"
+            :class="`tone--${t.tone}`"
+            :data-packet="t.id"
+            style="visibility: hidden"
+          >
+            <path class="ode-packet__glow" :d="t.d" />
+            <path class="ode-packet__core" :d="t.d" />
+          </g>
+        </template>
+      </g>
       <g class="ode-board__pins">
         <g
           v-for="p in circuit.pins"
@@ -95,13 +180,40 @@ onBeforeUnmount(() => {
           :class="{ 'ode-pin--wired': p.wired }"
           :data-pin="p.id"
         >
-          <rect v-if="p.wired" class="ode-pin__glow" :x="p.x - 4" :y="p.y - 4" :width="p.w + 8" :height="p.h + 8" rx="5" />
+          <rect
+            v-if="p.wired"
+            class="ode-pin__glow"
+            :x="p.x - 2.5"
+            :y="p.y - 2.5"
+            :width="p.w + 5"
+            :height="p.h + 5"
+            :rx="(Math.min(p.w, p.h) + 5) / 2"
+          />
           <rect class="ode-pin__body" :x="p.x" :y="p.y" :width="p.w" :height="p.h" rx="1.5" />
         </g>
       </g>
     </svg>
 
-    <Hero :wired="!!circuit" />
+    <Hero :wired="!!circuit" @burst="burst">
+      <template #controls>
+        <button
+          v-if="mounted && !reducedMotion"
+          class="ode-board__motion"
+          type="button"
+          :aria-pressed="userPaused"
+          :title="userPaused ? 'Play background animation' : 'Pause background animation'"
+          @click="toggleMotion"
+        >
+          <span class="visually-hidden">Pause background animation</span>
+          <svg v-if="userPaused" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+            <path d="M4 2.5v9l7.5-4.5z" fill="currentColor" />
+          </svg>
+          <svg v-else width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+            <path d="M4 2.5v9M10 2.5v9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </template>
+    </Hero>
     <Features />
   </div>
 </template>
@@ -175,7 +287,7 @@ onBeforeUnmount(() => {
 }
 
 .ode-pin__glow {
-  fill: var(--ode-c-accent-1);
+  fill: var(--ode-c-pin-hot);
   opacity: 0;
   transition: opacity 0.9s ease-out;
 }
@@ -187,13 +299,66 @@ onBeforeUnmount(() => {
 }
 
 .ode-pin.is-hot .ode-pin__glow {
-  opacity: 0.35;
+  opacity: 0.3;
   transition-duration: 0.2s;
 }
+
+/* the pause button stops every looping animation on the board */
+.ode-board--paused :deep(.ode-hero__halo),
+.ode-board--paused :deep(.ode-hero__scroll-cue svg) {
+  animation-play-state: paused;
+}
+
+/* packets: a soft halo under a bright core */
+.ode-packet path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ode-packet__glow {
+  stroke-width: 9;
+  opacity: 0.22;
+}
+
+.ode-packet__core {
+  stroke-width: 3;
+}
+
+.ode-packet.tone--gold path { stroke: var(--ode-c-pin-hot); }
+.ode-packet.tone--blue path,
+.ode-packet.tone--deep path { stroke: var(--ode-c-packet-blue); }
 
 @media (max-width: 639px) {
   .ode-board__traces path {
     stroke-width: 2;
   }
+}
+
+.ode-board__motion {
+  position: absolute;
+  z-index: 2;
+  right: 20px;
+  bottom: 20px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  background: rgba(0, 18, 42, 0.5);
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.ode-board__motion:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.ode-board__motion:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
 }
 </style>

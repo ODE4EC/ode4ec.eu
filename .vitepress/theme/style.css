@@ -34,6 +34,9 @@
   --ode-c-pin-dim: #9c8420;
   --ode-c-pin-hot: #fff3b0;
 
+  /* Signal packets travelling along blue traces. */
+  --ode-c-packet-blue: #d6e6ff;
+
   /* The dark "board" background the hero and the first homepage section share.
      Always dark, independent of the color scheme. */
   --ode-c-board: #001f47;
