@@ -48,10 +48,8 @@ export interface Trace {
   pinId: string
   /** 'in': signals travel from the board edge into the chip; 'out': the reverse */
   flow: 'in' | 'out'
-  /** the chip's two outputs down through Features, and their re-entries */
+  /** the chip's two outputs, down through Features into the project cards */
   feed?: boolean
-  /** a feed re-entering from the page edge into a project card */
-  reentry?: boolean
 }
 
 export interface Via extends Pt {
@@ -366,60 +364,63 @@ export function buildCircuit(L: BoardLayout): Circuit {
       const tops = cardTops[ci]
       return tops?.length ? tops[Math.round((tops.length - 1) * frac)] : null
     }
-    // three in a row: gold feeds AMS + DIG, blue feeds PIV + DIG;
-    // stacked: gold drops into the 1st and 3rd card, blue into the 2nd
-    const goldTargets = (inRow ? [pick(0, 0.5), pick(1, 0.3)] : [pick(0, 0.3), pick(2, 0.3)]).filter(Boolean) as Pin[]
-    const blueTargets = (inRow ? [pick(2, 0.5), pick(1, 0.7)] : [pick(1, 0.7)]).filter(Boolean) as Pin[]
+    // Only the blue feed continues into the project cards: it comes down its
+    // gutter (clear of the Projects text) and branches into all three, landing
+    // on the pins nearest it. The gold feed exits the page sideways below
+    // Features, since its gutter would run through the heading.
+    const goldTargets: Pin[] = []
+    const blueTargets = (inRow ? [pick(2, 0.25), pick(1, 0.75), pick(0, 0.75)] : [pick(0, 0.7), pick(1, 0.7), pick(2, 0.7)]).filter(Boolean) as Pin[]
     const TURN = 20
     /** rail height above a card's pin tips, and the 45° part of the drop */
     const RAIL = 26
     const DROP = 14
 
-    // Each feed leaves the chip, runs down through Features and exits the
-    // page sideways; below the board it re-enters from the same edge along a
-    // rail above the project cards and drops into their top pins. (One
-    // continuous route would have to wind around the section's text.)
+    // Each feed leaves the chip and runs straight down: through Features (in
+    // a gutter, or the margin on narrow screens), on past the Projects
+    // heading, to a junction on a rail just above the project cards, where
+    // it branches into their top pins. Branches share the trunk, so shared
+    // runs draw as one trace.
     const feed = (pin: Pin, x: number, dir: -1 | 1, tone: Tone, id: string, targets: Pin[]) => {
       const t = pin.tip
       const dx = x - t.x
-      const edgeX = dir < 0 ? -BLEED : W + BLEED
       const jogY = Math.max(t.y + 30, L.heroBottom - 80 - Math.abs(dx))
-      const downTo = L.gridBottom + 16
-      const exit = clean([
-        t,
-        { x: t.x, y: jogY },
-        { x, y: jogY + Math.abs(dx) },
-        { x, y: downTo },
-        { x: x + dir * TURN, y: downTo + TURN },
-        { x: edgeX, y: downTo + TURN },
-      ])
+      const trunk: Pt[] = [t, { x: t.x, y: jogY }, { x, y: jogY + Math.abs(dx) }]
       pin.wired = true
-      out.vias.push({ x, y: downTo, tone })
-      out.traces.push({ id, d: pathD(exit), len: polylineLength(exit), tone, pinId: pin.id, flow: 'out', feed: true })
 
-      // re-entries: one per target, identical along the rail up to each
-      // drop, so the shared run draws as one trace
+      if (!targets.length) {
+        const downTo = L.gridBottom + 16
+        const pts = clean([...trunk, { x, y: downTo }, { x: x + dir * TURN, y: downTo + TURN }, { x: dir < 0 ? -BLEED : W + BLEED, y: downTo + TURN }])
+        out.vias.push({ x, y: downTo, tone })
+        out.traces.push({ id, d: pathD(pts), len: polylineLength(pts), tone, pinId: pin.id, flow: 'out', feed: true })
+        return
+      }
+
+      const junctions = new Set<number>()
       targets.forEach((target, k) => {
         const tip = target.tip
         const railY = tip.y - RAIL
+        const side = Math.sign(tip.x - x) || 1
         const pts = clean([
-          { x: edgeX, y: railY },
-          { x: tip.x + dir * DROP, y: railY },
+          ...trunk,
+          { x, y: railY },
+          { x: tip.x - side * DROP, y: railY },
           { x: tip.x, y: railY + DROP },
           tip,
         ])
         target.wired = true
+        junctions.add(railY)
         out.traces.push({
-          id: `${id}-in-${k}`,
+          id: `${id}-${k}`,
           d: pathD(pts),
           len: polylineLength(pts),
           tone,
-          pinId: target.id,
-          flow: 'in',
+          pinId: pin.id,
+          endPinId: target.id,
+          flow: 'out',
           feed: true,
-          reentry: true,
         })
       })
+      for (const y of junctions) out.vias.push({ x, y, tone })
     }
     feed(pinA, L.feedXs[0], -1, 'gold', 'feed-a', goldTargets)
     feed(pinB, L.feedXs[1], 1, 'blue', 'feed-b', blueTargets)

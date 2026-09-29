@@ -76,6 +76,13 @@ const projects = [
   margin: 0 0 16px;
 }
 
+/* the chip's feeds run straight down through this header: keep the text
+   above the traces */
+.ode-projects__inner > :not(.ode-projects__grid) {
+  position: relative;
+  z-index: 2;
+}
+
 .ode-projects__sub {
   /* room for the circuit rail that runs above the cards' pins */
   margin: 0 0 56px;
