@@ -58,11 +58,12 @@ const projects = [
 
 <style scoped>
 .ode-projects {
-  padding: 48px 24px 64px;
+  /* side padding comes from the container it sits in (see HomeBoard) */
+  padding: 24px 0 64px;
 }
 
 @media (min-width: 640px) {
-  .ode-projects { padding: 56px 48px 80px; }
+  .ode-projects { padding: 32px 0 80px; }
 }
 
 .ode-projects__inner {

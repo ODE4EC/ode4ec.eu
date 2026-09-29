@@ -11,7 +11,7 @@ import Hero from './Hero.vue'
 import Features from './Features.vue'
 import ProjectsPreview from './ProjectsPreview.vue'
 import { buildCircuit, type Circuit, type Rect } from './circuit/layout'
-import { PacketEngine } from './circuit/packets'
+import { BURST_SPEED, PacketEngine } from './circuit/packets'
 
 const root = ref<HTMLElement | null>(null)
 const wires = ref<SVGSVGElement | null>(null)
@@ -92,7 +92,7 @@ watch(circuit, async (c) => {
   if (!c || !wires.value) return
   engine.attach(
     wires.value,
-    c.traces.map((t) => ({ id: t.id, len: t.len, flow: t.flow, pinId: t.pinId, endPinId: t.endPinId })),
+    c.traces.map((t) => ({ id: t.id, len: t.len, flow: t.flow, pinId: t.pinId })),
   )
   if (running.value) engine.start()
 })
@@ -109,7 +109,12 @@ function burst() {
   const now = performance.now()
   if (now - lastBurst < 1200) return
   lastBurst = now
-  engine.burst(circuit.value?.traces.filter((t) => t.feed).map((t) => t.id) ?? [])
+  const feeds = circuit.value?.traces.filter((t) => t.feed) ?? []
+  const exits = feeds.filter((t) => !t.reentry)
+  // the re-entries fire as the burst leaves the page, so it reads as one flow
+  const leave = (Math.max(0, ...exits.map((t) => t.len)) / BURST_SPEED) * 1000
+  engine.burst(exits.map((t) => t.id))
+  engine.burst(feeds.filter((t) => t.reentry).map((t) => t.id), 3, leave)
 }
 
 let resizeObserver: ResizeObserver | null = null

@@ -118,11 +118,12 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
 
 <style scoped>
 .ode-news {
-  padding: 24px 24px 88px;
+  /* side padding comes from VitePress's home container */
+  padding: 24px 0 88px;
 }
 
 @media (min-width: 640px) {
-  .ode-news { padding: 32px 48px 104px; }
+  .ode-news { padding: 32px 0 104px; }
 }
 
 .ode-news__inner {

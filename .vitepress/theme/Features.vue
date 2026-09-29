@@ -44,11 +44,17 @@
 .ode-features {
   position: relative;
   background: var(--ode-c-board);
-  padding: 64px 24px 240px;
+  /* side padding matches VitePress's home container (24/48/64px), so this
+     column lines up with the sections below the board */
+  padding: 64px 24px 150px;
 }
 
 @media (min-width: 640px) {
-  .ode-features { padding: 72px 48px 260px; }
+  .ode-features { padding: 72px 48px 170px; }
+}
+
+@media (min-width: 960px) {
+  .ode-features { padding-left: 64px; padding-right: 64px; }
 }
 
 .ode-features__fade {
@@ -56,7 +62,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 170px;
+  height: 110px;
   background: linear-gradient(180deg, transparent 0%, var(--vp-c-bg) 100%);
 }
 

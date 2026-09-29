@@ -48,10 +48,10 @@ export interface Trace {
   pinId: string
   /** 'in': signals travel from the board edge into the chip; 'out': the reverse */
   flow: 'in' | 'out'
-  /** for traces that end on another pin (a project card's), that pin */
-  endPinId?: string
-  /** the two traces that continue down through the Features section */
+  /** the chip's two outputs down through Features, and their re-entries */
   feed?: boolean
+  /** a feed re-entering from the page edge into a project card */
+  reentry?: boolean
 }
 
 export interface Via extends Pt {
@@ -370,65 +370,59 @@ export function buildCircuit(L: BoardLayout): Circuit {
     // stacked: gold drops into the 1st and 3rd card, blue into the 2nd
     const goldTargets = (inRow ? [pick(0, 0.5), pick(1, 0.3)] : [pick(0, 0.3), pick(2, 0.3)]).filter(Boolean) as Pin[]
     const blueTargets = (inRow ? [pick(2, 0.5), pick(1, 0.7)] : [pick(1, 0.7)]).filter(Boolean) as Pin[]
-    const leftX = cards.length ? Math.min(...cards.map((c) => c.x)) : 24
-    const rightX = cards.length ? Math.max(...cards.map((c) => c.x + c.w)) : W - 24
-
-    const TURN = 26
+    const TURN = 20
     /** rail height above a card's pin tips, and the 45° part of the drop */
     const RAIL = 26
     const DROP = 14
 
-    const feed = (pin: Pin, x: number, dir: -1 | 1, tone: Tone, id: string, targets: Pin[], marginX: number) => {
+    // Each feed leaves the chip, runs down through Features and exits the
+    // page sideways; below the board it re-enters from the same edge along a
+    // rail above the project cards and drops into their top pins. (One
+    // continuous route would have to wind around the section's text.)
+    const feed = (pin: Pin, x: number, dir: -1 | 1, tone: Tone, id: string, targets: Pin[]) => {
       const t = pin.tip
       const dx = x - t.x
+      const edgeX = dir < 0 ? -BLEED : W + BLEED
       const jogY = Math.max(t.y + 30, L.heroBottom - 80 - Math.abs(dx))
-      const downTo = L.gridBottom + 24
-      const head: Pt[] = [t, { x: t.x, y: jogY }, { x, y: jogY + Math.abs(dx) }, { x, y: downTo }]
+      const downTo = L.gridBottom + 16
+      const exit = clean([
+        t,
+        { x: t.x, y: jogY },
+        { x, y: jogY + Math.abs(dx) },
+        { x, y: downTo },
+        { x: x + dir * TURN, y: downTo + TURN },
+        { x: edgeX, y: downTo + TURN },
+      ])
       pin.wired = true
-      out.vias.push({ ...head[3], tone })
+      out.vias.push({ x, y: downTo, tone })
+      out.traces.push({ id, d: pathD(exit), len: polylineLength(exit), tone, pinId: pin.id, flow: 'out', feed: true })
 
-      if (!targets.length) {
-        const pts = clean([...head, { x: x + dir * TURN, y: downTo + TURN }, { x: dir < 0 ? -BLEED : W + BLEED, y: downTo + TURN }])
-        out.traces.push({ id, d: pathD(pts), len: polylineLength(pts), tone, pinId: pin.id, flow: 'out', feed: true })
-        return
-      }
-
-      // out to the page margin (already there on narrow screens)
-      const path = [...head]
-      if (Math.abs(x - marginX) > 2 * TURN) {
-        path.push(
-          { x: x + dir * TURN, y: downTo + TURN },
-          { x: marginX - dir * TURN, y: downTo + TURN },
-          { x: marginX, y: downTo + 2 * TURN },
-        )
-      }
-      // one trace per target: identical up to its drop, so shared runs draw as one
+      // re-entries: one per target, identical along the rail up to each
+      // drop, so the shared run draws as one trace
       targets.forEach((target, k) => {
         const tip = target.tip
         const railY = tip.y - RAIL
         const pts = clean([
-          ...path,
-          { x: marginX, y: railY - TURN },
-          { x: marginX - dir * TURN, y: railY },
+          { x: edgeX, y: railY },
           { x: tip.x + dir * DROP, y: railY },
           { x: tip.x, y: railY + DROP },
           tip,
         ])
         target.wired = true
         out.traces.push({
-          id: `${id}-${k}`,
+          id: `${id}-in-${k}`,
           d: pathD(pts),
           len: polylineLength(pts),
           tone,
-          pinId: pin.id,
-          endPinId: target.id,
-          flow: 'out',
+          pinId: target.id,
+          flow: 'in',
           feed: true,
+          reentry: true,
         })
       })
     }
-    feed(pinA, L.feedXs[0], -1, 'gold', 'feed-a', goldTargets, leftX / 2)
-    feed(pinB, L.feedXs[1], 1, 'blue', 'feed-b', blueTargets, W - (W - rightX) / 2)
+    feed(pinA, L.feedXs[0], -1, 'gold', 'feed-a', goldTargets)
+    feed(pinB, L.feedXs[1], 1, 'blue', 'feed-b', blueTargets)
   }
 
   return out

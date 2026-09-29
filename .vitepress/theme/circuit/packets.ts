@@ -14,8 +14,6 @@ export interface PacketTraceMeta {
   len: number
   flow: 'in' | 'out'
   pinId: string
-  /** pin at the far end, for 'out' traces that land on another pin */
-  endPinId?: string
 }
 
 interface Slot {
@@ -26,13 +24,14 @@ interface Slot {
 
 interface EngineTrace extends PacketTraceMeta {
   pin: Element | null
-  endPin: Element | null
   slots: Slot[]
   nextAt: number
 }
 
 /** px per second */
 const SPEED = 230
+/** px per second for CTA bursts */
+export const BURST_SPEED = SPEED * 2
 /** visible length of a packet, px */
 const PACKET = 28
 /** idle time between packets on one trace, ms */
@@ -57,7 +56,6 @@ export class PacketEngine {
     this.traces = metas.map((m) => ({
       ...m,
       pin: root.querySelector(`[data-pin="${m.pinId}"]`),
-      endPin: m.endPinId ? root.querySelector(`[data-pin="${m.endPinId}"]`) : null,
       slots: [...root.querySelectorAll<SVGGElement>(`g[data-packet="${m.id}"]`)].map((g) => ({
         g,
         paths: [...g.querySelectorAll('path')],
@@ -96,12 +94,12 @@ export class PacketEngine {
   }
 
   /** Send a quick train of packets down the given traces (CTA hover). */
-  burst(ids: string[], count = 3) {
+  burst(ids: string[], count = 3, delay = 0) {
     if (!this.running) return
     for (const id of ids) {
       const t = this.traces.find((x) => x.id === id)
       if (!t) continue
-      for (let k = 0; k < count; k++) this.later(() => this.fire(t, SPEED * 2), k * 170)
+      for (let k = 0; k < count; k++) this.later(() => this.fire(t, BURST_SPEED), delay + k * 170)
       t.nextAt = performance.now() + GAP_MIN
     }
   }
@@ -141,7 +139,7 @@ export class PacketEngine {
       slot.anims?.forEach((a) => a.cancel())
       slot.anims = null
       slot.g.style.visibility = 'hidden'
-      this.heat(t.flow === 'in' ? t.pin : t.endPin)
+      if (t.flow === 'in') this.heat(t.pin)
     }
   }
 
@@ -169,7 +167,6 @@ export class PacketEngine {
         s.g.style.visibility = 'hidden'
       }
       t.pin?.classList.remove('is-hot')
-      t.endPin?.classList.remove('is-hot')
     }
   }
 }

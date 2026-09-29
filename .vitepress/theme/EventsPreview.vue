@@ -27,11 +27,12 @@ import { data } from '../../events/events.data.ts'
 
 <style scoped>
 .ode-events {
-  padding: 24px 24px 64px;
+  /* side padding comes from VitePress's home container */
+  padding: 24px 0 64px;
 }
 
 @media (min-width: 640px) {
-  .ode-events { padding: 32px 48px 80px; }
+  .ode-events { padding: 32px 0 80px; }
 }
 
 .ode-events__inner {
