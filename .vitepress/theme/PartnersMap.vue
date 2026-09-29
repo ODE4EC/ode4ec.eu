@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, useId } from 'vue'
 import mapData from './data/europe-map.json'
 
 interface Partner {
@@ -13,9 +13,9 @@ const props = defineProps<{
   project: 'dig' | 'piv'
 }>()
 
-// City keys must match a key in ./data/europe-map.json's "cities" map
-// (generated from real coordinates via d3-geo — see the map's own README-less
-// build script in scratch history; keep new cities consistent with that source).
+// City keys must match a key in ./data/europe-map.json's "cities" map (x/y in
+// the same projection as landPath). A city missing there is skipped with a
+// warning in dev.
 const DIG_PARTNERS: Partner[] = [
   { name: 'Politecnico di Milano', flag: '🇮🇹', city: 'Milano, Italy', role: 'Coordinator' },
   { name: 'Sorbonne Université', flag: '🇫🇷', city: 'Paris, France' },
@@ -69,205 +69,493 @@ const PIV_PARTNERS: Partner[] = [
   { name: 'INESC-ID', flag: '🇵🇹', city: 'Lisboa, Portugal' },
 ]
 
+
 const partners = computed(() => (props.project === 'dig' ? DIG_PARTNERS : PIV_PARTNERS))
 
-const markers = computed(() => {
-  const byCity = new Map<string, Partner[]>()
-  for (const p of partners.value) {
-    if (!byCity.has(p.city)) byCity.set(p.city, [])
-    byCity.get(p.city)!.push(p)
-  }
-  return [...byCity.entries()]
-    .map(([city, list]) => {
-      const point = (mapData.cities as Record<string, { x: number; y: number }>)[city]
-      if (!point) return null
-      return {
-        city,
-        list,
-        x: point.x,
-        y: point.y,
-        r: 6 + Math.min(list.length - 1, 4) * 1.6,
-      }
-    })
-    .filter((m): m is NonNullable<typeof m> => m !== null)
-})
+type Point = { x: number; y: number }
+const CITIES = mapData.cities as Record<string, Point>
 
-// The generated landPath only occupies y≈188–612 of the 820×800 source
-// projection, so rendering the full viewBox left huge empty bands above and
-// below the map. Crop the viewBox to the drawn content instead.
-const VIEW = { x: 0, y: 180, w: 820, h: 440 }
+/** Locations closer than this (map units, roughly 15 km) share one marker. */
+const MERGE_DIST = 3
+/** Padding around the markers when framing the map, in map units. */
+const PAD = 30
+/** Keep the framed map between these width/height ratios. */
+const MIN_ASPECT = 1.25
+const MAX_ASPECT = 1.6
+/** Minimum clear space between two marker edges after relaxing. */
+const MARKER_GAP = 1.2
 
-const activeCity = ref<string | null>(null)
-
-function toggle(city: string) {
-  activeCity.value = activeCity.value === city ? null : city
+interface Site {
+  key: string
+  names: string[]
+  country: string
+  partners: Partner[]
+  /** true location */
+  ax: number
+  ay: number
+  /** drawn location, nudged apart from its neighbours when they overlap */
+  x: number
+  y: number
+  r: number
 }
 
-const activeMarker = computed(() => markers.value.find((m) => m.city === activeCity.value) ?? null)
-
-const tooltipAnchor = computed(() => {
-  const m = activeMarker.value
-  if (!m) return 'right'
-  if (m.x > mapData.width * 0.62) return 'left'
-  return 'right'
+const sites = computed<Site[]>(() => {
+  const list: Site[] = []
+  for (const p of partners.value) {
+    const pt = CITIES[p.city]
+    if (!pt) {
+      if (import.meta.env.DEV) console.warn(`[PartnersMap] no map coordinates for "${p.city}"`)
+      continue
+    }
+    const [name, country] = p.city.split(', ')
+    let site = list.find((s) => Math.hypot(s.ax - pt.x, s.ay - pt.y) < MERGE_DIST)
+    if (!site) {
+      site = { key: p.city, names: [], country, partners: [], ax: pt.x, ay: pt.y, x: pt.x, y: pt.y, r: 0 }
+      list.push(site)
+    }
+    if (!site.names.includes(name)) site.names.push(name)
+    site.partners.push(p)
+  }
+  for (const s of list) s.r = 3.6 + Math.min(s.partners.length - 1, 4) * 0.7
+  relax(list)
+  return list
 })
+
+// Push overlapping markers apart. Deterministic (fixed order, fixed
+// iterations) so the server and client render identical positions.
+function relax(list: Site[]) {
+  for (let iter = 0; iter < 80; iter++) {
+    let moved = false
+    for (let i = 0; i < list.length; i++) {
+      for (let j = i + 1; j < list.length; j++) {
+        const a = list[i]
+        const b = list[j]
+        const dx = b.x - a.x
+        const dy = b.y - a.y
+        const d = Math.hypot(dx, dy) || 0.01
+        const min = a.r + b.r + MARKER_GAP
+        if (d >= min) continue
+        const push = (min - d) / 2
+        a.x -= (dx / d) * push
+        a.y -= (dy / d) * push
+        b.x += (dx / d) * push
+        b.y += (dy / d) * push
+        moved = true
+      }
+    }
+    if (!moved) break
+  }
+}
+
+// Frame the map on the markers rather than on the whole source projection.
+const view = computed(() => {
+  const s = sites.value
+  let x0 = Math.min(...s.map((m) => m.x - m.r)) - PAD
+  let x1 = Math.max(...s.map((m) => m.x + m.r)) + PAD
+  let y0 = Math.min(...s.map((m) => m.y - m.r)) - PAD
+  let y1 = Math.max(...s.map((m) => m.y + m.r)) + PAD
+  const w = x1 - x0
+  const h = y1 - y0
+  if (w / h < MIN_ASPECT) {
+    const grow = (h * MIN_ASPECT - w) / 2
+    x0 -= grow
+    x1 += grow
+  } else if (w / h > MAX_ASPECT) {
+    const grow = (w / MAX_ASPECT - h) / 2
+    y0 -= grow
+    y1 += grow
+  }
+  return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }
+})
+
+// Split a path of absolute M/L(/Z) commands into subpaths with bounding boxes,
+// so polygons far outside the frame (e.g. Atlantic islands) are not drawn.
+function splitPath(d: string) {
+  return d
+    .split(/(?=M)/)
+    .filter(Boolean)
+    .map((sub) => {
+      const nums = sub.match(/-?\d+(?:\.\d+)?/g)!.map(Number)
+      const xs = nums.filter((_, i) => i % 2 === 0)
+      const ys = nums.filter((_, i) => i % 2 === 1)
+      return { d: sub, x0: Math.min(...xs), x1: Math.max(...xs), y0: Math.min(...ys), y1: Math.max(...ys) }
+    })
+}
+
+const LAND = splitPath(mapData.landPath)
+const BORDERS = splitPath(mapData.borderPath)
+
+function inView(parts: ReturnType<typeof splitPath>) {
+  const v = view.value
+  return parts
+    .filter((p) => p.x1 >= v.x && p.x0 <= v.x + v.w && p.y1 >= v.y && p.y0 <= v.y + v.h)
+    .map((p) => p.d)
+    .join('')
+}
+
+const land = computed(() => inView(LAND))
+const borders = computed(() => inView(BORDERS))
+
+const clipId = `pmap-clip-${useId()}`
+
+// The first partner listed is the coordinator, so its location is the default.
+const activeKey = ref<string | null>(null)
+const hoverKey = ref<string | null>(null)
+const activeSite = computed(() => sites.value.find((s) => s.key === activeKey.value) ?? sites.value[0])
+
+function select(key: string) {
+  activeKey.value = key
+}
+
+// Chips: coordinator's location first, then the biggest hubs, then A–Z.
+const chips = computed(() =>
+  sites.value
+    .map((s, i) => ({ s, i }))
+    .sort((a, b) =>
+      a.i === 0 ? -1 : b.i === 0 ? 1
+        : b.s.partners.length - a.s.partners.length || a.s.names[0].localeCompare(b.s.names[0]))
+    .map(({ s }) => s),
+)
+
+const countryCount = computed(() => new Set(sites.value.map((s) => s.country)).size)
 </script>
 
 <template>
   <div class="pmap">
-    <svg
-      class="pmap__svg"
-      :viewBox="`${VIEW.x} ${VIEW.y} ${VIEW.w} ${VIEW.h}`"
-      @click="activeCity = null"
-    >
-      <path class="pmap__land" :d="mapData.landPath" />
-      <path class="pmap__borders" :d="mapData.borderPath" />
-
-      <g v-for="m in markers" :key="m.city">
-        <circle
-          class="pmap__glow"
-          :cx="m.x"
-          :cy="m.y"
-          :r="m.r * 2.4"
-        />
-        <circle
-          class="pmap__marker"
-          :class="{ 'pmap__marker--active': activeCity === m.city }"
-          :cx="m.x"
-          :cy="m.y"
-          :r="m.r"
-          tabindex="0"
-          role="button"
-          :aria-label="`${m.city}: ${m.list.length} partner${m.list.length > 1 ? 's' : ''}`"
-          @click.stop="toggle(m.city)"
-          @keydown.enter.stop="toggle(m.city)"
-        />
-        <text
-          v-if="m.list.length > 1"
-          class="pmap__count"
-          :x="m.x"
-          :y="m.y"
-          text-anchor="middle"
-          dominant-baseline="central"
-        >{{ m.list.length }}</text>
-      </g>
-
-      <foreignObject
-        v-if="activeMarker"
-        :x="tooltipAnchor === 'left' ? activeMarker.x - 236 : activeMarker.x + 16"
-        :y="Math.min(Math.max(VIEW.y + 8, activeMarker.y - 14), VIEW.y + VIEW.h - 150)"
-        width="220"
-        height="200"
-        style="overflow: visible; pointer-events: none"
+    <div class="pmap__map">
+      <svg
+        class="pmap__svg"
+        :viewBox="`${view.x} ${view.y} ${view.w} ${view.h}`"
+        role="img"
+        :aria-label="`Map of ${partners.length} partners in ${sites.length} locations across ${countryCount} countries`"
       >
-        <div class="pmap__tooltip" xmlns="http://www.w3.org/1999/xhtml">
-          <p class="pmap__tooltip-city">{{ activeMarker.city }}</p>
-          <ul>
-            <li v-for="p in activeMarker.list" :key="p.name">
-              <span>{{ p.flag }}</span> {{ p.name }}
-              <em v-if="p.role">— {{ p.role }}</em>
-            </li>
-          </ul>
-        </div>
-      </foreignObject>
-    </svg>
-    <p class="pmap__hint">Tap a marker to see the partners based there.</p>
+        <defs>
+          <clipPath :id="clipId">
+            <rect :x="view.x" :y="view.y" :width="view.w" :height="view.h" />
+          </clipPath>
+        </defs>
+        <g :clip-path="`url(#${clipId})`">
+          <path class="pmap__land" :d="land" />
+          <path class="pmap__borders" :d="borders" />
+
+          <!-- nudged markers keep a trace back to a via at the true location -->
+          <g class="pmap__leaders">
+            <template v-for="s in sites" :key="`l-${s.key}`">
+              <template v-if="Math.hypot(s.x - s.ax, s.y - s.ay) > 0.5">
+                <line :x1="s.ax" :y1="s.ay" :x2="s.x" :y2="s.y" />
+                <circle :cx="s.ax" :cy="s.ay" r="1.1" />
+              </template>
+            </template>
+          </g>
+
+          <g
+            v-for="s in sites"
+            :key="s.key"
+            class="pmap__site"
+            :class="{
+              'pmap__site--active': activeSite?.key === s.key,
+              'pmap__site--hover': hoverKey === s.key,
+            }"
+            @click="select(s.key)"
+            @mouseenter="hoverKey = s.key"
+            @mouseleave="hoverKey = null"
+          >
+            <circle class="pmap__hit" :cx="s.x" :cy="s.y" :r="s.r + 4" />
+            <circle class="pmap__ring" :cx="s.x" :cy="s.y" :r="s.r + 1.8" />
+            <circle class="pmap__marker" :cx="s.x" :cy="s.y" :r="s.r" />
+            <text
+              v-if="s.partners.length > 1"
+              class="pmap__count"
+              :x="s.x"
+              :y="s.y"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >{{ s.partners.length }}</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <div class="pmap__panel">
+      <div v-if="activeSite" class="pmap__detail" aria-live="polite">
+        <p class="pmap__detail-place">
+          {{ activeSite.names.join(' · ') }}<span>, {{ activeSite.country }}</span>
+        </p>
+        <ul class="pmap__detail-list">
+          <li v-for="p in activeSite.partners" :key="p.name">
+            <span class="pmap__flag">{{ p.flag }}</span>
+            <span>
+              {{ p.name }}
+              <em v-if="p.role">{{ p.role }}</em>
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="pmap__sites-block">
+        <p :id="`${clipId}-label`" class="pmap__sites-label">Locations</p>
+        <ul class="pmap__sites" :aria-labelledby="`${clipId}-label`">
+          <li v-for="s in chips" :key="s.key">
+            <button
+              type="button"
+              class="pmap__chip"
+              :aria-pressed="activeSite?.key === s.key"
+              @click="select(s.key)"
+              @mouseenter="hoverKey = s.key"
+              @mouseleave="hoverKey = null"
+              @focus="hoverKey = s.key"
+              @blur="hoverKey = null"
+            >
+              {{ s.names.join(' · ') }}
+              <span class="pmap__chip-count" :aria-label="`${s.partners.length} partners`">{{ s.partners.length }}</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
+/* The map is always a dark board, in both color schemes. */
 .pmap {
+  --pmap-gold: var(--ode-c-accent-1);
+  --pmap-trace: var(--ode-c-trace-blue);
+
+  display: grid;
+  gap: 20px;
   margin: 32px 0;
-  padding: 20px;
-  background: linear-gradient(165deg, #041226, #00060f);
-  border: 1px solid rgba(255, 214, 23, 0.2);
+  padding: 16px;
+  background: linear-gradient(165deg, var(--ode-c-board), var(--ode-c-board-deep));
+  border: 1px solid rgba(127, 176, 255, 0.18);
   border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  color: #fff;
+}
+
+@media (min-width: 640px) {
+  .pmap {
+    padding: 20px;
+  }
+}
+
+.pmap__map {
+  position: relative;
+  align-self: start;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* soften the rectangular crop into the board */
+.pmap__map::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 62%, var(--ode-c-board-deep) 100%);
+  opacity: 0.7;
 }
 
 .pmap__svg {
+  display: block;
   width: 100%;
   height: auto;
-  display: block;
-  overflow: visible;
 }
 
 .pmap__land {
   fill: #123564;
-  stroke: none;
 }
 
 .pmap__borders {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.12);
-  stroke-width: 1;
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 0.4;
 }
 
-.pmap__glow {
-  fill: #ffd617;
-  opacity: 0.18;
+.pmap__leaders line {
+  stroke: var(--pmap-trace);
+  stroke-width: 0.7;
+  stroke-linecap: round;
+  opacity: 0.8;
+}
+
+.pmap__leaders circle {
+  fill: var(--pmap-trace);
+}
+
+.pmap__site {
+  cursor: pointer;
+}
+
+.pmap__hit {
+  fill: transparent;
+}
+
+.pmap__ring {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 0.9;
+  opacity: 0;
+  transition: opacity 0.15s;
 }
 
 .pmap__marker {
-  fill: #ffd617;
-  stroke: #00122a;
-  stroke-width: 1.5;
-  cursor: pointer;
-  transition: r 0.15s;
+  fill: var(--pmap-gold);
+  stroke: var(--ode-c-board-deep);
+  stroke-width: 0.7;
+  transition: fill 0.15s;
 }
 
-.pmap__marker:hover,
-.pmap__marker--active {
+.pmap__site--hover .pmap__marker {
   fill: #fff2b8;
 }
 
+.pmap__site--hover .pmap__ring {
+  opacity: 0.45;
+}
+
+.pmap__site--active .pmap__ring {
+  opacity: 1;
+}
+
 .pmap__count {
-  fill: #00122a;
-  font-size: 9px;
+  fill: var(--ode-c-board-deep);
+  font-size: 4.2px;
   font-weight: 700;
   pointer-events: none;
   user-select: none;
 }
 
-.pmap__tooltip {
-  pointer-events: none;
-  background: linear-gradient(165deg, rgba(14, 34, 68, 0.97), rgba(4, 12, 26, 0.98));
-  border: 1px solid rgba(255, 214, 23, 0.3);
+.pmap__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.pmap__detail {
+  min-height: 120px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(127, 176, 255, 0.2);
+  border-left: 3px solid var(--pmap-gold);
   border-radius: 10px;
-  padding: 10px 14px;
-  color: #fff;
-  font-size: 13px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
 }
 
-.pmap__tooltip-city {
-  margin: 0 0 6px;
-  font-weight: 700;
+.pmap__detail-place {
+  margin: 0 0 8px;
   font-family: var(--vp-font-family-heading);
-  color: var(--ode-c-accent-1, #ffd617);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.35;
 }
 
-.pmap__tooltip ul {
+.pmap__detail-place span {
+  font-family: var(--vp-font-family-base);
+  font-weight: 400;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.pmap__detail-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.pmap__detail-list li {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 3px 0;
+}
+
+.pmap__detail-list em {
+  display: block;
+  font-style: normal;
+  font-size: 12.5px;
+  color: var(--pmap-trace);
+}
+
+.pmap__sites-label {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.pmap__sites {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.pmap__tooltip li {
-  padding: 2px 0;
-  line-height: 1.4;
+.pmap__sites li {
+  margin: 0;
 }
 
-.pmap__tooltip em {
-  color: rgba(255, 255, 255, 0.6);
-  font-style: normal;
-  font-size: 12px;
-}
-
-.pmap__hint {
-  margin: 12px 0 0;
+.pmap__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 3px 6px 3px 10px;
+  border: 1px solid rgba(127, 176, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.88);
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.pmap__chip:hover {
+  border-color: rgba(127, 176, 255, 0.6);
+  background: rgba(127, 176, 255, 0.1);
+}
+
+.pmap__chip:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.pmap__chip[aria-pressed='true'] {
+  border-color: var(--pmap-gold);
+  background: rgba(255, 214, 23, 0.12);
+  color: #fff;
+}
+
+.pmap__chip-count {
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(127, 176, 255, 0.18);
+  font-size: 11.5px;
+  font-weight: 700;
   text-align: center;
+}
+
+.pmap__chip[aria-pressed='true'] .pmap__chip-count {
+  background: var(--pmap-gold);
+  color: var(--ode-c-board-deep);
+}
+
+/* map on top, full width; detail and locations side by side below it */
+@media (min-width: 640px) {
+  .pmap__panel {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: 20px;
+    align-items: start;
+  }
 }
 </style>
