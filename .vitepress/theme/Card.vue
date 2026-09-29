@@ -11,6 +11,8 @@ defineProps<{
   linkText?: string
   target?: string
   rel?: string
+  /** Heading level for the title; defaults to h3 so cards nest under a page's h2s. */
+  headingLevel?: 2 | 3 | 4
 }>()
 </script>
 
@@ -25,11 +27,16 @@ defineProps<{
   >
     <article class="box">
       <div v-if="logo || flag" class="logo">
-        <img v-if="logo" :src="logo" :alt="title" />
+        <img v-if="logo" :src="logo" :alt="title ? '' : 'Logo'" />
         <span v-if="flag" class="flag">{{ flag }}</span>
       </div>
       <div v-else-if="icon" class="icon" v-html="icon"></div>
-      <h2 v-if="title" class="title" v-html="title"></h2>
+      <component
+        :is="`h${headingLevel ?? 3}`"
+        v-if="title"
+        class="title"
+        v-html="title"
+      />
       <div class="details">
         <slot />
       </div>
@@ -63,6 +70,17 @@ defineProps<{
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
     0 2px 4px rgba(0, 0, 0, 0.25),
     0 10px 24px rgba(0, 0, 0, 0.3);
+}
+
+.Card.link:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .Card.link:hover {
+    transform: none !important;
+  }
 }
 
 .Card.link:hover {

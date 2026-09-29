@@ -14,8 +14,8 @@ function scrollByCards(dir: number) {
     <div class="ode-news__inner">
       <div class="ode-news__header">
         <div>
-          <p class="ode-news__eyebrow">Latest</p>
-          <h2 class="ode-news__heading">News &amp; Updates</h2>
+          <p class="ode-eyebrow">Latest</p>
+          <h2 class="ode-section-heading ode-heading ode-news__heading">News &amp; Updates</h2>
         </div>
         <div class="ode-news__controls">
           <button class="ode-news__nav-btn" type="button" aria-label="Scroll left" @click="scrollByCards(-1)">‹</button>
@@ -79,20 +79,8 @@ function scrollByCards(dir: number) {
   margin-bottom: 32px;
 }
 
-.ode-news__eyebrow {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--vp-c-brand-1);
-  margin: 0 0 14px;
-}
-
 .ode-news__heading {
   margin: 0;
-  border: none;
-  padding: 26px 0 0;
-  font-size: 1.7rem;
 }
 
 .ode-news__controls {

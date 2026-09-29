@@ -239,11 +239,13 @@ h3,
 }
 
 /**
- * Doc pages
+ * Doc pages and homepage sections
  *
- * Page titles get a short two-tone trace (blue → gold) underneath; h2s get
- * a small blue trace ending in a gold via dot. One consistent style, no
- * color rotation.
+ * Page titles get a short two-tone trace (blue → gold) underneath; section
+ * headings get a small blue trace ending in a gold via dot, also underneath.
+ * The section trace is scoped to top-level markdown h2s (`.vp-doc > div > h2`)
+ * plus the opt-in `.ode-heading` class, so headings inside components (cards,
+ * markdown nested in custom blocks) don't inherit it.
  * -------------------------------------------------------------------------- */
 
 .vp-doc h1 {
@@ -265,34 +267,78 @@ h3,
 
 .vp-doc h2 {
   border-top: none;
+}
+
+.vp-doc > div > h2 {
   position: relative;
   margin-top: 44px;
-  padding-top: 20px;
+  padding-top: 0;
+  padding-bottom: 16px;
+}
+
+.ode-heading {
+  position: relative;
+  padding-bottom: 18px;
 }
 
 /* the trace… */
-.vp-doc h2::before {
+.vp-doc > div > h2::before,
+.ode-heading::before {
   content: '';
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 0;
   width: 40px;
   height: 3px;
   border-radius: 2px;
-  background: var(--vp-c-brand-2);
+  background: var(--ode-heading-trace, var(--vp-c-brand-2));
 }
 
-/* …ending in a gold via */
-.vp-doc h2::after {
+/* …ending in a gold via. Its hollow centre takes the surface color, which
+   dark sections override through --ode-heading-via-bg. */
+.vp-doc > div > h2::after,
+.ode-heading::after {
   content: '';
   position: absolute;
-  top: -3.5px;
-  left: 44px;
-  width: 10px;
-  height: 10px;
+  bottom: -4px; /* centres the 11px ring on the 3px trace */
+  left: 39px;
+  width: 11px;
+  height: 11px;
+  box-sizing: border-box;
   border-radius: 50%;
-  background: var(--vp-c-bg);
+  background: var(--ode-heading-via-bg, var(--vp-c-bg));
   border: 2.5px solid var(--ode-c-accent-1);
+}
+
+/**
+ * Homepage section headers
+ *
+ * Shared by Features, ProjectsPreview, EventsPreview and NewsPreview.
+ * The eyebrow is brand blue (light blue on dark boards) — gold stays
+ * decorative and is never used for text.
+ * -------------------------------------------------------------------------- */
+
+.ode-eyebrow {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--vp-c-brand-1);
+  margin: 0 0 10px;
+}
+
+/* doubled selector: must outrank VitePress's `.vp-doc h2` spacing */
+.vp-doc h2.ode-section-heading {
+  border: none;
+  padding-top: 0;
+}
+
+/* margin and color stay overridable by each section's scoped styles */
+.ode-section-heading {
+  margin: 0;
+  font-size: 1.7rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
 }
 
 /* Tables: tinted header row instead of the default plain one. */

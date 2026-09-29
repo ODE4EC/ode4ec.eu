@@ -27,8 +27,8 @@ const projects = [
 <template>
   <section class="ode-projects">
     <div class="ode-projects__inner">
-      <p class="ode-projects__eyebrow">The projects</p>
-      <h2 class="ode-projects__heading">Three projects, one environment</h2>
+      <p class="ode-eyebrow">The projects</p>
+      <h2 class="ode-section-heading ode-heading ode-projects__heading">Three projects, one environment</h2>
       <p class="ode-projects__sub">
         The first batch of ODE4EC projects launches in summer 2026, each covering
         a different part of the open source chip design flow.
@@ -65,21 +65,9 @@ const projects = [
   margin: 0 auto;
 }
 
-.ode-projects__eyebrow {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--vp-c-brand-1);
-  margin: 0 0 14px;
-}
 
 .ode-projects__heading {
-  margin: 0 0 12px;
-  border: none;
-  padding: 26px 0 0;
-  font-size: 1.7rem;
-  color: var(--vp-c-text-1);
+  margin: 0 0 16px;
 }
 
 .ode-projects__sub {

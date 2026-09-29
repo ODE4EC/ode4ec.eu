@@ -5,8 +5,8 @@ import { data } from '../../events/events.data.ts'
 <template>
   <section class="ode-events">
     <div class="ode-events__inner">
-      <p class="ode-events__eyebrow">What's next</p>
-      <h2 class="ode-events__heading">Upcoming Events</h2>
+      <p class="ode-eyebrow">What's next</p>
+      <h2 class="ode-section-heading ode-heading ode-events__heading">Upcoming Events</h2>
 
       <ul v-if="data.upcoming.length" class="ode-events__list">
         <li v-for="event in data.upcoming" :key="event.url" class="ode-events__item">
@@ -39,20 +39,9 @@ import { data } from '../../events/events.data.ts'
   margin: 0 auto;
 }
 
-.ode-events__eyebrow {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--vp-c-brand-1);
-  margin: 0 0 14px;
-}
 
 .ode-events__heading {
-  margin: 0 0 28px;
-  border: none;
-  padding: 26px 0 0;
-  font-size: 1.7rem;
+  margin: 0 0 32px;
 }
 
 .ode-events__list {

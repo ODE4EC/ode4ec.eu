@@ -13,8 +13,8 @@
     </div>
 
     <div class="ode-features__inner">
-      <p class="ode-features__eyebrow">The initiative</p>
-      <h2 class="ode-features__heading">Why ODE4EC</h2>
+      <p class="ode-eyebrow">The initiative</p>
+      <h2 class="ode-section-heading ode-heading ode-features__heading">Why ODE4EC</h2>
 
       <div class="ode-features__grid">
         <div class="ode-feature">
@@ -146,26 +146,20 @@
   margin: 0 auto;
 }
 
-.ode-features__eyebrow {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ode-c-accent-1);
-  margin: 0 0 14px;
+
+/* dark board: light text, and the heading via's hollow centre matches it */
+.ode-features__inner {
+  --ode-heading-via-bg: var(--ode-c-board);
+  --ode-heading-trace: var(--ode-c-trace-blue);
+}
+
+.ode-features__inner .ode-eyebrow {
+  color: var(--ode-c-trace-blue);
 }
 
 .ode-features__heading {
   margin: 0 0 40px;
-  border: none;
-  padding: 26px 0 0;
-  font-size: 1.7rem;
   color: #fff;
-}
-
-/* the global h2 accent's via center must match this dark section */
-.ode-features__heading::after {
-  background: var(--ode-c-board);
 }
 
 .ode-features__grid {
