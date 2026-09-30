@@ -6,7 +6,7 @@ title: ODE4EC-PIV Consorsium
 
 ODE4EC-PIV is an European consortium of 24 organizations across 9 countries, bringing together universities, research organizations and companies from across the chip design value chain.
 
-<CardGrid>
+<CardGrid light>
 
 <Card title="INESC TEC" logo="/img/partners/inesc-tec.svg" flag="🇵🇹">
 
