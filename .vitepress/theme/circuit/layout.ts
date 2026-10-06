@@ -2,7 +2,7 @@
  * Circuit routing for the homepage board (HomeBoard.vue).
  *
  * Everything here works in the board's own pixel space, measured from the
- * DOM, so pins always sit on the chip card's edges and every trace lands on a
+ * DOM, so pins always sit on the cards' edges and every trace lands on a
  * pin — at any viewport size. Pure functions, no DOM access.
  *
  * Traces are routed PCB-style: straight runs joined by 45° bends. A bus of
@@ -28,7 +28,7 @@ export type Tone = 'gold' | 'blue' | 'deep'
 export interface Pin {
   id: string
   side: Side
-  /** the central chip, or one of the project cards */
+  /** the main chip, or one of the side modules */
   group: 'chip' | 'card'
   /** drawn rectangle */
   x: number
@@ -48,12 +48,12 @@ export interface Trace {
   len: number
   tone: Tone
   pinId: string
-  /** pin at the far end, for feed branches that land on a project card */
+  /** pin at the far end, for chip outputs that land on a module */
   endPinId?: string
-  /** 'in': signals travel from the board edge into the chip; 'out': the reverse */
+  /** 'in': signals travel from the board edge into a pin; 'out': from the chip to a module */
   flow: 'in' | 'out'
-  /** the chip's two outputs, down through Features into the project cards */
-  feed?: boolean
+  /** index of the module a chip output feeds */
+  module?: number
 }
 
 export interface Via extends Pt {
@@ -63,16 +63,14 @@ export interface Via extends Pt {
 export interface BoardLayout {
   width: number
   height: number
-  /** the chip card */
+  /** the main chip card (hero + why) */
   chip: Rect
-  /** bottom of the hero section */
-  heroBottom: number
-  /** x positions the two feed traces run down at (card gutters, or margins) */
-  feedXs: [number, number]
-  /** y just below the Features cards */
-  gridBottom: number
-  /** the project cards the feeds continue into (may be empty) */
-  cards: Rect[]
+  /** the side modules: projects, events, news */
+  modules: Rect[]
+  /** true when everything sits in one column (narrow or short screens) */
+  stacked: boolean
+  /** top of the credit line at the bottom of the board: no traces below */
+  floor: number
 }
 
 export interface Circuit {
@@ -202,6 +200,9 @@ interface BusSpec {
   flow: 'in' | 'out'
   /** index of the trace that gets a via at its second bend */
   viaOn?: number
+  /** pins the traces land on, in the same order as `pins` (chip outputs) */
+  endPins?: Pin[]
+  module?: number
 }
 
 function routeBus(spec: BusSpec, out: Circuit) {
@@ -212,6 +213,8 @@ function routeBus(spec: BusSpec, out: Circuit) {
   pins.forEach((pin, i) => {
     const pts = offsetPolyline(center, dot(sub(pin.tip, c0), n0))
     pin.wired = true
+    const end = spec.endPins?.[i]
+    if (end) end.wired = true
     const tone = spec.tones[i % spec.tones.length]
     out.traces.push({
       id: `${spec.id}-${i}`,
@@ -220,7 +223,9 @@ function routeBus(spec: BusSpec, out: Circuit) {
       len: polylineLength(pts),
       tone,
       pinId: pin.id,
+      endPinId: end?.id,
       flow: spec.flow,
+      module: spec.module,
     })
     // no vias up in the navbar band, where the traces fade out
     if (spec.viaOn === i && pts.length > 3 && pts[2].y > 110) out.vias.push({ ...pts[2], tone })
@@ -236,8 +241,33 @@ function mean(pins: Pin[]): Pt {
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
 
+/** `count` consecutive pins centred as close to `y` (or `x`) as the edge allows */
+function pinsNear(pins: Pin[], at: number, count: number, axis: 'x' | 'y'): Pin[] {
+  if (pins.length < count) return []
+  let best = 0
+  pins.forEach((_, i) => {
+    if (i + count > pins.length) return
+    const c = (pins[i].tip[axis] + pins[i + count - 1].tip[axis]) / 2
+    const b = (pins[best].tip[axis] + pins[best + count - 1].tip[axis]) / 2
+    if (Math.abs(c - at) < Math.abs(b - at)) best = i
+  })
+  return pins.slice(best, best + count)
+}
+
+/**
+ * Centerline from a to b (both pointing right) that crosses a vertical
+ * corridor at x = xm: right, 45° into the corridor, along it, 45° out, right.
+ */
+function corridorRoute(a: Pt, b: Pt, xm: number, r: number): Pt[] {
+  const dy = b.y - a.y
+  if (Math.abs(dy) < 1) return [a, b]
+  const s = Math.sign(dy)
+  const k = Math.min(r, Math.abs(dy) / 2)
+  return clean([a, { x: xm - k, y: a.y }, { x: xm, y: a.y + s * k }, { x: xm, y: b.y - s * k }, { x: xm + k, y: b.y }, b])
+}
+
 export function buildCircuit(L: BoardLayout): Circuit {
-  const { chip, width: W } = L
+  const { chip, width: W, height: H } = L
   const compact = W < 640
   const pitch = compact ? 16 : 18
   const out: Circuit = { pins: [], traces: [], vias: [] }
@@ -247,19 +277,17 @@ export function buildCircuit(L: BoardLayout): Circuit {
   const left = pinsOnSide(chip, 'left', pitch)
   const right = pinsOnSide(chip, 'right', pitch)
   out.pins = [...top, ...right, ...bottom, ...left]
-  if (top.length < 10 || left.length < 7) return out
+  if (top.length < 8 || left.length < 7) return out
 
   const nt = top.length
   const nl = left.length
-  const nb = bottom.length
   const stub = 26
-  const room = chip.x // free space either side of the chip
 
-  // top: two diagonal fans out to the corners, plus a pair straight up the middle
+  // chip, top: two diagonal fans up and out (they fade under the navbar)
   const topFan = (pins: Pin[], dir: -1 | 1, id: string) => {
     const c = mean(pins)
     const rise = c.y - stub
-    const run = clamp(room * 0.55, 0, Math.min(170, rise - 40))
+    const run = clamp(Math.min(chip.x, 170), 0, Math.max(0, rise - 20))
     routeBus(
       {
         id,
@@ -273,30 +301,15 @@ export function buildCircuit(L: BoardLayout): Circuit {
     )
   }
   topFan(top.slice(1, 4), -1, 'tl')
-  topFan(top.slice(nt - 4, nt - 1), 1, 'tr')
-  {
-    const mid = Math.floor(nt / 2)
-    const pins = top.slice(mid - 1, mid + 1)
-    const c = mean(pins)
-    const jog = compact ? 0 : 28
-    routeBus(
-      {
-        id: 'tc',
-        pins,
-        center: clean([c, { x: c.x, y: c.y - 70 }, { x: c.x - jog, y: c.y - 70 - jog }, { x: c.x - jog, y: -BLEED }]),
-        tones: ['gold', 'blue'],
-        flow: 'in',
-      },
-      out,
-    )
-  }
+  if (L.stacked) topFan(top.slice(nt - 4, nt - 1), 1, 'tr')
 
-  // sides: an upper and a lower bus each way, bending away from each other
+  // a bus from a card edge out to the page edge on that side, bending away
   const sideBus = (pins: Pin[], dir: -1 | 1, vdir: -1 | 1, id: string) => {
+    if (!pins.length) return
     const c = mean(pins)
     const edgeX = dir < 0 ? -BLEED : W + BLEED
     const avail = dir < 0 ? c.x : W - c.x
-    const run = avail < 90 ? 0 : clamp((avail - stub) * 0.4, 0, 150)
+    const run = avail < 90 ? 0 : clamp((avail - stub) * 0.4, 0, 120)
     routeBus(
       {
         id,
@@ -314,122 +327,107 @@ export function buildCircuit(L: BoardLayout): Circuit {
       out,
     )
   }
-  sideBus(left.slice(0, 3), -1, -1, 'lu')
-  sideBus(left.slice(nl - 3), -1, 1, 'ld')
-  sideBus(right.slice(0, 3), 1, -1, 'ru')
-  sideBus(right.slice(nl - 3), 1, 1, 'rd')
 
-  // bottom corners (wide layouts only): outputs that turn down and out
-  if (!compact) {
-    const bottomFan = (pins: Pin[], dir: -1 | 1, id: string) => {
-      const c = mean(pins)
-      const run = clamp(L.heroBottom - 90 - (c.y + stub), 0, Math.min(140, room * 0.5))
+  // chip, left: an upper and a lower bus out to the page edge
+  sideBus(left.slice(1, 4), -1, -1, 'lu')
+  sideBus(left.slice(nl - 4, nl - 1), -1, 1, 'ld')
+
+  // chip, bottom-left (two columns only; stacked, the gap below the chip
+  // belongs to the links into the modules): a fan down and out to the left
+  // page edge, kept above the board's credit line
+  if (!L.stacked) {
+    const pins = bottom.slice(1, 4)
+    const c = mean(pins)
+    const run = Math.min(24, L.floor - 22 - (c.y + stub))
+    if (run >= 0) {
       routeBus(
         {
-          id,
+          id: 'bl',
           pins,
-          center: clean([
-            c,
-            { x: c.x, y: c.y + stub },
-            { x: c.x + dir * run, y: c.y + stub + run },
-            { x: dir < 0 ? -BLEED : W + BLEED, y: c.y + stub + run },
-          ]),
+          center: clean([c, { x: c.x, y: c.y + stub }, { x: c.x - run, y: c.y + stub + run }, { x: -BLEED, y: c.y + stub + run }]),
           tones: ['blue', 'gold', 'deep'],
-          flow: 'out',
+          flow: 'in',
         },
         out,
       )
     }
-    bottomFan(bottom.slice(1, 4), -1, 'bl')
-    bottomFan(bottom.slice(nb - 4, nb - 1), 1, 'br')
   }
 
-  // project cards: chip-style pins along their top and bottom edges
-  const cardTops = L.cards.map((r, ci) => {
-    const topPins = pinsOnSide(r, 'top', 18, `c${ci}-`, 'card')
-    out.pins.push(...topPins, ...pinsOnSide(r, 'bottom', 18, `c${ci}-`, 'card'))
-    return topPins
-  })
-
-  // feeds: two outputs that leave the hero, run down through Features
-  // (between its cards, or in the margins on narrow screens), then down the
-  // page margins and along a rail into the project cards' top pins
-  {
-    const lo = compact ? 1 : 5
-    const hi = compact ? nb - 2 : nb - 6
-    const candidates = bottom.slice(lo, hi + 1)
-    const nearest = (x: number, not?: Pin) =>
-      candidates.filter((p) => p !== not).reduce((a, b) => (Math.abs(b.tip.x - x) < Math.abs(a.tip.x - x) ? b : a))
-    const pinA = nearest(L.feedXs[0])
-    const pinB = nearest(L.feedXs[1], pinA)
-
-    const cards = L.cards
-    const inRow = cards.length === 3 && Math.abs(cards[0].y - cards[2].y) < 2
-    const pick = (ci: number, frac: number) => {
-      const tops = cardTops[ci]
-      return tops?.length ? tops[Math.round((tops.length - 1) * frac)] : null
-    }
-    // Only the blue feed continues into the project cards: it comes down its
-    // gutter (clear of the Projects text) and branches into all three, landing
-    // on the pins nearest it. The gold feed exits the page sideways below
-    // Features, since its gutter would run through the heading.
-    const goldTargets: Pin[] = []
-    const blueTargets = (inRow ? [pick(2, 0.25), pick(1, 0.75), pick(0, 0.75)] : [pick(0, 0.7), pick(1, 0.7), pick(2, 0.7)]).filter(Boolean) as Pin[]
-    const TURN = 20
-    /** rail height above a card's pin tips, and the 45° part of the drop */
-    const RAIL = 26
-    const DROP = 14
-
-    // Each feed leaves the chip and runs straight down: through Features (in
-    // a gutter, or the margin on narrow screens), on past the Projects
-    // heading, to a junction on a rail just above the project cards, where
-    // it branches into their top pins. Branches share the trunk, so shared
-    // runs draw as one trace.
-    const feed = (pin: Pin, x: number, dir: -1 | 1, tone: Tone, id: string, targets: Pin[]) => {
-      const t = pin.tip
-      const dx = x - t.x
-      const jogY = Math.max(t.y + 30, L.heroBottom - 80 - Math.abs(dx))
-      const trunk: Pt[] = [t, { x: t.x, y: jogY }, { x, y: jogY + Math.abs(dx) }]
-      pin.wired = true
-
-      if (!targets.length) {
-        const downTo = L.gridBottom + 16
-        const pts = clean([...trunk, { x, y: downTo }, { x: x + dir * TURN, y: downTo + TURN }, { x: dir < 0 ? -BLEED : W + BLEED, y: downTo + TURN }])
-        out.vias.push({ x, y: downTo, tone })
-        out.traces.push({ id, d: pathD(pts), pts, len: polylineLength(pts), tone, pinId: pin.id, flow: 'out', feed: true })
-        return
+  if (!L.stacked) {
+    // Two columns: the chip's right edge feeds each module's left edge across
+    // the corridor between the columns, and each module takes a pair of
+    // traces in from the right page edge.
+    const corridorL = chip.x + chip.w + PIN_LEN
+    const tones: Tone[][] = [
+      ['gold', 'blue', 'deep'],
+      ['blue', 'gold'],
+      ['deep', 'gold', 'blue'],
+    ]
+    L.modules.forEach((m, mi) => {
+      const mLeft = pinsOnSide(m, 'left', pitch, `m${mi}-`, 'card')
+      const mRight = pinsOnSide(m, 'right', pitch, `m${mi}-`, 'card')
+      out.pins.push(...mLeft, ...mRight)
+      const n = tones[mi % tones.length].length
+      const y = m.y + m.h / 2
+      const ends = pinsNear(mLeft, y, n, 'y')
+      // chip pins at the same height where the chip allows, else its nearest
+      const starts = pinsNear(right.slice(1, -1), mean(ends.length ? ends : mLeft).y, n, 'y')
+      if (ends.length === n && starts.length === n) {
+        const a = mean(starts)
+        const b = mean(ends)
+        const corridorR = m.x - PIN_LEN
+        const xm = (corridorL + corridorR) / 2
+        const r = clamp((corridorR - corridorL) / 2 - 12, 0, 28)
+        routeBus(
+          {
+            id: `m${mi}`,
+            pins: starts,
+            endPins: ends,
+            center: corridorRoute(a, b, xm, r),
+            tones: tones[mi % tones.length],
+            flow: 'out',
+            module: mi,
+          },
+          out,
+        )
       }
-
-      const junctions = new Set<number>()
-      targets.forEach((target, k) => {
-        const tip = target.tip
-        const railY = tip.y - RAIL
-        const side = Math.sign(tip.x - x) || 1
-        const pts = clean([
-          ...trunk,
-          { x, y: railY },
-          { x: tip.x - side * DROP, y: railY },
-          { x: tip.x, y: railY + DROP },
-          tip,
-        ])
-        target.wired = true
-        junctions.add(railY)
+      if (mRight.length >= 4) sideBus(pinsNear(mRight, y, 2, 'y'), 1, mi === 0 ? -1 : 1, `mr${mi}`)
+    })
+  } else {
+    // One column: chip, then the modules, joined top to bottom by short
+    // straight links between their facing edges; the chip's right side goes
+    // out to the page edge like its left.
+    sideBus(right.slice(1, 4), 1, -1, 'ru')
+    let prevBottom = bottom
+    L.modules.forEach((m, mi) => {
+      const mTop = pinsOnSide(m, 'top', pitch, `m${mi}-`, 'card')
+      const mBottom = pinsOnSide(m, 'bottom', pitch, `m${mi}-`, 'card')
+      out.pins.push(...mTop, ...mBottom)
+      const links: [number, Tone][] = [
+        [0.62, 'gold'],
+        [0.74, 'blue'],
+      ]
+      links.forEach(([frac, tone], k) => {
+        const x = m.x + m.w * frac
+        const [from] = pinsNear(prevBottom, x, 1, 'x')
+        const [to] = pinsNear(mTop, from?.tip.x ?? x, 1, 'x')
+        if (!from || !to || Math.abs(from.tip.x - to.tip.x) > 1) return
+        from.wired = to.wired = true
+        const pts = [from.tip, to.tip]
         out.traces.push({
-          id: `${id}-${k}`,
+          id: `m${mi}-${k}`,
           d: pathD(pts),
           pts,
           len: polylineLength(pts),
           tone,
-          pinId: pin.id,
-          endPinId: target.id,
+          pinId: from.id,
+          endPinId: to.id,
           flow: 'out',
-          feed: true,
+          module: mi,
         })
       })
-      for (const y of junctions) out.vias.push({ x, y, tone })
-    }
-    feed(pinA, L.feedXs[0], -1, 'gold', 'feed-a', goldTargets)
-    feed(pinB, L.feedXs[1], 1, 'blue', 'feed-b', blueTargets)
+      prevBottom = mBottom
+    })
   }
 
   return out

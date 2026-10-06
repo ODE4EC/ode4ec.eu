@@ -235,6 +235,16 @@ h3,
   background-color: rgba(255, 255, 255, 0.88) !important;
 }
 
+/* The homepage is one board (HomeBoard.vue): no bottom margin under it, and
+   nothing may widen the page sideways. */
+.Layout.ode-home .VPHome {
+  margin-bottom: 0;
+}
+
+.Layout.ode-home .VPContent {
+  overflow-x: clip;
+}
+
 /**
  * Sidebar
  *
@@ -350,49 +360,140 @@ h3,
 }
 
 /**
- * Homepage section headers
+ * Homepage board modules
  *
- * Shared by Features, ProjectsPreview, EventsPreview and NewsPreview.
- * The eyebrow is brand blue (light blue on dark boards) — gold stays
- * decorative and is never used for text.
+ * The solid navy panels in the board's right-hand column (HomeProjects,
+ * HomeEvents, HomeNews): a header row with the title, optional carousel
+ * buttons and an "all" link, then the content. Always dark, like the board.
  * -------------------------------------------------------------------------- */
 
-.ode-eyebrow {
-  font-size: 14px;
+.ode-module {
+  position: relative;
+  z-index: 2;
+  padding: clamp(12px, 2vh, 20px) 20px;
+  color: #fff;
+  background: linear-gradient(170deg, var(--ode-c-panel-top) 0%, var(--ode-c-panel-deep) 100%);
+  border: 1px solid rgba(140, 175, 240, 0.22);
+  border-top-color: rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 14px 30px rgba(1, 8, 20, 0.45);
+}
+
+.ode-module__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: clamp(6px, 1.2vh, 12px);
+}
+
+/* doubled class: must outrank VitePress's `.vp-doc h2` */
+.ode-module__title.ode-module__title {
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-family: var(--vp-font-family-base);
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.06em;
+  line-height: 1.4;
   text-transform: uppercase;
-  color: var(--vp-c-brand-1);
-  margin: 0 0 10px;
+  color: var(--ode-c-trace-blue);
 }
 
-/* doubled selector: must outrank VitePress's `.vp-doc h2` spacing */
-.vp-doc h2.ode-section-heading {
-  border: none;
-  padding-top: 0;
+.ode-module__nav {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
 }
 
-/* margin and color stay overridable by each section's scoped styles */
-.ode-section-heading {
+.ode-module__nav button {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.ode-module__nav button:hover:not(:disabled) {
+  border-color: var(--ode-c-accent-1);
+  color: var(--ode-c-accent-1);
+}
+
+.ode-module__nav button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.ode-module__nav button:focus-visible,
+.ode-module__all:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.vp-doc .ode-module__all {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ode-module__nav + .ode-module__all {
+  margin-left: 4px;
+}
+
+.ode-module__head > .ode-module__title + .ode-module__all {
+  margin-left: auto;
+}
+
+.vp-doc .ode-module__all:hover {
+  color: var(--ode-c-accent-1);
+}
+
+/* a scroll-snapped row; the buttons step it one item at a time */
+.vp-doc .ode-module__track {
+  display: flex;
+  gap: 12px;
   margin: 0;
-  font-size: 1.7rem;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  /* the next item peeks in, fading out, as a hint that the row scrolls */
+  mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent);
+}
+
+.vp-doc .ode-module__track.is-end {
+  mask-image: none;
+}
+
+.ode-module__track::-webkit-scrollbar {
+  display: none;
+}
+
+.vp-doc .ode-module__track > li {
+  margin: 0;
+  scroll-snap-align: start;
+}
+
+.vp-doc .ode-module__empty {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.65);
 }
 
 /* Tables: tinted header row instead of the default plain one. */
 .vp-doc th {
   background-color: var(--vp-c-brand-soft);
   color: var(--vp-c-text-1);
-}
-
-/**
- * Reduced motion: homepage cards keep their hover color change but don't lift.
- * -------------------------------------------------------------------------- */
-
-@media (prefers-reduced-motion: reduce) {
-  .ode-feature:hover,
-  .ode-news__card:hover {
-    transform: none !important;
-  }
 }
