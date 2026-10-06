@@ -77,12 +77,14 @@ function scrollToNext() {
   translate: -50% -50%;
   background: radial-gradient(closest-side, rgba(47, 111, 214, 0.4), rgba(47, 111, 214, 0.12) 60%, transparent);
   pointer-events: none;
-  animation: ode-breathe 9s ease-in-out infinite;
+  /* fades in once and then holds still: an endlessly breathing glow this
+     large repaints the hero every frame and kept the CPU busy */
+  animation: ode-halo-in 1.6s ease-out both;
 }
 
-@keyframes ode-breathe {
-  0%, 100% { opacity: 0.7; scale: 1; }
-  50% { opacity: 1; scale: 1.06; }
+@keyframes ode-halo-in {
+  from { opacity: 0; scale: 0.94; }
+  to { opacity: 1; scale: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -318,7 +320,8 @@ function scrollToNext() {
 }
 
 .ode-hero__scroll-cue svg {
-  animation: ode-bounce 2s ease-in-out infinite;
+  /* a few nudges after load, then still (no endless per-frame work) */
+  animation: ode-bounce 2s ease-in-out 1s 3;
 }
 
 @media (prefers-reduced-motion: reduce) {

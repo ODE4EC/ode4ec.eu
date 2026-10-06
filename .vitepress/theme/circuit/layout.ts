@@ -43,9 +43,13 @@ export interface Pin {
 export interface Trace {
   id: string
   d: string
+  /** the polyline behind `d`, for packets that travel along it */
+  pts: Pt[]
   len: number
   tone: Tone
   pinId: string
+  /** pin at the far end, for feed branches that land on a project card */
+  endPinId?: string
   /** 'in': signals travel from the board edge into the chip; 'out': the reverse */
   flow: 'in' | 'out'
   /** the chip's two outputs, down through Features into the project cards */
@@ -212,6 +216,7 @@ function routeBus(spec: BusSpec, out: Circuit) {
     out.traces.push({
       id: `${spec.id}-${i}`,
       d: pathD(pts),
+      pts,
       len: polylineLength(pts),
       tone,
       pinId: pin.id,
@@ -391,7 +396,7 @@ export function buildCircuit(L: BoardLayout): Circuit {
         const downTo = L.gridBottom + 16
         const pts = clean([...trunk, { x, y: downTo }, { x: x + dir * TURN, y: downTo + TURN }, { x: dir < 0 ? -BLEED : W + BLEED, y: downTo + TURN }])
         out.vias.push({ x, y: downTo, tone })
-        out.traces.push({ id, d: pathD(pts), len: polylineLength(pts), tone, pinId: pin.id, flow: 'out', feed: true })
+        out.traces.push({ id, d: pathD(pts), pts, len: polylineLength(pts), tone, pinId: pin.id, flow: 'out', feed: true })
         return
       }
 
@@ -412,6 +417,7 @@ export function buildCircuit(L: BoardLayout): Circuit {
         out.traces.push({
           id: `${id}-${k}`,
           d: pathD(pts),
+          pts,
           len: polylineLength(pts),
           tone,
           pinId: pin.id,

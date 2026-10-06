@@ -1,16 +1,20 @@
 /**
- * Signal packets for the homepage board: short glowing dashes that travel
+ * Signal packets for the homepage board: short glowing capsules that travel
  * along the traces, into the chip's pins ('in') or out of them ('out'). When
- * a packet reaches (or leaves) the chip, that pin glows briefly.
+ * a packet reaches (or leaves) a pin, that pin glows briefly.
  *
- * Each trace owns a few packet slots rendered by HomeBoard.vue as
- * <g data-packet="{traceId}"> elements containing the paths to animate. The
- * engine drives them with the Web Animations API from one rAF scheduler, and
- * can be fully paused (reduced motion, pause button, off screen, hidden tab).
+ * Packets and pin glows are small HTML elements in a layer over the circuit
+ * SVG (HomeBoard.vue renders them as [data-packet] / [data-pin-glow]). They
+ * only ever animate `transform` and `opacity`, which the browser composites
+ * without repainting the board; re-stroking the traces every frame (the old
+ * stroke-dashoffset approach) kept the CPU busy for as long as the page was
+ * open. Between packets nothing runs at all: the scheduler is a plain timer,
+ * not a per-frame loop.
  */
 
 export interface PacketTraceMeta {
   id: string
+  pts: { x: number; y: number }[]
   len: number
   flow: 'in' | 'out'
   pinId: string
@@ -18,16 +22,20 @@ export interface PacketTraceMeta {
   endPinId?: string
 }
 
+/** fade packets out above this band (the transparent navbar), px */
+export type FadeBand = [top: number, bottom: number] | null
+
 interface Slot {
-  g: SVGGElement
-  paths: SVGPathElement[]
-  anims: Animation[] | null
+  el: HTMLElement
+  anim: Animation | null
+  ambient: boolean
 }
 
 interface EngineTrace extends PacketTraceMeta {
   pin: Element | null
   endPin: Element | null
   slots: Slot[]
+  frames: Keyframe[]
   nextAt: number
 }
 
@@ -35,40 +43,80 @@ interface EngineTrace extends PacketTraceMeta {
 const SPEED = 230
 /** px per second for CTA bursts */
 const BURST_SPEED = SPEED * 2
-/** visible length of a packet, px */
-const PACKET = 28
 /** idle time between packets on one trace, ms */
 const GAP_MIN = 2600
 const GAP_MAX = 8500
+/** at most this many ambient packets in flight at once */
+const MAX_IN_FLIGHT = 3
+/** keyframe spacing along a trace, px; corners turn over one step */
+const STEP = 20
 /** how long a pin stays lit, ms — well under 3 flashes per second */
 const HOT_MS = 650
 
 const rand = (lo: number, hi: number) => lo + Math.random() * (hi - lo)
 
+/** Transform/opacity keyframes that carry a packet along a polyline. */
+function keyframes(pts: PacketTraceMeta['pts'], len: number, reverse: boolean, fade: FadeBand): Keyframe[] {
+  const path = reverse ? [...pts].reverse() : pts
+  const frames: Keyframe[] = []
+  const opacity = (y: number) => (fade ? Math.min(1, Math.max(0, (y - fade[0]) / (fade[1] - fade[0]))) : 1)
+  let dist = 0
+  let prevAngle: number | null = null
+  const push = (x: number, y: number, angle: number) => {
+    frames.push({
+      offset: len ? Math.min(1, dist / len) : 0,
+      transform: `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${angle.toFixed(1)}deg)`,
+      opacity: opacity(y),
+    })
+  }
+  for (let i = 1; i < path.length; i++) {
+    const a = path[i - 1]
+    const b = path[i]
+    const seg = Math.hypot(b.x - a.x, b.y - a.y)
+    if (!seg) continue
+    let angle = (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI
+    // unwrap, so a turn never spins the long way round
+    if (prevAngle !== null) angle = prevAngle + ((((angle - prevAngle) % 360) + 540) % 360) - 180
+    if (prevAngle === null) push(a.x, a.y, angle)
+    prevAngle = angle
+    const n = Math.max(1, Math.round(seg / STEP))
+    for (let k = 1; k <= n; k++) {
+      dist += seg / n
+      push(a.x + ((b.x - a.x) * k) / n, a.y + ((b.y - a.y) * k) / n, angle)
+    }
+  }
+  return frames
+}
+
 export class PacketEngine {
   private traces: EngineTrace[] = []
-  private raf = 0
   private running = false
+  private ambient = true
   private pausedAt = 0
+  private inFlight = 0
+  private timer: ReturnType<typeof setTimeout> | 0 = 0
   private timers = new Set<ReturnType<typeof setTimeout>>()
 
   /** (Re)bind to the rendered slots after the circuit is (re)laid out. */
-  attach(root: SVGSVGElement, metas: PacketTraceMeta[]) {
+  attach(layer: HTMLElement, metas: PacketTraceMeta[], fade: FadeBand = null) {
     this.cancelAll()
     const now = performance.now()
+    const glow = (id?: string) => (id ? layer.querySelector(`[data-pin-glow="${id}"]`) : null)
     this.traces = metas.map((m) => ({
       ...m,
-      pin: root.querySelector(`[data-pin="${m.pinId}"]`),
-      endPin: m.endPinId ? root.querySelector(`[data-pin="${m.endPinId}"]`) : null,
-      slots: [...root.querySelectorAll<SVGGElement>(`g[data-packet="${m.id}"]`)].map((g) => ({
-        g,
-        paths: [...g.querySelectorAll('path')],
-        anims: null,
+      pin: glow(m.pinId),
+      endPin: glow(m.endPinId),
+      slots: [...layer.querySelectorAll<HTMLElement>(`[data-packet="${m.id}"]`)].map((el) => ({
+        el,
+        anim: null,
+        ambient: false,
       })),
+      frames: keyframes(m.pts, m.len, m.flow === 'in', fade),
       // stagger the first wave so the board doesn't fire all at once
       nextAt: now + rand(200, GAP_MAX),
     }))
     this.pausedAt = this.running ? 0 : now
+    if (this.running) this.schedule()
   }
 
   start() {
@@ -79,16 +127,32 @@ export class PacketEngine {
       for (const t of this.traces) t.nextAt += shift
       this.pausedAt = 0
     }
-    for (const t of this.traces) for (const s of t.slots) s.anims?.forEach((a) => a.play())
-    this.raf = requestAnimationFrame(this.tick)
+    for (const t of this.traces) for (const s of t.slots) s.anim?.play()
+    this.schedule()
   }
 
   stop() {
     if (!this.running) return
     this.running = false
     this.pausedAt = performance.now()
-    cancelAnimationFrame(this.raf)
-    for (const t of this.traces) for (const s of t.slots) s.anims?.forEach((a) => a.pause())
+    this.clearTimer()
+    for (const t of this.traces) for (const s of t.slots) s.anim?.pause()
+  }
+
+  /**
+   * Ambient packets on or off. Off lets packets already in flight land and
+   * then leaves the board still; bursts keep working.
+   */
+  setAmbient(on: boolean) {
+    if (on === this.ambient) return
+    this.ambient = on
+    if (on) {
+      const now = performance.now()
+      for (const t of this.traces) t.nextAt = now + rand(200, GAP_MIN)
+      this.schedule()
+    } else {
+      this.clearTimer()
+    }
   }
 
   destroy() {
@@ -103,48 +167,57 @@ export class PacketEngine {
     for (const id of ids) {
       const t = this.traces.find((x) => x.id === id)
       if (!t) continue
-      for (let k = 0; k < count; k++) this.later(() => this.fire(t, BURST_SPEED), k * 170)
+      for (let k = 0; k < count; k++) this.later(() => this.fire(t, BURST_SPEED, false), k * 170)
       t.nextAt = performance.now() + GAP_MIN
     }
   }
 
+  private schedule() {
+    this.clearTimer()
+    if (!this.running || !this.ambient || !this.traces.length) return
+    const next = Math.min(...this.traces.map((t) => t.nextAt))
+    this.timer = setTimeout(this.tick, Math.max(0, next - performance.now()))
+  }
+
   private tick = () => {
-    if (!this.running) return
+    this.timer = 0
+    if (!this.running || !this.ambient) return
     const now = performance.now()
     for (const t of this.traces) {
       if (now < t.nextAt) continue
-      this.fire(t, SPEED)
-      t.nextAt = now + rand(GAP_MIN, GAP_MAX)
+      // board busy: try this trace again shortly instead of piling on
+      t.nextAt = this.inFlight < MAX_IN_FLIGHT && this.fire(t, SPEED, true) ? now + rand(GAP_MIN, GAP_MAX) : now + rand(400, 1200)
     }
-    this.raf = requestAnimationFrame(this.tick)
+    this.schedule()
   }
 
-  private fire(t: EngineTrace, speed: number) {
-    if (!this.running) return
-    const slot = t.slots.find((s) => !s.anims)
-    if (!slot) return
-    // Dash pattern: one PACKET-long dash, then a gap longer than the path.
-    // Offsetting from +PACKET to -len slides it from before the start to past
-    // the end; 'in' packets run the other way, from the edge to the pin.
-    const from = t.flow === 'out' ? PACKET : -t.len
-    const to = t.flow === 'out' ? -t.len : PACKET
-    const duration = ((t.len + PACKET) / speed) * 1000
-    slot.g.style.visibility = 'visible'
-    slot.anims = slot.paths.map((p) => {
-      p.style.strokeDasharray = `${PACKET} ${t.len + PACKET}`
-      return p.animate([{ strokeDashoffset: `${from}px` }, { strokeDashoffset: `${to}px` }], {
-        duration,
-        easing: 'linear',
-        fill: 'forwards',
-      })
+  private fire(t: EngineTrace, speed: number, ambient: boolean) {
+    if (!this.running || t.frames.length < 2) return false
+    const slot = t.slots.find((s) => !s.anim)
+    if (!slot) return false
+    slot.el.style.visibility = 'visible'
+    slot.ambient = ambient
+    if (ambient) this.inFlight++
+    const anim = slot.el.animate(t.frames, {
+      duration: (t.len / speed) * 1000,
+      easing: 'linear',
+      fill: 'forwards',
     })
+    slot.anim = anim
     if (t.flow === 'out') this.heat(t.pin)
-    slot.anims[0].onfinish = () => {
-      slot.anims?.forEach((a) => a.cancel())
-      slot.anims = null
-      slot.g.style.visibility = 'hidden'
+    anim.onfinish = () => {
+      this.release(slot)
       this.heat(t.flow === 'in' ? t.pin : t.endPin)
     }
+    return true
+  }
+
+  private release(slot: Slot) {
+    slot.el.style.visibility = 'hidden'
+    slot.anim?.cancel()
+    slot.anim = null
+    if (slot.ambient) this.inFlight--
+    slot.ambient = false
   }
 
   private heat(pin: Element | null) {
@@ -161,17 +234,20 @@ export class PacketEngine {
     this.timers.add(id)
   }
 
+  private clearTimer() {
+    if (this.timer) clearTimeout(this.timer)
+    this.timer = 0
+  }
+
   private cancelAll() {
+    this.clearTimer()
     for (const id of this.timers) clearTimeout(id)
     this.timers.clear()
     for (const t of this.traces) {
-      for (const s of t.slots) {
-        s.anims?.forEach((a) => a.cancel())
-        s.anims = null
-        s.g.style.visibility = 'hidden'
-      }
+      for (const s of t.slots) if (s.anim) this.release(s)
       t.pin?.classList.remove('is-hot')
       t.endPin?.classList.remove('is-hot')
     }
+    this.inFlight = 0
   }
 }
