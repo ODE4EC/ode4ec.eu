@@ -200,9 +200,6 @@ interface BusSpec {
   flow: 'in' | 'out'
   /** index of the trace that gets a via at its second bend */
   viaOn?: number
-  /** pins the traces land on, in the same order as `pins` (chip outputs) */
-  endPins?: Pin[]
-  module?: number
 }
 
 function routeBus(spec: BusSpec, out: Circuit) {
@@ -213,8 +210,6 @@ function routeBus(spec: BusSpec, out: Circuit) {
   pins.forEach((pin, i) => {
     const pts = offsetPolyline(center, dot(sub(pin.tip, c0), n0))
     pin.wired = true
-    const end = spec.endPins?.[i]
-    if (end) end.wired = true
     const tone = spec.tones[i % spec.tones.length]
     out.traces.push({
       id: `${spec.id}-${i}`,
@@ -223,9 +218,7 @@ function routeBus(spec: BusSpec, out: Circuit) {
       len: polylineLength(pts),
       tone,
       pinId: pin.id,
-      endPinId: end?.id,
       flow: spec.flow,
-      module: spec.module,
     })
     // no vias up in the navbar band, where the traces fade out
     if (spec.viaOn === i && pts.length > 3 && pts[2].y > 110) out.vias.push({ ...pts[2], tone })
@@ -254,16 +247,77 @@ function pinsNear(pins: Pin[], at: number, count: number, axis: 'x' | 'y'): Pin[
   return pins.slice(best, best + count)
 }
 
+/** Small seeded PRNG, so a given layout never reshuffles between resizes. */
+function rng(seed: number) {
+  let a = seed >>> 0
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0
+    let t = a
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+function weighted<T>(items: [T, number][], rnd: () => number): T {
+  const total = items.reduce((s, [, w]) => s + w, 0)
+  let r = rnd() * total
+  for (const [item, w] of items) if ((r -= w) <= 0) return item
+  return items[items.length - 1][0]
+}
+
+/** `n` pins of `pool`, in order, picked at random with gaps between them */
+function pickSpread(pool: Pin[], n: number, rnd: () => number): Pin[] {
+  if (pool.length < n) return []
+  const gap = pool.length >= 2 * n - 1 ? 2 : 1
+  // spare pins, scattered at random before, between and after the picks
+  const buckets = new Array(n + 1).fill(0)
+  for (let k = pool.length - 1 - gap * (n - 1); k > 0; k--) buckets[Math.floor(rnd() * (n + 1))]++
+  const picks: Pin[] = []
+  let i = buckets[0]
+  for (let j = 0; j < n; j++) {
+    picks.push(pool[i])
+    i += gap + buckets[j + 1]
+  }
+  return picks
+}
+
+/** 45° chamfer at each end of a lane's vertical run, px */
+const CHAMFER = 12
+/** smallest height change worth a jog: anything less reads as a kink */
+const MIN_JOG = 2 * CHAMFER + 6
+/** spacing between the vertical lanes in the corridor between the columns */
+const LANE = 10
+
 /**
- * Centerline from a to b (both pointing right) that crosses a vertical
- * corridor at x = xm: right, 45° into the corridor, along it, 45° out, right.
+ * End pins for traces leaving `starts`, in order, picked at random from
+ * `pool` (nearer pins likelier). Each trace either runs dead straight or
+ * changes height by at least MIN_JOG, never by a few pixels.
  */
-function corridorRoute(a: Pt, b: Pt, xm: number, r: number): Pt[] {
+function pickEnds(starts: Pin[], pool: Pin[], rnd: () => number): Pin[] {
+  const ends: Pin[] = []
+  let from = 0
+  for (let j = 0; j < starts.length; j++) {
+    const last = pool.length - (starts.length - j)
+    const range: number[] = []
+    for (let i = from; i <= last; i++) range.push(i)
+    if (!range.length) return []
+    const dy = (i: number) => Math.abs(pool[i].tip.y - starts[j].tip.y)
+    const clean = range.filter((i) => dy(i) < 1 || dy(i) >= MIN_JOG)
+    const i = weighted((clean.length ? clean : range).map((i) => [i, 1 / (1 + dy(i) / 30)] as [number, number]), rnd)
+    ends.push(pool[i])
+    from = i + 1
+  }
+  return ends
+}
+
+/** a → b (both facing right): straight, or along a vertical lane at x */
+function laneRoute(a: Pt, b: Pt, x: number): Pt[] {
   const dy = b.y - a.y
   if (Math.abs(dy) < 1) return [a, b]
   const s = Math.sign(dy)
-  const k = Math.min(r, Math.abs(dy) / 2)
-  return clean([a, { x: xm - k, y: a.y }, { x: xm, y: a.y + s * k }, { x: xm, y: b.y - s * k }, { x: xm + k, y: b.y }, b])
+  const k = Math.min(CHAMFER, Math.abs(dy) / 2)
+  return clean([a, { x: x - k, y: a.y }, { x, y: a.y + s * k }, { x, y: b.y - s * k }, { x: x + k, y: b.y }, b])
 }
 
 export function buildCircuit(L: BoardLayout): Circuit {
@@ -330,7 +384,8 @@ export function buildCircuit(L: BoardLayout): Circuit {
 
   // chip, left: an upper and a lower bus out to the page edge
   sideBus(left.slice(1, 4), -1, -1, 'lu')
-  sideBus(left.slice(nl - 4, nl - 1), -1, 1, 'ld')
+  // (the lower one sits well up the edge, clear of the bottom-left fan)
+  sideBus(left.slice(nl - 8, nl - 5), -1, 1, 'ld')
 
   // chip, bottom-left (two columns only; stacked, the gap below the chip
   // belongs to the links into the modules): a fan down and out to the left
@@ -358,6 +413,7 @@ export function buildCircuit(L: BoardLayout): Circuit {
     // the corridor between the columns, and each module takes a pair of
     // traces in from the right page edge.
     const corridorL = chip.x + chip.w + PIN_LEN
+    const usedChip = new Set<Pin>()
     const tones: Tone[][] = [
       ['gold', 'blue', 'deep'],
       ['blue', 'gold'],
@@ -367,29 +423,47 @@ export function buildCircuit(L: BoardLayout): Circuit {
       const mLeft = pinsOnSide(m, 'left', pitch, `m${mi}-`, 'card')
       const mRight = pinsOnSide(m, 'right', pitch, `m${mi}-`, 'card')
       out.pins.push(...mLeft, ...mRight)
-      const n = tones[mi % tones.length].length
+      const toneSet = tones[mi % tones.length]
+      const n = toneSet.length
       const y = m.y + m.h / 2
-      const ends = pinsNear(mLeft, y, n, 'y')
-      // chip pins at the same height where the chip allows, else its nearest
-      const starts = pinsNear(right.slice(1, -1), mean(ends.length ? ends : mLeft).y, n, 'y')
-      if (ends.length === n && starts.length === n) {
-        const a = mean(starts)
-        const b = mean(ends)
+      const rnd = rng(7919 * (mi + 1))
+      // chip pins facing the module (or the nearest ones the chip has),
+      // spread out rather than side by side, then module pins for each
+      const band = right.slice(1, -1).filter((p) => !usedChip.has(p) && p.tip.y > m.y + 6 && p.tip.y < m.y + m.h - 6)
+      const pool = band.length >= n ? band : pinsNear(right.slice(1, -1).filter((p) => !usedChip.has(p)), y, Math.max(n, 5), 'y')
+      const starts = pickSpread(pool, n, rnd)
+      const ends = starts.length === n ? pickEnds(starts, mLeft, rnd) : []
+      if (ends.length === n) {
+        starts.forEach((p) => usedChip.add(p))
+        // Each trace gets its own vertical lane. Traces heading down take
+        // lanes bottom trace first, those heading up top trace first, so no
+        // two ever cross.
         const corridorR = m.x - PIN_LEN
-        const xm = (corridorL + corridorR) / 2
-        const r = clamp((corridorR - corridorL) / 2 - 12, 0, 28)
-        routeBus(
-          {
-            id: `m${mi}`,
-            pins: starts,
-            endPins: ends,
-            center: corridorRoute(a, b, xm, r),
-            tones: tones[mi % tones.length],
+        const mid = (corridorL + corridorR) / 2
+        const idx = starts.map((_, j) => j)
+        const down = idx.filter((j) => ends[j].tip.y - starts[j].tip.y >= 1).reverse()
+        const up = idx.filter((j) => ends[j].tip.y - starts[j].tip.y <= -1)
+        const lanes = Math.max(down.length, up.length)
+        const laneX = (k: number) => mid + (k - (lanes - 1) / 2) * LANE
+        const lane = new Map<number, number>()
+        down.forEach((j, k) => lane.set(j, laneX(k)))
+        up.forEach((j, k) => lane.set(j, laneX(k)))
+        starts.forEach((pin, j) => {
+          const end = ends[j]
+          const pts = laneRoute(pin.tip, end.tip, lane.get(j) ?? mid)
+          pin.wired = end.wired = true
+          out.traces.push({
+            id: `m${mi}-${j}`,
+            d: pathD(pts),
+            pts,
+            len: polylineLength(pts),
+            tone: toneSet[j],
+            pinId: pin.id,
+            endPinId: end.id,
             flow: 'out',
             module: mi,
-          },
-          out,
-        )
+          })
+        })
       }
       if (mRight.length >= 4) sideBus(pinsNear(mRight, y, 2, 'y'), 1, mi === 0 ? -1 : 1, `mr${mi}`)
     })

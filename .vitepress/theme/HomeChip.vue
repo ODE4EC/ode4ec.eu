@@ -30,7 +30,6 @@ const reasons = [
   <div class="ode-chip">
     <span class="ode-chip__notch" aria-hidden="true" />
 
-    <p class="ode-chip__eyebrow">Open source chip design for Europe</p>
     <h1 class="ode-chip__title">ODE4EC</h1>
     <p class="ode-chip__lede">Open Design Environment for European Chips</p>
     <p class="ode-chip__tagline">The central website of the ODE4EC initiative and its projects.</p>
@@ -105,15 +104,6 @@ const reasons = [
   box-shadow:
     inset 0 1.5px 3px rgba(0, 0, 0, 0.8),
     0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.ode-chip__eyebrow {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.65);
-  margin: 0 0 clamp(10px, 1.6vh, 16px);
 }
 
 .vp-doc .ode-chip__title {
