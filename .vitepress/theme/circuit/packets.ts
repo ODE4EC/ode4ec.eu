@@ -1,7 +1,7 @@
 /**
  * Signal packets for the homepage board: short glowing capsules that travel
  * along the traces, into the chip's pins ('in') or out of them ('out'). When
- * a packet reaches (or leaves) a pin, that pin glows briefly.
+ * a packet arrives at a pin, that pin glows briefly.
  *
  * Packets and pin glows are small HTML elements in a layer over the circuit
  * SVG (HomeBoard.vue renders them as [data-packet] / [data-pin-glow]). They
@@ -51,7 +51,7 @@ const MAX_IN_FLIGHT = 3
 /** keyframe spacing along a trace, px; corners turn over one step */
 const STEP = 20
 /** how long a pin stays lit, ms — well under 3 flashes per second */
-const HOT_MS = 650
+const HOT_MS = 500
 
 const rand = (lo: number, hi: number) => lo + Math.random() * (hi - lo)
 
@@ -204,7 +204,6 @@ export class PacketEngine {
       fill: 'forwards',
     })
     slot.anim = anim
-    if (t.flow === 'out') this.heat(t.pin)
     anim.onfinish = () => {
       this.release(slot)
       this.heat(t.flow === 'in' ? t.pin : t.endPin)

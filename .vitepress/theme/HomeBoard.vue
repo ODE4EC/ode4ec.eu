@@ -431,12 +431,12 @@ onBeforeUnmount(() => {
   background: var(--ode-c-pin-hot);
   box-shadow: 0 0 8px 1px rgba(255, 225, 88, 0.55);
   opacity: 0;
-  transition: opacity 0.9s ease-out;
+  transition: opacity 0.6s ease-out;
 }
 
 .ode-pin-glow.is-hot {
   opacity: 0.9;
-  transition-duration: 0.2s;
+  transition-duration: 0.15s;
 }
 
 /* a short capsule, centred on (0,0) so its transform puts the centre on the
