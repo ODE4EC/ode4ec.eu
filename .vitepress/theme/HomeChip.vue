@@ -200,6 +200,23 @@ const reasons = [
   .ode-btn:hover { transform: none; }
 }
 
+/* Beside the modules the chip is stretched to their column's height: the
+   intro stays at the top and Why ODE4EC sits at the bottom. */
+@media (min-width: 1152px) and (min-height: 600px) {
+  .ode-chip {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ode-chip__actions {
+    margin-bottom: clamp(22px, 4vh, 40px);
+  }
+
+  .ode-chip__why {
+    margin-top: auto;
+  }
+}
+
 /* Why ODE4EC: an inset section of the same chip, under an etched line */
 .ode-chip__why {
   margin-top: clamp(22px, 4vh, 40px);

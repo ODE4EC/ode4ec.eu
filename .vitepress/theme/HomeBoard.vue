@@ -349,7 +349,9 @@ onBeforeUnmount(() => {
   .ode-board__grid {
     grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
     column-gap: clamp(76px, 7vw, 112px);
-    align-items: center;
+    /* the chip spans the module column top to bottom, so the pins on its
+       right edge face the modules' pins and the traces run straight */
+    align-items: stretch;
     padding-top: calc(var(--vp-nav-height) + clamp(8px, 2vh, 32px));
     padding-bottom: clamp(8px, 1.5vh, 20px);
   }

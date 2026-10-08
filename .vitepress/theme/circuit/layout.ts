@@ -157,11 +157,23 @@ function clean(pts: Pt[]) {
 // ---------------------------------------------------------------------------
 // pins
 
-function pinsOnSide(chip: Rect, side: Side, pitch: number, prefix = '', group: Pin['group'] = 'chip'): Pin[] {
+/**
+ * Pins along one edge, `pitch` apart and clear of the corners. They are
+ * centred on the edge unless `grid` is given: then they sit on the board-wide
+ * grid through that coordinate (x for top/bottom, y for left/right), so pins
+ * on facing edges of different cards line up.
+ */
+function pinsOnSide(chip: Rect, side: Side, pitch: number, prefix = '', group: Pin['group'] = 'chip', grid?: number): Pin[] {
   const horizontal = side === 'top' || side === 'bottom'
   const edgeLen = horizontal ? chip.w : chip.h
-  const count = Math.max(0, Math.floor((edgeLen - 2 * CORNER_INSET) / pitch) + 1)
-  const start = (edgeLen - (count - 1) * pitch) / 2
+  let count = Math.max(0, Math.floor((edgeLen - 2 * CORNER_INSET) / pitch) + 1)
+  let start = (edgeLen - (count - 1) * pitch) / 2
+  if (grid !== undefined) {
+    const origin = horizontal ? chip.x : chip.y
+    const first = CORNER_INSET + ((((grid - origin - CORNER_INSET) % pitch) + pitch) % pitch)
+    start = first
+    count = Math.max(0, Math.floor((edgeLen - CORNER_INSET - first) / pitch + 1e-6) + 1)
+  }
   const pins: Pin[] = []
   for (let i = 0; i < count; i++) {
     const along = start + i * pitch
@@ -419,9 +431,12 @@ export function buildCircuit(L: BoardLayout): Circuit {
       ['blue', 'gold'],
       ['deep', 'gold', 'blue'],
     ]
+    // the modules' pins share the chip's right-edge grid, so the outputs can
+    // cross the corridor dead straight
+    const gridY = right[0].tip.y
     L.modules.forEach((m, mi) => {
-      const mLeft = pinsOnSide(m, 'left', pitch, `m${mi}-`, 'card')
-      const mRight = pinsOnSide(m, 'right', pitch, `m${mi}-`, 'card')
+      const mLeft = pinsOnSide(m, 'left', pitch, `m${mi}-`, 'card', gridY)
+      const mRight = pinsOnSide(m, 'right', pitch, `m${mi}-`, 'card', gridY)
       out.pins.push(...mLeft, ...mRight)
       const toneSet = tones[mi % tones.length]
       const n = toneSet.length
@@ -431,8 +446,13 @@ export function buildCircuit(L: BoardLayout): Circuit {
       // spread out rather than side by side, then module pins for each
       const band = right.slice(1, -1).filter((p) => !usedChip.has(p) && p.tip.y > m.y + 6 && p.tip.y < m.y + m.h - 6)
       const pool = band.length >= n ? band : pinsNear(right.slice(1, -1).filter((p) => !usedChip.has(p)), y, Math.max(n, 5), 'y')
-      const starts = pickSpread(pool, n, rnd)
-      const ends = starts.length === n ? pickEnds(starts, mLeft, rnd) : []
+      // straight across wherever a module pin faces the chip pin; jogging
+      // between rows only when the cards don't line up
+      const facing = (p: Pin) => mLeft.find((q) => Math.abs(q.tip.y - p.tip.y) < 1)
+      const straight = pickSpread(pool.filter((p) => facing(p)), n, rnd)
+      const starts = straight.length === n ? straight : pickSpread(pool, n, rnd)
+      const ends =
+        straight.length === n ? straight.map((p) => facing(p)!) : starts.length === n ? pickEnds(starts, mLeft, rnd) : []
       if (ends.length === n) {
         starts.forEach((p) => usedChip.add(p))
         // Each trace gets its own vertical lane. Traces heading down take
