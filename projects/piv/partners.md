@@ -1,10 +1,10 @@
 ---
-title: ODE4EC-PIV Consorsium
+title: ODE4EC-PIV Consortium
 ---
 
-# Consorsium
+# Consortium
 
-ODE4EC-PIV is an European consortium of 24 organizations across 9 countries, bringing together universities, research organizations and companies from across the chip design value chain.
+ODE4EC-PIV is a European consortium of 24 organizations across 9 countries, bringing together universities, research organizations and companies from across the chip design value chain.
 
 <PartnersMap project="piv" />
 

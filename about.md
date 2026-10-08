@@ -14,7 +14,7 @@ On our roadmap we target the key ingredients of chip design:
 
 ## Vision
 
-To increase Europe's impact and share on the global semiconductor markets and Europe's sovereignty, more chips need to be designed in Europe. A major challenge to achieve this goal is the lack of a solid talent pipeline and significant barriers for newcomers such as SMEs and research across disciplines.
+To increase Europe's impact and share on the global semiconductor markets and Europe's sovereignty, more chips need to be designed in Europe. A major challenge to achieve this goal is the lack of a solid talent pipeline and significant barriers for newcomers such as SMEs and researchers across disciplines.
 
 Europe cannot rely on closed, proprietary tools and supply chains to build sovereign semiconductor capability. ODE4EC's vision is a chip design landscape where open source is a solid base of chip ambitions: open EDA tools, open design IP, and open process design kits together remove the friction that today keeps talented engineers, researchers, and SMEs from designing chips. When designing a chip is as accessible as writing software, Europe gains a self-reinforcing cycle: more designers, more innovation, more chips.
 
@@ -22,7 +22,7 @@ Europe cannot rely on closed, proprietary tools and supply chains to build sover
 
 Open source chip design is not a single project but an ecosystem. ODE4EC brings together industry, academia, and research organizations that share a commitment to openness, and creates the conditions for them to collaborate effectively. Rather than building in isolation, ODE4EC acts as a connective layer: aligning efforts, closing gaps, and amplifying what the community is already building. The result is an ecosystem that is more than the sum of its parts — one that is resilient, interoperable, and positioned to grow.
 
-Support actions to support the ecosystem are performed as [advocacy](/advocacy) and through collaborative projects. Activities are performend with strong support by [FOSSi Foundation](https://fossi-foundation.org), the leading open source chip design non-profit.
+Support actions to support the ecosystem are performed as [advocacy](/advocacy) and through collaborative projects. Activities are performed with strong support by [FOSSi Foundation](https://fossi-foundation.org), the leading open source chip design non-profit.
 
 ## Projects
 
@@ -37,10 +37,10 @@ The first batch of ODE4EC projects will launch in summer 2026:
 General activities and the overall coordination are led by:
 
 - Frank Gürkaynak - ETH Zürich, Switzerland
-- Luca Benini - University Bologna, Italy, and ETH Zürich, Switzerland
+- Luca Benini - University of Bologna, Italy, and ETH Zürich, Switzerland
 - Stefan Wallentowitz - HM University of Applied Sciences Munich, Germany, and FOSSi Foundation, United Kingdom
 
-The leadership team is completed with the leaders of projects in the ODE4EC projects
+The leadership team is completed by the coordinators of the ODE4EC projects:
 
 - Rene Scholz - IHP, Germany (ODE4EC-AMS coordinator)
 - Christian Pilato - Politecnico Milano, Italy (ODE4EC-DIG coordinator)

@@ -20,7 +20,7 @@ const reasons = [
   },
   {
     icon: 'stars',
-    title: 'Paneuropean',
+    title: 'Pan-European',
     text: 'A joint effort of leading institutions across Europe.',
   },
 ]
