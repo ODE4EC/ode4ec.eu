@@ -1,11 +1,6 @@
 <script setup lang="ts">
-// The homepage's main chip: the initiative's name and calls to action, with
-// "Why ODE4EC" condensed underneath. Its pins and traces are drawn by
-// HomeBoard.vue around it.
-const emit = defineEmits<{
-  /** "Explore projects" was hovered or focused */
-  burst: []
-}>()
+// Its pins and traces are drawn around it by HomeBoard.vue.
+const emit = defineEmits<{ burst: [] }>()
 
 const reasons = [
   {
@@ -41,7 +36,7 @@ const reasons = [
     </div>
 
     <section class="ode-chip__why" aria-labelledby="ode-why">
-      <h2 id="ode-why" class="ode-chip__why-heading">Why ODE4EC</h2>
+      <h2 id="ode-why" class="ode-eyebrow ode-chip__why-heading">Why ODE4EC</h2>
       <ul class="ode-chip__reasons">
         <li v-for="r in reasons" :key="r.title" class="ode-chip__reason">
           <svg class="ode-chip__icon" width="28" height="28" viewBox="0 0 40 40" fill="none" aria-hidden="true">
@@ -70,9 +65,8 @@ const reasons = [
 </template>
 
 <style scoped>
-/* A chip package: solid body, beveled edges. No transparency — chips are not
-   transparent. Vertical rhythm scales with the viewport height so the whole
-   board fits one screen on laptops too. */
+/* Vertical rhythm scales with the viewport height so the whole board fits
+   one screen on laptops too. */
 .ode-chip {
   position: relative;
   z-index: 2;
@@ -108,7 +102,7 @@ const reasons = [
 
 .vp-doc .ode-chip__title {
   font-family: var(--vp-font-family-heading);
-  font-size: min(clamp(48px, 8.5vh, 80px), 15vw);
+  font-size: clamp(3rem, min(2rem + 4vw, 8.5vh), 5rem);
   line-height: 1;
   font-weight: 700;
   letter-spacing: 0;
@@ -129,7 +123,7 @@ const reasons = [
 }
 
 .ode-chip__lede {
-  font-size: clamp(18px, 2.6vh, 22px);
+  font-size: clamp(1.125rem, 2.6vh, 1.375rem);
   font-weight: 600;
   line-height: 1.3;
   margin: 0 0 8px;
@@ -137,9 +131,9 @@ const reasons = [
 }
 
 .ode-chip__tagline {
-  font-size: 15.5px;
+  font-size: 0.96875rem;
   line-height: 1.55;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--ode-c-board-text-2);
   margin: 0 0 clamp(18px, 3vh, 28px);
 }
 
@@ -154,7 +148,7 @@ const reasons = [
   align-items: center;
   padding: 11px 22px;
   border-radius: 999px;
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 600;
   text-decoration: none;
   transition: transform 0.2s, background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
@@ -162,11 +156,6 @@ const reasons = [
 
 .ode-btn:hover {
   transform: translateY(-1px);
-}
-
-.ode-btn:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 3px;
 }
 
 .ode-btn--gold {
@@ -200,8 +189,7 @@ const reasons = [
   .ode-btn:hover { transform: none; }
 }
 
-/* Beside the modules the chip is stretched to their column's height: the
-   intro stays at the top and Why ODE4EC sits at the bottom. */
+/* Stretched to the module column's height: Why ODE4EC sits at the bottom. */
 @media (min-width: 1152px) and (min-height: 600px) {
   .ode-chip {
     display: flex;
@@ -217,24 +205,14 @@ const reasons = [
   }
 }
 
-/* Why ODE4EC: an inset section of the same chip, under an etched line */
 .ode-chip__why {
   margin-top: clamp(22px, 4vh, 40px);
   padding-top: clamp(18px, 3vh, 28px);
-  border-top: 1px solid rgba(140, 175, 240, 0.2);
+  border-top: 1px solid var(--ode-c-board-edge);
 }
 
 .vp-doc .ode-chip__why-heading {
-  margin: 0 0 clamp(12px, 2vh, 18px);
-  padding: 0;
-  border: none;
-  font-family: var(--vp-font-family-base);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  line-height: 1.4;
-  color: var(--ode-c-trace-blue);
+  margin-bottom: clamp(12px, 2vh, 18px);
 }
 
 .ode-chip__reasons {
@@ -245,11 +223,6 @@ const reasons = [
   list-style: none;
 }
 
-/* three columns where the chip is wide enough, one row each otherwise */
-@media (min-width: 640px) {
-  .ode-chip__reasons { grid-template-columns: repeat(3, 1fr); gap: 20px; }
-}
-
 .ode-chip__reason {
   display: flex;
   gap: 12px;
@@ -257,6 +230,7 @@ const reasons = [
 }
 
 @media (min-width: 640px) {
+  .ode-chip__reasons { grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .ode-chip__reason { flex-direction: column; gap: 8px; }
 }
 
@@ -269,7 +243,7 @@ const reasons = [
   margin: 0 0 4px;
   padding: 0;
   border: none;
-  font-size: 15.5px;
+  font-size: 0.96875rem;
   line-height: 1.3;
   letter-spacing: 0;
   color: #fff;
@@ -277,8 +251,8 @@ const reasons = [
 
 .ode-chip__reason-text {
   margin: 0;
-  font-size: 13.5px;
+  font-size: 0.84375rem;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--ode-c-board-text-2);
 }
 </style>

@@ -5,6 +5,9 @@ import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue'
  * by exactly one item (its width plus the track gap) and reports whether the
  * track sits at either end, so the buttons can disable themselves.
  */
+/** scroll positions this close to an end count as at the end, px */
+const EDGE_PX = 2
+
 export function useCarousel(track: Ref<HTMLElement | null>) {
   const atStart = ref(true)
   const atEnd = ref(true)
@@ -12,8 +15,8 @@ export function useCarousel(track: Ref<HTMLElement | null>) {
   function update() {
     const el = track.value
     if (!el) return
-    atStart.value = el.scrollLeft <= 2
-    atEnd.value = el.scrollLeft + el.clientWidth >= el.scrollWidth - 2
+    atStart.value = el.scrollLeft <= EDGE_PX
+    atEnd.value = el.scrollLeft + el.clientWidth >= el.scrollWidth - EDGE_PX
   }
 
   function step(dir: -1 | 1) {

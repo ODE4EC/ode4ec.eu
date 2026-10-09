@@ -9,7 +9,7 @@ const projects = [
 <template>
   <section class="ode-module" aria-labelledby="ode-mod-projects">
     <div class="ode-module__head">
-      <h2 id="ode-mod-projects" class="ode-module__title">Projects</h2>
+      <h2 id="ode-mod-projects" class="ode-eyebrow">Projects</h2>
       <a class="ode-module__all" href="/projects/">All projects →</a>
     </div>
     <ul class="ode-projects">
@@ -44,6 +44,7 @@ const projects = [
   display: flex;
   align-items: center;
   gap: 14px;
+  min-height: 44px;
   padding: clamp(5px, 1vh, 10px) 12px;
   margin: 0 -12px;
   border-radius: 10px;
@@ -57,7 +58,6 @@ const projects = [
 }
 
 .ode-projects__row:focus-visible {
-  outline: 2px solid #fff;
   outline-offset: 0;
 }
 
@@ -68,7 +68,7 @@ const projects = [
   padding: 5px 0;
   border-radius: 6px;
   text-align: center;
-  font-size: 12.5px;
+  font-size: 0.78125rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--ode-c-board-deep);
@@ -84,14 +84,14 @@ const projects = [
 
 .ode-projects__name {
   font-weight: 600;
-  font-size: 15.5px;
+  font-size: 0.96875rem;
   line-height: 1.35;
 }
 
 .ode-projects__focus {
-  font-size: 13.5px;
+  font-size: 0.84375rem;
   line-height: 1.4;
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--ode-c-board-text-3);
 }
 
 .ode-projects__arrow {

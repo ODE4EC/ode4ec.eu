@@ -5,11 +5,9 @@
  *
  * Packets and pin glows are small HTML elements in a layer over the circuit
  * SVG (HomeBoard.vue renders them as [data-packet] / [data-pin-glow]). They
- * only ever animate `transform` and `opacity`, which the browser composites
- * without repainting the board; re-stroking the traces every frame (the old
- * stroke-dashoffset approach) kept the CPU busy for as long as the page was
- * open. Between packets nothing runs at all: the scheduler is a plain timer,
- * not a per-frame loop.
+ * only animate `transform` and `opacity`, so the board never repaints, and
+ * between packets nothing runs: the scheduler is a plain timer, not a
+ * per-frame loop.
  */
 
 export interface PacketTraceMeta {

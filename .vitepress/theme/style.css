@@ -11,11 +11,6 @@
  */
 
 :root {
-  --vp-c-default-1: var(--vp-c-gray-1);
-  --vp-c-default-2: var(--vp-c-gray-2);
-  --vp-c-default-3: var(--vp-c-gray-3);
-  --vp-c-default-soft: var(--vp-c-gray-soft);
-
   /* ODE4EC brand blue, taken directly from the logo (#004494). */
   --vp-c-brand-1: #004494;
   --vp-c-brand-2: #0a5abf;
@@ -57,6 +52,13 @@
   --ode-c-board-land: #123564;
   --ode-c-board-deep: #00122a;
 
+  /* Edges, wells and text on the always-dark board. */
+  --ode-c-board-edge: rgba(140, 175, 240, 0.22);
+  --ode-c-board-well: rgba(0, 18, 42, 0.45);
+  --ode-c-board-text-2: rgba(255, 255, 255, 0.7);
+  --ode-c-board-text-3: rgba(255, 255, 255, 0.65);
+  --ode-c-board-hover-edge: rgba(255, 214, 23, 0.45);
+
   /* The plate partner logos sit on (see Card.vue): the light-mode card gray in
      both themes, so in light mode only its border shows. */
   --ode-c-logo-plate: #f6f6f7;
@@ -65,20 +67,6 @@
   /* Soft blue-tinted panel background for subtle band separation on inner pages. */
   --ode-c-bg-tint: #f2f6fb;
 
-  --vp-c-tip-1: var(--vp-c-brand-1);
-  --vp-c-tip-2: var(--vp-c-brand-2);
-  --vp-c-tip-3: var(--vp-c-brand-3);
-  --vp-c-tip-soft: var(--vp-c-brand-soft);
-
-  --vp-c-warning-1: var(--vp-c-yellow-1);
-  --vp-c-warning-2: var(--vp-c-yellow-2);
-  --vp-c-warning-3: var(--vp-c-yellow-3);
-  --vp-c-warning-soft: var(--vp-c-yellow-soft);
-
-  --vp-c-danger-1: var(--vp-c-red-1);
-  --vp-c-danger-2: var(--vp-c-red-2);
-  --vp-c-danger-3: var(--vp-c-red-3);
-  --vp-c-danger-soft: var(--vp-c-red-soft);
 }
 
 .dark {
@@ -90,33 +78,6 @@
 
   --ode-c-bg-tint: #131b2c;
   --ode-c-logo-plate-border: transparent;
-}
-
-/**
- * Component: Button
- * -------------------------------------------------------------------------- */
-
-:root {
-  --vp-button-brand-border: transparent;
-  --vp-button-brand-text: var(--vp-c-white);
-  --vp-button-brand-bg: var(--vp-c-brand-3);
-  --vp-button-brand-hover-border: transparent;
-  --vp-button-brand-hover-text: var(--vp-c-white);
-  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
-  --vp-button-brand-active-border: transparent;
-  --vp-button-brand-active-text: var(--vp-c-white);
-  --vp-button-brand-active-bg: var(--vp-c-brand-1);
-}
-
-/**
- * Component: Custom Block
- * -------------------------------------------------------------------------- */
-
-:root {
-  --vp-custom-block-tip-border: transparent;
-  --vp-custom-block-tip-text: var(--vp-c-text-1);
-  --vp-custom-block-tip-bg: var(--vp-c-brand-soft);
-  --vp-custom-block-tip-code-bg: var(--vp-c-brand-soft);
 }
 
 /**
@@ -145,10 +106,6 @@ h3,
 
 .DocSearch {
   --docsearch-primary-color: var(--vp-c-brand-1) !important;
-}
-
-.VPHome {
-  margin-bottom: 0 !important;
 }
 
 .VPDoc .content {
@@ -235,8 +192,8 @@ h3,
   background-color: rgba(255, 255, 255, 0.88) !important;
 }
 
-/* The homepage is one board (HomeBoard.vue): no bottom margin under it, and
-   nothing may widen the page sideways. */
+/* The homepage is one board (HomeBoard.vue): no margin under it, and nothing
+   may widen the page sideways. */
 .Layout.ode-home .VPHome {
   margin-bottom: 0;
 }
@@ -373,7 +330,7 @@ h3,
   padding: clamp(12px, 2vh, 20px) 20px;
   color: #fff;
   background: linear-gradient(170deg, var(--ode-c-panel-top) 0%, var(--ode-c-panel-deep) 100%);
-  border: 1px solid rgba(140, 175, 240, 0.22);
+  border: 1px solid var(--ode-c-board-edge);
   border-top-color: rgba(255, 255, 255, 0.16);
   border-radius: 14px;
   box-shadow:
@@ -385,18 +342,20 @@ h3,
 
 .ode-module__head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 8px 12px;
   margin-bottom: clamp(6px, 1.2vh, 12px);
 }
 
-/* doubled class: must outrank VitePress's `.vp-doc h2` */
-.ode-module__title.ode-module__title {
+/* Small uppercase label used for every heading on the board. Doubled class:
+   must outrank VitePress's `.vp-doc h2`. */
+.ode-eyebrow.ode-eyebrow {
   margin: 0;
   padding: 0;
   border: none;
   font-family: var(--vp-font-family-base);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   line-height: 1.4;
@@ -423,6 +382,13 @@ h3,
   transition: border-color 0.2s, color 0.2s;
 }
 
+@media (pointer: coarse) {
+  .ode-module__nav button {
+    width: 40px;
+    height: 40px;
+  }
+}
+
 .ode-module__nav button:hover:not(:disabled) {
   border-color: var(--ode-c-accent-1);
   color: var(--ode-c-accent-1);
@@ -433,16 +399,16 @@ h3,
   cursor: default;
 }
 
-.ode-module__nav button:focus-visible,
-.ode-module__all:focus-visible {
+/* One focus ring for every control on the dark board. */
+.ode-board :is(a, button):focus-visible {
   outline: 2px solid #fff;
   outline-offset: 2px;
 }
 
 .vp-doc .ode-module__all {
-  font-size: 13.5px;
+  font-size: 0.84375rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--ode-c-board-text-2);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -451,7 +417,7 @@ h3,
   margin-left: 4px;
 }
 
-.ode-module__head > .ode-module__title + .ode-module__all {
+.ode-module__head > .ode-eyebrow + .ode-module__all {
   margin-left: auto;
 }
 
@@ -488,8 +454,24 @@ h3,
 
 .vp-doc .ode-module__empty {
   margin: 0;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.875rem;
+  color: var(--ode-c-board-text-3);
+}
+
+/* A linked item inside a module: a dark well that lights up gold on hover. */
+.vp-doc .ode-module__card {
+  display: flex;
+  height: 100%;
+  border-radius: 10px;
+  background: var(--ode-c-board-well);
+  border: 1px solid rgba(140, 175, 240, 0.16);
+  color: #fff;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+
+.vp-doc .ode-module__card:hover {
+  border-color: var(--ode-c-board-hover-edge);
 }
 
 /* Tables: tinted header row instead of the default plain one. */

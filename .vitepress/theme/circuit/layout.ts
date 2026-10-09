@@ -85,9 +85,6 @@ const CORNER_INSET = 36
 /** how far traces run past the board edge, so their ends are never visible */
 const BLEED = 24
 
-// ---------------------------------------------------------------------------
-// geometry
-
 function sub(a: Pt, b: Pt): Pt {
   return { x: a.x - b.x, y: a.y - b.y }
 }
@@ -154,9 +151,6 @@ function clean(pts: Pt[]) {
   return pts.filter((p, i) => i === 0 || Math.hypot(p.x - pts[i - 1].x, p.y - pts[i - 1].y) > 0.5)
 }
 
-// ---------------------------------------------------------------------------
-// pins
-
 /**
  * Pins along one edge, `pitch` apart and clear of the corners. They are
  * centred on the edge unless `grid` is given: then they sit on the board-wide
@@ -199,9 +193,6 @@ function pinsOnSide(chip: Rect, side: Side, pitch: number, prefix = '', group: P
   }
   return pins
 }
-
-// ---------------------------------------------------------------------------
-// routing
 
 interface BusSpec {
   id: string

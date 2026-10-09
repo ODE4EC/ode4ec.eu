@@ -1,21 +1,15 @@
 <script setup lang="ts">
-// The homepage "board": one dark PCB holding the main chip (HomeChip) and,
-// beside it, the projects / events / news modules, with a single circuit
-// overlay drawn in real pixels behind them. The overlay measures the chip and
-// the modules, so pins sit exactly on their edges and every trace lands on a
-// pin at any viewport size: the chip's outputs cross to each module, other
-// traces come in from the board edges. On wide, tall-enough screens it all
-// fits one screen; otherwise the cards stack in one column and the page
-// scrolls. Signal packets travel along the traces (circuit/packets.ts) while
-// the board is visible and someone is using the page.
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
+// The homepage board: the chip and the modules beside it, over one circuit
+// drawn in real pixels from their measured positions, so every trace lands on
+// a pin at any viewport size.
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
 import { useData } from 'vitepress'
 import HomeChip from './HomeChip.vue'
 import HomeProjects from './HomeProjects.vue'
 import HomeEvents from './HomeEvents.vue'
 import HomeNews from './HomeNews.vue'
-import { buildCircuit, type Circuit, type Rect } from './circuit/layout'
-import { PacketEngine, type FadeBand } from './circuit/packets'
+import { buildCircuit, type Circuit, type Rect, type Trace } from './circuit/layout'
+import { usePacketMotion } from './circuit/usePacketMotion'
 
 const { theme } = useData()
 const footerMessage = computed(() => theme.value.footer?.message as string | undefined)
@@ -28,13 +22,20 @@ const TONES = ['deep', 'blue', 'gold'] as const
 // filled in after mount.
 const circuit = shallowRef<Circuit | null>(null)
 
+const tracesByTone = computed(() => {
+  const groups: Record<string, Trace[]> = {}
+  for (const t of circuit.value?.traces ?? []) (groups[t.tone] ??= []).push(t)
+  return groups
+})
+
+const { mounted, reducedMotion, userPaused, toggleMotion, burst } = usePacketMotion(root, packetLayer, circuit)
+
 function measure() {
   const el = root.value
-  if (!el) return
-  const chipEl = el.querySelector('.ode-chip')
+  const chipEl = el?.querySelector('.ode-chip')
+  if (!el || !chipEl) return
   const moduleEls = [...el.querySelectorAll('.ode-module')]
   const footEl = el.querySelector('.ode-board__foot')
-  if (!chipEl) return
 
   const box = el.getBoundingClientRect()
   const rel = (r: DOMRect): Rect => ({ x: r.left - box.left, y: r.top - box.top, w: r.width, h: r.height })
@@ -53,128 +54,27 @@ function measure() {
 }
 
 let frame = 0
+let unmounted = false
 function scheduleMeasure() {
+  if (unmounted) return
   cancelAnimationFrame(frame)
   frame = requestAnimationFrame(measure)
 }
 
-// --- signal packets ---------------------------------------------------------
-
-const MOTION_KEY = 'ode-board-motion'
-
-const engine = new PacketEngine()
-const mounted = ref(false)
-const reducedMotion = ref(false)
-const userPaused = ref(false)
-const inView = ref(true)
-const pageVisible = ref(true)
-
-const running = computed(
-  () => mounted.value && !reducedMotion.value && !userPaused.value && inView.value && pageVisible.value,
-)
-
-watch(running, (on) => (on ? engine.start() : engine.stop()))
-
-/** At 960px+ the traces fade out under the transparent navbar (see the
- *  .ode-board__wires mask); packets fade over the same band. */
-function navFade(): FadeBand {
-  if (!window.matchMedia('(min-width: 960px)').matches) return null
-  const nav = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--vp-nav-height')) || 64
-  return [40, nav + 56]
-}
-
-// rebind the engine to the freshly rendered packet slots after every layout
-watch(circuit, async (c) => {
-  await nextTick()
-  if (!c || !packetLayer.value) return
-  engine.attach(
-    packetLayer.value,
-    c.traces.map((t) => ({ id: t.id, pts: t.pts, len: t.len, flow: t.flow, pinId: t.pinId, endPinId: t.endPinId })),
-    navFade(),
-  )
-  if (running.value) engine.start()
-})
-
-// Ambient packets stop once nobody has touched the page for a while, so an
-// open but unattended tab goes fully still; any input brings them back.
-const IDLE_MS = 30_000
-const ACTIVITY_EVENTS = ['pointermove', 'pointerdown', 'wheel', 'scroll', 'keydown', 'touchstart'] as const
-const ambient = ref(true)
-let lastActive = 0
-let idleTimer: ReturnType<typeof setTimeout> | 0 = 0
-
-watch(ambient, (on) => engine.setAmbient(on))
-
-function checkIdle() {
-  const left = lastActive + IDLE_MS - performance.now()
-  if (left > 0) {
-    idleTimer = setTimeout(checkIdle, left)
-  } else {
-    idleTimer = 0
-    ambient.value = false
-  }
-}
-
-function onActivity() {
-  lastActive = performance.now()
-  ambient.value = true
-  if (!idleTimer) idleTimer = setTimeout(checkIdle, IDLE_MS)
-}
-
-function toggleMotion() {
-  userPaused.value = !userPaused.value
-  try {
-    localStorage.setItem(MOTION_KEY, userPaused.value ? 'paused' : 'playing')
-  } catch {}
-}
-
-let lastBurst = 0
-function burst() {
-  const now = performance.now()
-  if (now - lastBurst < 1200) return
-  lastBurst = now
-  engine.burst(circuit.value?.traces.filter((t) => t.module === 0).map((t) => t.id) ?? [])
-}
-
 let resizeObserver: ResizeObserver | null = null
-let intersectionObserver: IntersectionObserver | null = null
-let motionQuery: MediaQueryList | null = null
-
-const onMotionChange = () => (reducedMotion.value = !!motionQuery?.matches)
-const onVisibilityChange = () => (pageVisible.value = document.visibilityState === 'visible')
 
 onMounted(() => {
-  try {
-    userPaused.value = localStorage.getItem(MOTION_KEY) === 'paused'
-  } catch {}
-  motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-  onMotionChange()
-  motionQuery.addEventListener('change', onMotionChange)
-  document.addEventListener('visibilitychange', onVisibilityChange)
-  onVisibilityChange()
-  intersectionObserver = new IntersectionObserver(([entry]) => (inView.value = entry.isIntersecting))
-  intersectionObserver.observe(root.value!)
-  for (const e of ACTIVITY_EVENTS) window.addEventListener(e, onActivity, { passive: true })
-  onActivity()
-  mounted.value = true
-
   measure()
   resizeObserver = new ResizeObserver(scheduleMeasure)
   resizeObserver.observe(root.value!)
   for (const el of root.value!.querySelectorAll('.ode-chip, .ode-module')) resizeObserver.observe(el)
-  // web fonts change the cards' sizes once they load
   document.fonts?.ready.then(scheduleMeasure)
 })
 
 onBeforeUnmount(() => {
+  unmounted = true
   cancelAnimationFrame(frame)
   resizeObserver?.disconnect()
-  intersectionObserver?.disconnect()
-  motionQuery?.removeEventListener('change', onMotionChange)
-  document.removeEventListener('visibilitychange', onVisibilityChange)
-  for (const e of ACTIVITY_EVENTS) window.removeEventListener(e, onActivity)
-  if (idleTimer) clearTimeout(idleTimer)
-  engine.destroy()
 })
 </script>
 
@@ -191,11 +91,10 @@ onBeforeUnmount(() => {
       aria-hidden="true"
       focusable="false"
     >
-      <!-- grouped by tone so that traces sharing a route draw as one
-           (opacity is applied per group, not per path) -->
+      <!-- one group per tone, so overlapping traces of a tone share one opacity -->
       <g class="ode-board__traces">
         <g v-for="tone in TONES" :key="tone" :class="`tone--${tone}`">
-          <path v-for="t in circuit.traces.filter((x) => x.tone === tone)" :key="t.id" :d="t.d" />
+          <path v-for="t in tracesByTone[tone]" :key="t.id" :d="t.d" />
         </g>
       </g>
       <g class="ode-board__vias">
@@ -227,8 +126,7 @@ onBeforeUnmount(() => {
           :style="{ left: `${p.x - 2.5}px`, top: `${p.y - 2.5}px`, width: `${p.w + 5}px`, height: `${p.h + 5}px` }"
         />
       </template>
-      <!-- packet slots: hidden until the engine sends one down the trace;
-           the chip's outputs get extra slots for the CTA burst -->
+      <!-- the chip's outputs get extra slots for the CTA burst -->
       <template v-for="t in circuit.traces" :key="`p-${t.id}`">
         <span
           v-for="k in t.flow === 'out' ? 3 : 1"
@@ -256,7 +154,7 @@ onBeforeUnmount(() => {
         class="ode-board__motion"
         type="button"
         :aria-pressed="userPaused"
-        :title="userPaused ? 'Play background animation' : 'Pause background animation'"
+        title="Pause background animation"
         @click="toggleMotion"
       >
         <span class="visually-hidden">Pause background animation</span>
@@ -327,15 +225,11 @@ onBeforeUnmount(() => {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 40px 24px 32px;
-}
-
-@media (min-width: 640px) {
-  .ode-board__grid { padding: 48px 48px 32px; }
+  padding: 40px clamp(24px, 5vw + 8px, 64px) 32px;
 }
 
 @media (min-width: 960px) {
-  .ode-board__grid { padding: calc(var(--vp-nav-height) + 48px) 64px 32px; }
+  .ode-board__grid { padding-top: calc(var(--vp-nav-height) + 48px); }
 }
 
 .ode-board__side {
@@ -361,7 +255,6 @@ onBeforeUnmount(() => {
   }
 }
 
-/* Behind the cards (z-index 2), above the board's background. */
 .ode-board__wires {
   position: absolute;
   top: 0;
@@ -372,7 +265,7 @@ onBeforeUnmount(() => {
 }
 
 /* At 960px+ the transparent navbar sits over the board: fade the traces out
-   underneath it so they never run through the nav links. */
+   underneath it. Keep in sync with NAV_FADE_* in circuit/usePacketMotion.ts. */
 @media (min-width: 960px) {
   .ode-board__wires {
     mask-image: linear-gradient(180deg, transparent 0, transparent 40px, #000 calc(var(--vp-nav-height) + 56px));
@@ -416,7 +309,6 @@ onBeforeUnmount(() => {
   fill: var(--ode-c-accent-1);
 }
 
-/* Packets and pin glows: HTML over the SVG, in the board's pixel space. */
 .ode-board__packets {
   position: absolute;
   inset: 0;
@@ -458,7 +350,6 @@ onBeforeUnmount(() => {
 
 .ode-packet.tone--gold { --packet: var(--ode-c-pin-hot); }
 
-/* site credit (the footer is off on this page) and the motion toggle */
 .ode-board__foot {
   position: relative;
   z-index: 2;
@@ -469,20 +360,12 @@ onBeforeUnmount(() => {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 24px 10px;
-}
-
-@media (min-width: 640px) {
-  .ode-board__foot { padding: 0 48px 10px; }
-}
-
-@media (min-width: 960px) {
-  .ode-board__foot { padding: 0 64px 10px; }
+  padding: 0 clamp(24px, 5vw + 8px, 64px) 10px;
 }
 
 .vp-doc .ode-board__credit {
   margin: 0;
-  font-size: 11.5px;
+  font-size: 0.71875rem;
   line-height: 1.5;
   color: rgba(255, 255, 255, 0.5);
 }
@@ -517,8 +400,10 @@ onBeforeUnmount(() => {
   border-color: rgba(255, 255, 255, 0.7);
 }
 
-.ode-board__motion:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 3px;
+@media (pointer: coarse) {
+  .ode-board__motion {
+    width: 40px;
+    height: 40px;
+  }
 }
 </style>
