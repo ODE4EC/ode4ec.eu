@@ -1,3 +1,4 @@
+import { existsSync } from 'fs'
 import { createContentLoader } from 'vitepress'
 
 export interface Post {
@@ -21,8 +22,17 @@ export default createContentLoader('news/posts/*.md', {
         ? new Date(page.frontmatter.date).toISOString().slice(0, 10)
         : '',
         tags: page.frontmatter.tags ?? [],
-        image: page.frontmatter.image,
+        image: checkImage(page.frontmatter.image, page.url),
       }))
       .sort((a, b) => (a.date > b.date ? -1 : 1))
   }
 })
+
+// `image` must be a site-root path to a file in public/, e.g. /img/news/foo.png.
+// Anything else would render a broken thumbnail on the homepage, so warn at build.
+function checkImage(image: string | undefined, url: string) {
+  if (image && (!image.startsWith('/') || !existsSync(`public${image}`))) {
+    console.warn(`[news] ${url}: image "${image}" is not a file under public/ (use e.g. /img/news/foo.png)`)
+  }
+  return image
+}
