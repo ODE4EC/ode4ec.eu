@@ -27,7 +27,7 @@ const events = [
 
 <style scoped>
 .ode-events :deep(.ode-module__track > li) {
-  flex: 0 0 100%;
+  flex: 0 0 88%;
 }
 
 .ode-events__card {
