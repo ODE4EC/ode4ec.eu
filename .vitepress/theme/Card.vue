@@ -1,7 +1,4 @@
 <script setup lang="ts">
-// Generic reusable card. Reuses VitePress's built-in feature-card styling
-// (--vp-c-* variables → free dark mode + brand hover) and adds a default
-// slot so any markdown can be placed inside it.
 defineProps<{
   icon?: string
   logo?: string
@@ -55,6 +52,14 @@ defineProps<{
 
 <style scoped>
 .Card {
+  --card-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 1px 2px rgba(2, 8, 20, 0.05),
+    0 8px 20px rgba(2, 8, 20, 0.06);
+  --card-shadow-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 4px 8px rgba(2, 8, 20, 0.07),
+    0 16px 36px rgba(2, 8, 20, 0.12);
   display: block;
   border: 1px solid var(--vp-c-divider);
   border-radius: 12px;
@@ -62,18 +67,19 @@ defineProps<{
   background-color: var(--vp-c-bg-soft);
   text-decoration: none;
   color: inherit;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 1px 2px rgba(2, 8, 20, 0.05),
-    0 8px 20px rgba(2, 8, 20, 0.06);
+  box-shadow: var(--card-shadow);
   transition: border-color 0.25s, background-color 0.25s, transform 0.25s, box-shadow 0.25s;
 }
 
 .dark .Card {
-  box-shadow:
+  --card-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
     0 2px 4px rgba(0, 0, 0, 0.25),
     0 10px 24px rgba(0, 0, 0, 0.3);
+  --card-shadow-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 16px 36px rgba(0, 0, 0, 0.4);
 }
 
 .Card.link:focus-visible {
@@ -81,19 +87,16 @@ defineProps<{
   outline-offset: 3px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .Card.link:hover {
-    transform: none !important;
-  }
-}
-
 .Card.link:hover {
   border-color: var(--vp-c-brand-1);
   transform: translateY(-3px);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 4px 8px rgba(2, 8, 20, 0.07),
-    0 16px 36px rgba(2, 8, 20, 0.12);
+  box-shadow: var(--card-shadow-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .Card.link:hover {
+    transform: none;
+  }
 }
 
 .box {
@@ -171,7 +174,6 @@ defineProps<{
   color: var(--vp-c-text-2);
 }
 
-/* Keep nested markdown tidy inside the card */
 .details :deep(> :first-child) {
   margin-top: 0;
 }
