@@ -80,8 +80,6 @@ onBeforeUnmount(() => {
 
 <template>
   <div ref="root" class="ode-board">
-    <div class="ode-board__halo" aria-hidden="true" />
-
     <svg
       v-if="circuit"
       class="ode-board__wires"
@@ -181,9 +179,8 @@ onBeforeUnmount(() => {
   min-height: 100svh;
   margin-left: var(--vp-offset, calc(50% - 50vw));
   margin-right: var(--vp-offset, calc(50% - 50vw));
-  background: linear-gradient(180deg, var(--ode-c-board-top) 0%, var(--ode-c-board-mid) 55%, var(--ode-c-board) 100%);
-  color: #fff;
-  /* the halo is larger than the board: never let it add scroll */
+  background: var(--vp-c-bg);
+  color: var(--board-text-1);
   overflow: clip;
 }
 
@@ -193,21 +190,7 @@ onBeforeUnmount(() => {
   }
 }
 
-/* a soft glow behind the cards; fades in once, then holds still */
-.ode-board__halo {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: min(1400px, 150vw);
-  aspect-ratio: 1.7;
-  translate: -50% -50%;
-  background: radial-gradient(closest-side, rgba(47, 111, 214, 0.36), rgba(47, 111, 214, 0.1) 60%, transparent);
-  pointer-events: none;
-  animation: ode-fade-in 1.6s ease-out both;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .ode-board__halo,
   .ode-board__wires,
   .ode-board__packets {
     animation: none;
@@ -288,25 +271,25 @@ onBeforeUnmount(() => {
   .ode-board__traces path { stroke-width: 2; }
 }
 
-.ode-board__traces .tone--gold { stroke: var(--ode-c-accent-1); opacity: 0.72; }
-.ode-board__traces .tone--blue { stroke: var(--ode-c-trace-blue); opacity: 0.5; }
-.ode-board__traces .tone--deep { stroke: var(--ode-c-trace-deep); opacity: 0.7; }
+.ode-board__traces .tone--gold { stroke: var(--board-trace-gold); opacity: calc(var(--board-trace-opacity) + 0.12); }
+.ode-board__traces .tone--blue { stroke: var(--board-trace-blue); opacity: calc(var(--board-trace-opacity) - 0.1); }
+.ode-board__traces .tone--deep { stroke: var(--board-trace-deep); opacity: calc(var(--board-trace-opacity) + 0.1); }
 
 .ode-board__vias circle {
-  fill: var(--ode-c-board);
+  fill: var(--vp-c-bg);
   stroke-width: 2;
 }
 
-.ode-board__vias .tone--gold { stroke: var(--ode-c-accent-1); }
-.ode-board__vias .tone--blue { stroke: var(--ode-c-trace-blue); }
-.ode-board__vias .tone--deep { stroke: var(--ode-c-trace-deep); }
+.ode-board__vias .tone--gold { stroke: var(--board-trace-gold); }
+.ode-board__vias .tone--blue { stroke: var(--board-trace-blue); }
+.ode-board__vias .tone--deep { stroke: var(--board-trace-deep); }
 
 .ode-pin {
-  fill: var(--ode-c-pin-dim);
+  fill: var(--board-pin-dim);
 }
 
 .ode-pin--wired {
-  fill: var(--ode-c-accent-1);
+  fill: var(--board-pin-wired);
 }
 
 .ode-board__packets {
@@ -343,7 +326,7 @@ onBeforeUnmount(() => {
   height: 4px;
   border-radius: 2px;
   visibility: hidden;
-  --packet: var(--ode-c-packet-blue);
+  --packet: var(--board-packet-blue);
   background: linear-gradient(90deg, transparent, var(--packet) 60%);
   box-shadow: 4px 0 8px 1px color-mix(in srgb, var(--packet) 30%, transparent);
 }
@@ -367,17 +350,17 @@ onBeforeUnmount(() => {
   margin: 0;
   font-size: 0.71875rem;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--board-text-2);
 }
 
 .vp-doc .ode-board__credit :deep(a) {
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--board-text-2);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .vp-doc .ode-board__credit :deep(a:hover) {
-  color: var(--ode-c-accent-1);
+  color: var(--board-accent);
 }
 
 .ode-board__motion {
@@ -387,17 +370,17 @@ onBeforeUnmount(() => {
   place-items: center;
   width: 28px;
   height: 28px;
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border: 1.5px solid var(--board-control-edge);
   border-radius: 50%;
-  background: rgba(0, 18, 42, 0.5);
-  color: rgba(255, 255, 255, 0.75);
+  background: var(--board-control-bg);
+  color: var(--board-text-2);
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s;
 }
 
 .ode-board__motion:hover {
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.7);
+  color: var(--board-text-1);
+  border-color: var(--board-accent);
 }
 
 @media (pointer: coarse) {

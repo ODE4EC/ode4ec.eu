@@ -48,13 +48,13 @@ const projects = [
   padding: clamp(5px, 1vh, 10px) 12px;
   margin: 0 -12px;
   border-radius: 10px;
-  color: #fff;
+  color: var(--board-text-1);
   text-decoration: none;
   transition: background-color 0.2s;
 }
 
 .ode-projects__row:hover {
-  background: rgba(127, 176, 255, 0.08);
+  background: var(--board-row-hover);
 }
 
 .ode-projects__row:focus-visible {
@@ -91,17 +91,17 @@ const projects = [
 .ode-projects__focus {
   font-size: 0.84375rem;
   line-height: 1.4;
-  color: var(--ode-c-board-text-3);
+  color: var(--board-text-2);
 }
 
 .ode-projects__arrow {
   margin-left: auto;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--board-text-2);
   transition: color 0.2s, transform 0.2s;
 }
 
 .ode-projects__row:hover .ode-projects__arrow {
-  color: var(--ode-c-accent-1);
+  color: var(--board-accent);
   transform: translateX(3px);
 }
 

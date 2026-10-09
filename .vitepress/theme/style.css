@@ -37,27 +37,15 @@
   /* Signal packets travelling along blue traces. */
   --ode-c-packet-blue: #d6e6ff;
 
-  /* The dark "board" background the hero and the first homepage section share.
-     Always dark, independent of the color scheme. */
-  --ode-c-board: #001f47;
-  --ode-c-board-top: #060f22;
-  --ode-c-board-mid: #092a66;
-
   /* Solid navy panels sitting on a board (the chip card, feature cards). */
   --ode-c-panel-top: #102c5c;
   --ode-c-panel: #0a2148;
   --ode-c-panel-deep: #081b3c;
 
-  /* Land on the partners map. */
+  /* The partners map: sea, land and its darkest edge. */
+  --ode-c-board: #001f47;
   --ode-c-board-land: #123564;
   --ode-c-board-deep: #00122a;
-
-  /* Edges, wells and text on the always-dark board. */
-  --ode-c-board-edge: rgba(140, 175, 240, 0.22);
-  --ode-c-board-well: rgba(0, 18, 42, 0.45);
-  --ode-c-board-text-2: rgba(255, 255, 255, 0.7);
-  --ode-c-board-text-3: rgba(255, 255, 255, 0.65);
-  --ode-c-board-hover-edge: rgba(255, 214, 23, 0.45);
 
   /* The plate partner logos sit on (see Card.vue): the light-mode card gray in
      both themes, so in light mode only its border shows. */
@@ -138,58 +126,14 @@ h3,
   background: var(--ode-c-accent-1);
 }
 
-/**
- * Component: Nav-over-hero
- *
- * VitePress already renders the navbar transparent when `layout: home` and the
- * page is scrolled to the very top (`.VPNavBar.home.top`, see VPNavBar.vue).
- * But its text colors are still the theme-reactive `--vp-c-text-1`, which
- * would be unreadable in light mode since our homepage hero is always dark
- * regardless of the site's light/dark toggle. Force light text only for that
- * one state; every other page/scroll position keeps normal theme colors.
- *
- * Note: plain links are `.VPNavBarMenuLink` but dropdowns (e.g. "Projects")
- * are `.VPFlyout` buttons, and the mobile menu is `.VPNavBarHamburger` —
- * all three need the override or they stay grey over the dark hero.
- *
- * Below 960px the navbar is static, sitting above the hero rather than over
- * it, so "transparent" would show the page background (white in light mode)
- * behind the light text. There it takes the hero's top color instead.
- * -------------------------------------------------------------------------- */
-
+/* VitePress makes the navbar transparent at the top of the homepage; keep its
+   inner layers transparent too so the board shows through. */
 .VPNavBar.home.top,
 .VPNavBar.home.top .wrapper,
 .VPNavBar.home.top .content-body,
 .VPNavBar.home.top .divider,
 .VPNavBar.home.top .divider-line {
   background: transparent !important;
-}
-
-@media (max-width: 959.98px) {
-  .VPNavBar.home.top {
-    background: var(--ode-c-board-top) !important;
-  }
-}
-
-.VPNavBar.home.top .VPNavBarMenuLink,
-.VPNavBar.home.top .VPFlyout .button .text,
-.VPNavBar.home.top .VPFlyout .button .vpi-chevron-down,
-.VPNavBar.home.top .title,
-.VPNavBar.home.top .VPNavBarSocialLinks a {
-  color: rgba(255, 255, 255, 0.88) !important;
-}
-
-.VPNavBar.home.top .VPNavBarMenuLink.active,
-.VPNavBar.home.top .VPNavBarMenuLink:hover,
-.VPNavBar.home.top .VPFlyout:hover .button .text,
-.VPNavBar.home.top .VPFlyout .button:hover .text {
-  color: var(--ode-c-accent-1) !important;
-}
-
-.VPNavBar.home.top .VPNavBarHamburger .top,
-.VPNavBar.home.top .VPNavBarHamburger .middle,
-.VPNavBar.home.top .VPNavBarHamburger .bottom {
-  background-color: rgba(255, 255, 255, 0.88) !important;
 }
 
 /* The homepage is one board (HomeBoard.vue): no margin under it, and nothing
@@ -317,6 +261,98 @@ h3,
 }
 
 /**
+ * Homepage board colours
+ *
+ * The board (HomeBoard.vue and its chip and modules) follows the site theme:
+ * light cards on the page background in light mode, navy chips in dark mode.
+ * Gold has too little contrast on white for text, so in light mode it only
+ * marks pins, pads and decoration.
+ * -------------------------------------------------------------------------- */
+
+.ode-board {
+  --board-text-1: var(--vp-c-text-1);
+  --board-text-2: var(--vp-c-text-2);
+  --board-accent: var(--vp-c-brand-1);
+  --board-icon: var(--ode-c-gold-dark);
+  --board-eyebrow: var(--vp-c-brand-1);
+  --board-focus: var(--vp-c-brand-1);
+
+  --board-panel-bg: var(--vp-c-bg-soft);
+  --board-panel-edge: var(--vp-c-divider);
+  --board-panel-edge-top: var(--vp-c-divider);
+  --board-panel-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 1px 2px rgba(2, 8, 20, 0.05),
+    0 8px 20px rgba(2, 8, 20, 0.06);
+  --board-chip-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 2px 4px rgba(2, 8, 20, 0.06),
+    0 16px 36px rgba(2, 8, 20, 0.1);
+  --board-well: var(--vp-c-bg);
+  --board-well-edge: var(--vp-c-divider);
+  --board-hover-edge: var(--vp-c-brand-1);
+  --board-row-hover: var(--vp-c-brand-soft);
+  --board-control-edge: var(--vp-c-divider);
+  --board-control-bg: var(--vp-c-bg);
+
+  --board-title: linear-gradient(120deg, var(--vp-c-brand-1) 30%, var(--vp-c-brand-3) 100%);
+  --board-notch: radial-gradient(circle at 35% 35%, var(--vp-c-bg), var(--vp-c-gray-2));
+
+  --board-trace-blue: var(--vp-c-brand-3);
+  --board-trace-deep: var(--vp-c-brand-1);
+  --board-trace-gold: var(--ode-c-gold-shade);
+  --board-trace-opacity: 0.45;
+  --board-pin-dim: #e6d58a;
+  --board-pin-wired: var(--ode-c-gold-shade);
+  --board-packet-blue: var(--vp-c-brand-3);
+  --board-thumb-bg: var(--vp-c-bg-alt);
+  --board-thumb-chip: var(--vp-c-bg);
+}
+
+.dark .ode-board {
+  --board-text-1: #fff;
+  --board-text-2: rgba(255, 255, 255, 0.7);
+  --board-accent: var(--ode-c-accent-1);
+  --board-icon: var(--ode-c-accent-1);
+  --board-eyebrow: var(--ode-c-trace-blue);
+  --board-focus: #fff;
+
+  --board-panel-bg: linear-gradient(170deg, var(--ode-c-panel-top) 0%, var(--ode-c-panel-deep) 100%);
+  --board-panel-edge: rgba(140, 175, 240, 0.22);
+  --board-panel-edge-top: rgba(255, 255, 255, 0.16);
+  --board-panel-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 14px 30px rgba(1, 8, 20, 0.45);
+  --board-chip-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.35),
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 14px 28px rgba(0, 0, 0, 0.45),
+    0 40px 80px rgba(1, 6, 18, 0.6);
+  --board-well: rgba(0, 18, 42, 0.45);
+  --board-well-edge: rgba(140, 175, 240, 0.16);
+  --board-hover-edge: rgba(255, 214, 23, 0.45);
+  --board-row-hover: rgba(127, 176, 255, 0.08);
+  --board-control-edge: rgba(255, 255, 255, 0.28);
+  --board-control-bg: rgba(255, 255, 255, 0.04);
+
+  --board-title: linear-gradient(120deg, var(--ode-c-trace-blue) 15%, var(--ode-c-accent-1) 100%);
+  --board-notch: radial-gradient(circle at 35% 35%, var(--ode-c-panel), var(--ode-c-board-deep));
+
+  --board-trace-blue: var(--ode-c-trace-blue);
+  --board-trace-deep: var(--ode-c-trace-deep);
+  --board-trace-gold: var(--ode-c-accent-1);
+  --board-trace-opacity: 0.6;
+  --board-pin-dim: var(--ode-c-pin-dim);
+  --board-pin-wired: var(--ode-c-accent-1);
+  --board-packet-blue: var(--ode-c-packet-blue);
+  --board-thumb-bg: var(--ode-c-panel);
+  --board-thumb-chip: var(--ode-c-panel-top);
+}
+
+/**
  * Homepage board modules
  *
  * The solid navy panels in the board's right-hand column (HomeProjects,
@@ -328,16 +364,12 @@ h3,
   position: relative;
   z-index: 2;
   padding: clamp(12px, 2vh, 20px) 20px;
-  color: #fff;
-  background: linear-gradient(170deg, var(--ode-c-panel-top) 0%, var(--ode-c-panel-deep) 100%);
-  border: 1px solid var(--ode-c-board-edge);
-  border-top-color: rgba(255, 255, 255, 0.16);
+  color: var(--board-text-1);
+  background: var(--board-panel-bg);
+  border: 1px solid var(--board-panel-edge);
+  border-top-color: var(--board-panel-edge-top);
   border-radius: 14px;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 -2px 0 rgba(0, 0, 0, 0.3),
-    0 2px 4px rgba(0, 0, 0, 0.3),
-    0 14px 30px rgba(1, 8, 20, 0.45);
+  box-shadow: var(--board-panel-shadow);
 }
 
 .ode-module__head {
@@ -360,7 +392,7 @@ h3,
   letter-spacing: 0.06em;
   line-height: 1.4;
   text-transform: uppercase;
-  color: var(--ode-c-trace-blue);
+  color: var(--board-eyebrow);
 }
 
 .ode-module__nav {
@@ -373,9 +405,9 @@ h3,
   width: 28px;
   height: 28px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: rgba(255, 255, 255, 0.04);
-  color: #fff;
+  border: 1px solid var(--board-control-edge);
+  background: var(--board-control-bg);
+  color: var(--board-text-1);
   font-size: 16px;
   line-height: 1;
   cursor: pointer;
@@ -390,8 +422,8 @@ h3,
 }
 
 .ode-module__nav button:hover:not(:disabled) {
-  border-color: var(--ode-c-accent-1);
-  color: var(--ode-c-accent-1);
+  border-color: var(--board-accent);
+  color: var(--board-accent);
 }
 
 .ode-module__nav button:disabled {
@@ -401,14 +433,14 @@ h3,
 
 /* One focus ring for every control on the dark board. */
 .ode-board :is(a, button):focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid var(--board-focus);
   outline-offset: 2px;
 }
 
 .vp-doc .ode-module__all {
   font-size: 0.84375rem;
   font-weight: 500;
-  color: var(--ode-c-board-text-2);
+  color: var(--board-text-2);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -422,7 +454,7 @@ h3,
 }
 
 .vp-doc .ode-module__all:hover {
-  color: var(--ode-c-accent-1);
+  color: var(--board-accent);
 }
 
 /* a scroll-snapped row; the buttons step it one item at a time */
@@ -455,7 +487,7 @@ h3,
 .vp-doc .ode-module__empty {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--ode-c-board-text-3);
+  color: var(--board-text-2);
 }
 
 /* A linked item inside a module: a dark well that lights up gold on hover. */
@@ -463,15 +495,30 @@ h3,
   display: flex;
   height: 100%;
   border-radius: 10px;
-  background: var(--ode-c-board-well);
-  border: 1px solid rgba(140, 175, 240, 0.16);
-  color: #fff;
+  background: var(--board-well);
+  border: 1px solid var(--board-well-edge);
+  color: var(--board-text-1);
   text-decoration: none;
   transition: border-color 0.2s;
 }
 
 .vp-doc .ode-module__card:hover {
-  border-color: var(--ode-c-board-hover-edge);
+  border-color: var(--board-hover-edge);
+}
+
+/* The last item of a carousel: a way through to the full list. */
+.vp-doc .ode-module__more {
+  align-items: center;
+  justify-content: center;
+  min-height: 72px;
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--board-eyebrow);
+}
+
+.vp-doc .ode-module__more:hover {
+  color: var(--board-accent);
 }
 
 /* Tables: tinted header row instead of the default plain one. */

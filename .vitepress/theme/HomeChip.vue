@@ -71,19 +71,12 @@ const reasons = [
   position: relative;
   z-index: 2;
   padding: clamp(28px, 4.5vh, 48px) clamp(24px, 3.4vw, 48px);
-  color: #fff;
-  background: linear-gradient(168deg, var(--ode-c-panel-top) 0%, var(--ode-c-panel) 55%, var(--ode-c-panel-deep) 100%);
-  border: 1px solid rgba(140, 175, 240, 0.28);
-  border-top-color: rgba(255, 255, 255, 0.22);
+  color: var(--board-text-1);
+  background: var(--board-panel-bg);
+  border: 1px solid var(--board-panel-edge);
+  border-top-color: var(--board-panel-edge-top);
   border-radius: 18px;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    inset 0 -3px 0 rgba(0, 0, 0, 0.35),
-    0 2px 4px rgba(0, 0, 0, 0.4),
-    0 14px 28px rgba(0, 0, 0, 0.45),
-    0 40px 80px rgba(1, 6, 18, 0.6);
-  --ode-heading-via-bg: var(--ode-c-panel);
-  --ode-heading-trace: var(--ode-c-trace-blue);
+  box-shadow: var(--board-chip-shadow);
 }
 
 /* the pin-1 marker every chip has */
@@ -94,9 +87,9 @@ const reasons = [
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, var(--ode-c-panel), var(--ode-c-board-deep));
+  background: var(--board-notch);
   box-shadow:
-    inset 0 1.5px 3px rgba(0, 0, 0, 0.8),
+    inset 0 1.5px 3px rgba(0, 0, 0, 0.5),
     0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
@@ -108,7 +101,7 @@ const reasons = [
   letter-spacing: 0;
   margin: 0 0 clamp(12px, 2vh, 18px);
   padding-bottom: clamp(14px, 2.2vh, 20px);
-  background: linear-gradient(120deg, var(--ode-c-trace-blue) 15%, var(--ode-c-accent-1) 100%);
+  background: var(--board-title);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -127,13 +120,13 @@ const reasons = [
   font-weight: 600;
   line-height: 1.3;
   margin: 0 0 8px;
-  color: #fff;
+  color: var(--board-text-1);
 }
 
 .ode-chip__tagline {
   font-size: 0.96875rem;
   line-height: 1.55;
-  color: var(--ode-c-board-text-2);
+  color: var(--board-text-2);
   margin: 0 0 clamp(18px, 3vh, 28px);
 }
 
@@ -175,14 +168,14 @@ const reasons = [
 }
 
 .ode-btn--ghost {
-  background: rgba(255, 255, 255, 0.04);
-  color: #fff;
-  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  background: var(--board-control-bg);
+  color: var(--board-text-1);
+  border: 1.5px solid var(--board-control-edge);
 }
 
 .ode-btn--ghost:hover {
-  border-color: rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--board-accent);
+  background: var(--board-row-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -208,7 +201,7 @@ const reasons = [
 .ode-chip__why {
   margin-top: clamp(22px, 4vh, 40px);
   padding-top: clamp(18px, 3vh, 28px);
-  border-top: 1px solid var(--ode-c-board-edge);
+  border-top: 1px solid var(--board-panel-edge);
 }
 
 .vp-doc .ode-chip__why-heading {
@@ -236,7 +229,7 @@ const reasons = [
 
 .ode-chip__icon {
   flex-shrink: 0;
-  color: var(--ode-c-accent-1);
+  color: var(--board-icon);
 }
 
 .vp-doc .ode-chip__reason-title {
@@ -246,13 +239,13 @@ const reasons = [
   font-size: 0.96875rem;
   line-height: 1.3;
   letter-spacing: 0;
-  color: #fff;
+  color: var(--board-text-1);
 }
 
 .ode-chip__reason-text {
   margin: 0;
   font-size: 0.84375rem;
   line-height: 1.5;
-  color: var(--ode-c-board-text-2);
+  color: var(--board-text-2);
 }
 </style>
