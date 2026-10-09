@@ -1,74 +1,11 @@
 <script setup lang="ts">
 import { computed, ref, useId } from 'vue'
 import mapData from './data/europe-map.json'
-
-interface Partner {
-  name: string
-  flag: string
-  city: string
-  role?: string
-}
+import { DIG_PARTNERS, PIV_PARTNERS, type Partner } from './data/partners'
 
 const props = defineProps<{
   project: 'dig' | 'piv'
 }>()
-
-// City keys must match a key in ./data/europe-map.json's "cities" map (x/y in
-// the same projection as landPath). A city missing there is skipped with a
-// warning in dev.
-const DIG_PARTNERS: Partner[] = [
-  { name: 'Politecnico di Milano', flag: '🇮🇹', city: 'Milano, Italy', role: 'Coordinator' },
-  { name: 'Sorbonne Université', flag: '🇫🇷', city: 'Paris, France' },
-  { name: 'ETH Zürich', flag: '🇨🇭', city: 'Zürich, Switzerland' },
-  { name: 'University of Thessaly', flag: '🇬🇷', city: 'Volos, Greece' },
-  { name: 'Politecnico di Torino', flag: '🇮🇹', city: 'Torino, Italy' },
-  { name: 'CEA', flag: '🇫🇷', city: 'Paris, France' },
-  { name: 'Barcelona Supercomputing Center', flag: '🇪🇸', city: 'Barcelona, Spain' },
-  { name: 'CSIC', flag: '🇪🇸', city: 'Madrid, Spain' },
-  { name: 'IHP GmbH', flag: '🇩🇪', city: 'Frankfurt (Oder), Germany' },
-  { name: 'Munich University of Applied Sciences', flag: '🇩🇪', city: 'Munich, Germany' },
-  { name: 'TU Darmstadt', flag: '🇩🇪', city: 'Darmstadt, Germany' },
-  { name: 'JMU Würzburg', flag: '🇩🇪', city: 'Würzburg, Germany' },
-  { name: 'INESC TEC', flag: '🇵🇹', city: 'Porto, Portugal' },
-  { name: 'STMicroelectronics', flag: '🇮🇹', city: 'Agrate Brianza, Italy' },
-  { name: 'Resiltech', flag: '🇮🇹', city: 'Cascina, Italy' },
-  { name: 'Seamless Waves', flag: '🇫🇷', city: 'Paris, France' },
-  { name: 'Kepler', flag: '🇫🇷', city: 'Palaiseau, France' },
-  { name: 'YosysHQ', flag: '🇦🇹', city: 'Vienna, Austria' },
-  { name: 'JKU Linz', flag: '🇦🇹', city: 'Linz, Austria' },
-  { name: 'KTH Royal Institute of Technology', flag: '🇸🇪', city: 'Stockholm, Sweden' },
-  { name: 'Qamcom', flag: '🇸🇪', city: 'Gothenburg, Sweden' },
-  { name: 'NanoWired', flag: '🇩🇪', city: 'Gernsheim, Germany' },
-  { name: 'Joseki Solutions', flag: '🇭🇺', city: 'Budapest, Hungary' },
-]
-
-const PIV_PARTNERS: Partner[] = [
-  { name: 'INESC TEC', flag: '🇵🇹', city: 'Porto, Portugal', role: 'Coordinator' },
-  { name: 'Munich University of Applied Sciences', flag: '🇩🇪', city: 'Munich, Germany', role: 'Technical Manager' },
-  { name: 'ETH Zürich', flag: '🇨🇭', city: 'Zürich, Switzerland' },
-  { name: 'Politecnico di Milano', flag: '🇮🇹', city: 'Milano, Italy' },
-  { name: 'Politecnico di Torino', flag: '🇮🇹', city: 'Torino, Italy' },
-  { name: 'YosysHQ', flag: '🇦🇹', city: 'Vienna, Austria' },
-  { name: 'Linköping University', flag: '🇸🇪', city: 'Linköping, Sweden' },
-  { name: 'Qamcom', flag: '🇸🇪', city: 'Gothenburg, Sweden' },
-  { name: 'BTU Cottbus-Senftenberg', flag: '🇩🇪', city: 'Cottbus, Germany' },
-  { name: 'JKU Linz', flag: '🇦🇹', city: 'Linz, Austria' },
-  { name: 'Chipmind', flag: '🇨🇭', city: 'Zürich, Switzerland' },
-  { name: 'Barcelona Supercomputing Center', flag: '🇪🇸', city: 'Barcelona, Spain' },
-  { name: 'Lubis EDA', flag: '🇩🇪', city: 'Kaiserslautern, Germany' },
-  { name: 'Infineon Technologies', flag: '🇩🇪', city: 'Neubiberg, Germany' },
-  { name: 'CEA', flag: '🇫🇷', city: 'Paris, France' },
-  { name: 'Technical University of Denmark', flag: '🇩🇰', city: 'Kongens Lyngby, Denmark' },
-  { name: 'Universidad Politécnica de Madrid', flag: '🇪🇸', city: 'Madrid, Spain' },
-  { name: 'Synective Labs', flag: '🇸🇪', city: 'Gothenburg, Sweden' },
-  { name: 'SyoSil', flag: '🇩🇰', city: 'Taastrup, Denmark' },
-  { name: 'E4 Computer Engineering', flag: '🇮🇹', city: 'Scandiano, Italy' },
-  { name: 'Universität zu Lübeck', flag: '🇩🇪', city: 'Lübeck, Germany' },
-  { name: 'IObundle', flag: '🇵🇹', city: 'Lisboa, Portugal' },
-  { name: 'EDALab', flag: '🇮🇹', city: 'Verona, Italy' },
-  { name: 'INESC-ID', flag: '🇵🇹', city: 'Lisboa, Portugal' },
-]
-
 
 const partners = computed(() => (props.project === 'dig' ? DIG_PARTNERS : PIV_PARTNERS))
 
@@ -97,6 +34,7 @@ interface Site {
   x: number
   y: number
   r: number
+  nudged: boolean
 }
 
 const sites = computed<Site[]>(() => {
@@ -110,7 +48,7 @@ const sites = computed<Site[]>(() => {
     const [name, country] = p.city.split(', ')
     let site = list.find((s) => Math.hypot(s.ax - pt.x, s.ay - pt.y) < MERGE_DIST)
     if (!site) {
-      site = { key: p.city, names: [], country, partners: [], ax: pt.x, ay: pt.y, x: pt.x, y: pt.y, r: 0 }
+      site = { key: p.city, names: [], country, partners: [], ax: pt.x, ay: pt.y, x: pt.x, y: pt.y, r: 0, nudged: false }
       list.push(site)
     }
     if (!site.names.includes(name)) site.names.push(name)
@@ -118,6 +56,7 @@ const sites = computed<Site[]>(() => {
   }
   for (const s of list) s.r = 3.6 + Math.min(s.partners.length - 1, 4) * 0.7
   relax(list)
+  for (const s of list) s.nudged = Math.hypot(s.x - s.ax, s.y - s.ay) > 0.5
   return list
 })
 
@@ -241,7 +180,7 @@ const countryCount = computed(() => new Set(sites.value.map((s) => s.country)).s
           <!-- nudged markers keep a trace back to a via at the true location -->
           <g class="pmap__leaders">
             <template v-for="s in sites" :key="`l-${s.key}`">
-              <template v-if="Math.hypot(s.x - s.ax, s.y - s.ay) > 0.5">
+              <template v-if="s.nudged">
                 <line :x1="s.ax" :y1="s.ay" :x2="s.x" :y2="s.y" />
                 <circle :cx="s.ax" :cy="s.ay" r="1.1" />
               </template>
@@ -307,7 +246,7 @@ const countryCount = computed(() => new Set(sites.value.map((s) => s.country)).s
               @blur="hoverKey = null"
             >
               {{ s.names.join(' · ') }}
-              <span class="pmap__chip-count" :aria-label="`${s.partners.length} partners`">{{ s.partners.length }}</span>
+              <span class="pmap__chip-count">{{ s.partners.length }}<span class="visually-hidden"> partners</span></span>
             </button>
           </li>
         </ul>
