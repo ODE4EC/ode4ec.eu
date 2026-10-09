@@ -20,6 +20,12 @@ function getSidebarItems(subdir: string) {
   })
 }
 
+const projectLinks = [
+  { text: 'ODE4EC-AMS', link: '/projects/ams/' },
+  { text: 'ODE4EC-DIG', link: '/projects/dig/' },
+  { text: 'ODE4EC-PIV', link: '/projects/piv/' },
+]
+
 const topLevel = [
   { text: 'About', link: '/about', items: [] },
   { text: 'Advocacy', link: '/advocacy', items: [] },
@@ -42,11 +48,7 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'About', link: '/about/' },
-      { text: 'Projects', items: [
-        { text: 'ODE4EC-AMS', link: '/projects/ams/' },
-        { text: 'ODE4EC-DIG', link: '/projects/dig/' },
-        { text: 'ODE4EC-PIV', link: '/projects/piv/' },
-      ]},
+      { text: 'Projects', items: projectLinks },
       { text: 'Advocacy', link: '/advocacy/' },
       { text: 'News', link: '/news/' },
       { text: 'Events', link: '/events/' },
@@ -66,17 +68,7 @@ export default defineConfig({
       // Without this key the projects index had no sidebar at all, which made
       // the whole side navigation vanish when landing on /projects/.
       '/projects/': [
-        { text: 'About', link: '/about', items: [] },
-        { text: 'Advocacy', link: '/advocacy', items: [] },
-        {
-          text: 'Projects',
-          link: '/projects',
-          items: [
-            { text: 'ODE4EC-AMS', link: '/projects/ams/' },
-            { text: 'ODE4EC-DIG', link: '/projects/dig/' },
-            { text: 'ODE4EC-PIV', link: '/projects/piv/' },
-          ],
-        },
+        ...topLevel.map((item) => (item.link === '/projects' ? { ...item, items: projectLinks } : item)),
         { text: 'News', link: '/news/', items: [] },
         { text: 'Events', link: '/events/', items: [] },
       ],
@@ -113,7 +105,7 @@ export default defineConfig({
           items: [
             { text: 'Overview', link: '/projects/piv/' },
             { text: 'Partners', link: '/projects/piv/partners' },
-            { text: 'Funding', link: '/projects/piv/funding'}
+            { text: 'Funding', link: '/projects/piv/funding' }
           ],
         },
       ],
