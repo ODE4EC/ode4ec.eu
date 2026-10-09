@@ -21,7 +21,7 @@ const { atStart, atEnd, step, update } = useCarousel(track)
   <section class="ode-module" :aria-labelledby="`${id}-title`">
     <div class="ode-module__head">
       <h2 :id="`${id}-title`" class="ode-eyebrow">{{ title }}</h2>
-      <div v-if="items.length > 1" class="ode-module__nav">
+      <div v-if="items.length" class="ode-module__nav">
         <button type="button" :aria-label="`Previous ${noun}`" :aria-controls="`${id}-track`" :disabled="atStart" @click="step(-1)">‹</button>
         <button type="button" :aria-label="`Next ${noun}`" :aria-controls="`${id}-track`" :disabled="atEnd" @click="step(1)">›</button>
       </div>
@@ -31,6 +31,9 @@ const { atStart, atEnd, step, update } = useCarousel(track)
     <ul v-if="items.length" :id="`${id}-track`" ref="track" class="ode-module__track" :class="{ 'is-end': atEnd }" :aria-label="title" @scroll.passive="update">
       <li v-for="item in items" :key="item.url">
         <slot :item="item" />
+      </li>
+      <li>
+        <a class="ode-module__card ode-module__more" :href="allHref">{{ allLabel }}</a>
       </li>
     </ul>
     <p v-else class="ode-module__empty">{{ empty }}</p>

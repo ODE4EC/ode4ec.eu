@@ -3,7 +3,7 @@ import { data as posts } from '../../news/posts.data.ts'
 import HomeCarousel from './HomeCarousel.vue'
 import { formatDate } from './format'
 
-const latest = posts.slice(0, 8)
+const latest = posts.slice(0, 3)
 </script>
 
 <template>
@@ -48,7 +48,7 @@ const latest = posts.slice(0, 8)
   aspect-ratio: 4 / 3;
   border-radius: 7px;
   overflow: hidden;
-  background: var(--ode-c-panel);
+  background: var(--board-thumb-bg);
 }
 
 .ode-news__thumb img,
@@ -59,13 +59,13 @@ const latest = posts.slice(0, 8)
   object-fit: cover;
 }
 
-.nf-bg { fill: var(--ode-c-panel-deep); }
-.nf-gold { stroke: var(--ode-c-accent-1); opacity: 0.75; }
-.nf-blue { stroke: var(--ode-c-trace-blue); opacity: 0.55; }
-.nf-deep { stroke: var(--ode-c-trace-deep); opacity: 0.75; }
+.nf-bg { fill: var(--board-thumb-bg); }
+.nf-gold { stroke: var(--board-trace-gold); opacity: 0.75; }
+.nf-blue { stroke: var(--board-trace-blue); opacity: 0.55; }
+.nf-deep { stroke: var(--board-trace-deep); opacity: 0.75; }
 .nf-chip {
-  fill: var(--ode-c-panel-top);
-  stroke: rgba(160, 190, 240, 0.4);
+  fill: var(--board-thumb-chip);
+  stroke: var(--board-panel-edge);
   stroke-width: 1.5;
 }
 
@@ -79,7 +79,7 @@ const latest = posts.slice(0, 8)
 .ode-news__date {
   font-size: 0.78125rem;
   font-weight: 600;
-  color: var(--ode-c-trace-blue);
+  color: var(--board-eyebrow);
 }
 
 .ode-news__title {

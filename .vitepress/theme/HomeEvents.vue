@@ -3,11 +3,11 @@ import { data } from '../../events/events.data.ts'
 import HomeCarousel from './HomeCarousel.vue'
 import { formatDate } from './format'
 
-// Recent past events follow the upcoming ones so the row never runs empty.
+// Upcoming first, then the latest past ones, so the row never runs empty.
 const events = [
   ...data.upcoming.map((e) => ({ ...e, past: false })),
-  ...data.past.slice(0, 4).map((e) => ({ ...e, past: true })),
-]
+  ...data.past.map((e) => ({ ...e, past: true })),
+].slice(0, 3)
 </script>
 
 <template>
@@ -56,11 +56,11 @@ const events = [
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--ode-c-trace-blue);
+  color: var(--board-eyebrow);
 }
 
 .ode-events__status.is-past {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--board-text-2);
 }
 
 .ode-events__title {
@@ -76,6 +76,6 @@ const events = [
 
 .ode-events__location {
   font-size: 0.84375rem;
-  color: var(--ode-c-board-text-3);
+  color: var(--board-text-2);
 }
 </style>
