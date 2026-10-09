@@ -264,7 +264,7 @@ h3,
  * Homepage board colours
  *
  * The board (HomeBoard.vue and its chip and modules) follows the site theme:
- * light cards on the page background in light mode, navy chips in dark mode.
+ * the page background in either mode, with navy chips and modules on it.
  * Gold has too little contrast on white for text, so in light mode it only
  * marks pins, pads and decoration.
  * -------------------------------------------------------------------------- */
@@ -309,7 +309,10 @@ h3,
   --board-thumb-chip: var(--vp-c-bg);
 }
 
-.dark .ode-board {
+/* The chip and the modules are navy in both themes. */
+.dark .ode-board,
+.ode-board .ode-chip,
+.ode-board .ode-module {
   --board-text-1: #fff;
   --board-text-2: rgba(255, 255, 255, 0.7);
   --board-accent: var(--ode-c-accent-1);
@@ -350,6 +353,18 @@ h3,
   --board-packet-blue: var(--ode-c-packet-blue);
   --board-thumb-bg: var(--ode-c-panel);
   --board-thumb-chip: var(--ode-c-panel-top);
+}
+
+/* On a white page the dark-mode shadows read as smudges: keep them soft. */
+html:not(.dark) .ode-board :is(.ode-chip, .ode-module) {
+  --board-panel-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 2px 4px rgba(0, 31, 71, 0.12),
+    0 10px 24px rgba(0, 31, 71, 0.16);
+  --board-chip-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 2px 4px rgba(0, 31, 71, 0.14),
+    0 16px 36px rgba(0, 31, 71, 0.2);
 }
 
 /**
