@@ -47,10 +47,10 @@
   --ode-c-board-land: #123564;
   --ode-c-board-deep: #00122a;
 
-  /* The plate partner logos sit on (see Card.vue): the light-mode card gray in
-     both themes, so in light mode only its border shows. */
-  --ode-c-logo-plate: #f6f6f7;
-  --ode-c-logo-plate-border: var(--vp-c-divider);
+  /* The plate partner logos sit on (see Card.vue): the light-mode card colour
+     (--vp-c-bg-soft below) in both themes, so in light mode it melts into the
+     card and in dark mode the logos keep the light ground they were made for. */
+  --ode-c-logo-plate: #f2efe8;
 
   /* Soft blue-tinted panel background for subtle band separation on inner pages. */
   --ode-c-bg-tint: #f2f6fb;
@@ -74,7 +74,6 @@
   --vp-c-brand-soft: rgba(127, 176, 255, 0.16);
 
   --ode-c-bg-tint: #131b2c;
-  --ode-c-logo-plate-border: transparent;
 }
 
 /**

@@ -135,7 +135,6 @@ defineProps<{
   height: 60px;
   padding: 8px 12px;
   box-sizing: border-box;
-  border: 1px solid var(--ode-c-logo-plate-border);
   border-radius: 8px;
   background: var(--ode-c-logo-plate);
 }
