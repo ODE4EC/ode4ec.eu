@@ -54,7 +54,16 @@
 
   /* Soft blue-tinted panel background for subtle band separation on inner pages. */
   --ode-c-bg-tint: #f2f6fb;
+}
 
+/* Light mode sits on warm paper rather than pure white: softer next to the
+   navy. Scoped to light: on plain :root it would tie with VitePress's .dark
+   and, loading later, win in dark mode too. */
+:root:not(.dark) {
+  --vp-c-bg: #faf8f4;
+  --vp-c-bg-elv: #faf8f4;
+  --vp-c-bg-alt: #f2efe8;
+  --vp-c-bg-soft: #f2efe8;
 }
 
 .dark {

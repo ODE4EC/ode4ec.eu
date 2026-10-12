@@ -1,8 +1,6 @@
 <script setup lang="ts">
 // Its pins and traces are drawn around it by HomeBoard.vue.
 import HomeProjects from './HomeProjects.vue'
-
-const emit = defineEmits<{ burst: [] }>()
 </script>
 
 <template>
@@ -11,12 +9,14 @@ const emit = defineEmits<{ burst: [] }>()
 
     <h1 class="ode-chip__title">ODE4EC</h1>
     <p class="ode-chip__lede">Open Design Environment for European Chips</p>
-    <p class="ode-chip__tagline">The central website of the ODE4EC initiative and its projects.</p>
+    <p class="ode-chip__tagline">
+      A coordinated initiative bringing together research institutions, universities and industry across Europe to
+      build an open source chip design environment, with open EDA tools, open process design kits and open
+      educational resources at its core.
+    </p>
     <div class="ode-chip__actions">
       <a class="ode-btn ode-btn--gold" href="/about/">About the initiative</a>
-      <a class="ode-btn ode-btn--ghost" href="/projects/" @mouseenter="emit('burst')" @focus="emit('burst')">
-        Explore projects
-      </a>
+      <a class="ode-btn ode-btn--ghost" href="/advocacy/">Our advocacy</a>
     </div>
 
     <HomeProjects class="ode-chip__projects" />
@@ -29,7 +29,7 @@ const emit = defineEmits<{ burst: [] }>()
 .ode-chip {
   position: relative;
   z-index: 2;
-  padding: clamp(28px, 4.5vh, 48px) clamp(24px, 3.4vw, 48px);
+  padding: clamp(24px, 3.4vh, 48px) clamp(24px, 3.4vw, 48px);
   color: var(--board-text-1);
   background: var(--board-panel-bg);
   border: 1px solid var(--board-panel-edge);
@@ -58,8 +58,8 @@ const emit = defineEmits<{ burst: [] }>()
   line-height: 1;
   font-weight: 700;
   letter-spacing: 0;
-  margin: 0 0 clamp(12px, 2vh, 18px);
-  padding-bottom: clamp(14px, 2.2vh, 20px);
+  margin: 0 0 clamp(10px, 1.6vh, 18px);
+  padding-bottom: clamp(12px, 1.8vh, 20px);
   color: var(--board-text-1);
 }
 
@@ -75,7 +75,7 @@ const emit = defineEmits<{ burst: [] }>()
   font-size: 0.96875rem;
   line-height: 1.55;
   color: var(--board-text-2);
-  margin: 0 0 clamp(18px, 3vh, 28px);
+  margin: 0 0 clamp(14px, 2.4vh, 24px);
 }
 
 .ode-chip__actions {
@@ -137,18 +137,14 @@ const emit = defineEmits<{ burst: [] }>()
     flex-direction: column;
   }
 
-  .ode-chip__actions {
-    margin-bottom: clamp(22px, 4vh, 40px);
-  }
-
   .ode-chip__projects {
     margin-top: auto;
   }
 }
 
 .ode-chip__projects {
-  margin-top: clamp(22px, 4vh, 40px);
-  padding-top: clamp(18px, 3vh, 28px);
+  margin-top: clamp(14px, 2.4vh, 24px);
+  padding-top: clamp(12px, 2vh, 22px);
   border-top: 1px solid var(--board-panel-edge);
 }
 </style>

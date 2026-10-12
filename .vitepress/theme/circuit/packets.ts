@@ -26,7 +26,6 @@ export type FadeBand = [top: number, bottom: number] | null
 interface Slot {
   el: HTMLElement
   anim: Animation | null
-  ambient: boolean
 }
 
 interface EngineTrace extends PacketTraceMeta {
@@ -39,12 +38,10 @@ interface EngineTrace extends PacketTraceMeta {
 
 /** px per second */
 const SPEED = 230
-/** px per second for CTA bursts */
-const BURST_SPEED = SPEED * 2
 /** idle time between packets on one trace, ms */
 const GAP_MIN = 2600
 const GAP_MAX = 8500
-/** at most this many ambient packets in flight at once */
+/** at most this many packets in flight at once */
 const MAX_IN_FLIGHT = 3
 /** keyframe spacing along a trace, px; corners turn over one step */
 const STEP = 20
@@ -107,7 +104,6 @@ export class PacketEngine {
       slots: [...layer.querySelectorAll<HTMLElement>(`[data-packet="${m.id}"]`)].map((el) => ({
         el,
         anim: null,
-        ambient: false,
       })),
       frames: keyframes(m.pts, m.len, m.flow === 'in', fade),
       // stagger the first wave so the board doesn't fire all at once
@@ -139,7 +135,7 @@ export class PacketEngine {
 
   /**
    * Ambient packets on or off. Off lets packets already in flight land and
-   * then leaves the board still; bursts keep working.
+   * then leaves the board still.
    */
   setAmbient(on: boolean) {
     if (on === this.ambient) return
@@ -159,17 +155,6 @@ export class PacketEngine {
     this.traces = []
   }
 
-  /** Send a quick train of packets down the given traces (CTA hover). */
-  burst(ids: string[], count = 3) {
-    if (!this.running) return
-    for (const id of ids) {
-      const t = this.traces.find((x) => x.id === id)
-      if (!t) continue
-      for (let k = 0; k < count; k++) this.later(() => this.fire(t, BURST_SPEED, false), k * 170)
-      t.nextAt = performance.now() + GAP_MIN
-    }
-  }
-
   private schedule() {
     this.clearTimer()
     if (!this.running || !this.ambient || !this.traces.length) return
@@ -184,20 +169,19 @@ export class PacketEngine {
     for (const t of this.traces) {
       if (now < t.nextAt) continue
       // board busy: try this trace again shortly instead of piling on
-      t.nextAt = this.inFlight < MAX_IN_FLIGHT && this.fire(t, SPEED, true) ? now + rand(GAP_MIN, GAP_MAX) : now + rand(400, 1200)
+      t.nextAt = this.inFlight < MAX_IN_FLIGHT && this.fire(t) ? now + rand(GAP_MIN, GAP_MAX) : now + rand(400, 1200)
     }
     this.schedule()
   }
 
-  private fire(t: EngineTrace, speed: number, ambient: boolean) {
+  private fire(t: EngineTrace) {
     if (!this.running || t.frames.length < 2) return false
     const slot = t.slots.find((s) => !s.anim)
     if (!slot) return false
     slot.el.style.visibility = 'visible'
-    slot.ambient = ambient
-    if (ambient) this.inFlight++
+    this.inFlight++
     const anim = slot.el.animate(t.frames, {
-      duration: (t.len / speed) * 1000,
+      duration: (t.len / SPEED) * 1000,
       easing: 'linear',
       fill: 'forwards',
     })
@@ -213,8 +197,7 @@ export class PacketEngine {
     slot.el.style.visibility = 'hidden'
     slot.anim?.cancel()
     slot.anim = null
-    if (slot.ambient) this.inFlight--
-    slot.ambient = false
+    this.inFlight--
   }
 
   private heat(pin: Element | null) {

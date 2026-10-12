@@ -52,8 +52,6 @@ export interface Trace {
   endPinId?: string
   /** 'in': signals travel from the board edge into a pin; 'out': from the chip to a module */
   flow: 'in' | 'out'
-  /** index of the module a chip output feeds */
-  module?: number
 }
 
 export interface Via extends Pt {
@@ -65,7 +63,7 @@ export interface BoardLayout {
   height: number
   /** the main chip card (hero + why) */
   chip: Rect
-  /** the side modules: projects, events, news */
+  /** the side modules: why, events, news */
   modules: Rect[]
   /** true when everything sits in one column (narrow or short screens) */
   stacked: boolean
@@ -164,9 +162,12 @@ function pinsOnSide(chip: Rect, side: Side, pitch: number, prefix = '', group: P
   let start = (edgeLen - (count - 1) * pitch) / 2
   if (grid !== undefined) {
     const origin = horizontal ? chip.x : chip.y
-    const first = CORNER_INSET + ((((grid - origin - CORNER_INSET) % pitch) + pitch) % pitch)
+    // snapping costs up to a pitch at one end; let both ends give half of it,
+    // so the row doesn't end visibly short of the card's bottom
+    const inset = CORNER_INSET - pitch / 2
+    const first = inset + ((((grid - origin - inset) % pitch) + pitch) % pitch)
     start = first
-    count = Math.max(0, Math.floor((edgeLen - CORNER_INSET - first) / pitch + 1e-6) + 1)
+    count = Math.max(0, Math.floor((edgeLen - inset - first) / pitch + 1e-6) + 1)
   }
   const pins: Pin[] = []
   for (let i = 0; i < count; i++) {
@@ -396,13 +397,18 @@ export function buildCircuit(L: BoardLayout): Circuit {
   if (!L.stacked) {
     const pins = bottom.slice(1, 4)
     const c = mean(pins)
-    const run = Math.min(24, L.floor - 22 - (c.y + stub))
-    if (run >= 0) {
+    // The inner trace is offset a pin pitch inside each bend, so a short leg
+    // folds back into a loop. When room is tight, shorten the drop before the
+    // diagonal; with too little room for both, leave the fan out.
+    const room = L.floor - 22 - c.y
+    const drop = clamp(room - 24, 14, stub)
+    const run = Math.min(24, room - drop)
+    if (run >= 18) {
       routeBus(
         {
           id: 'bl',
           pins,
-          center: clean([c, { x: c.x, y: c.y + stub }, { x: c.x - run, y: c.y + stub + run }, { x: -BLEED, y: c.y + stub + run }]),
+          center: clean([c, { x: c.x, y: c.y + drop }, { x: c.x - run, y: c.y + drop + run }, { x: -BLEED, y: c.y + drop + run }]),
           tones: ['blue', 'gold', 'deep'],
           flow: 'in',
         },
@@ -472,7 +478,6 @@ export function buildCircuit(L: BoardLayout): Circuit {
             pinId: pin.id,
             endPinId: end.id,
             flow: 'out',
-            module: mi,
           })
         })
       }
@@ -508,7 +513,6 @@ export function buildCircuit(L: BoardLayout): Circuit {
           pinId: from.id,
           endPinId: to.id,
           flow: 'out',
-          module: mi,
         })
       })
       prevBottom = mBottom

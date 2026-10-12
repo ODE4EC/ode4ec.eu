@@ -32,7 +32,7 @@ const projects = [
 <style scoped>
 .ode-projects {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 190px), 1fr));
   gap: 6px 28px;
   margin: 0;
   padding: 0;

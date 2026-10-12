@@ -6,7 +6,6 @@ const MOTION_KEY = 'ode-board-motion'
 // Ambient packets stop once nobody has touched the page for a while, so an
 // open but unattended tab goes fully still; any input brings them back.
 const IDLE_MS = 30_000
-const BURST_COOLDOWN_MS = 1200
 const ACTIVITY_EVENTS = ['pointermove', 'pointerdown', 'wheel', 'scroll', 'keydown', 'touchstart'] as const
 
 /** Must match the `.ode-board__wires` mask in HomeBoard.vue. */
@@ -41,7 +40,6 @@ export function usePacketMotion(
   const running = computed(
     () => mounted.value && !reducedMotion.value && !userPaused.value && inView.value && pageVisible.value,
   )
-  const chipOutputs = computed(() => circuit.value?.traces.filter((t) => t.module === 0).map((t) => t.id) ?? [])
 
   watch(running, (on) => (on ? engine.start() : engine.stop()))
   watch(ambient, (on) => engine.setAmbient(on))
@@ -79,14 +77,6 @@ export function usePacketMotion(
     } catch {}
   }
 
-  let lastBurst = 0
-  function burst() {
-    const now = performance.now()
-    if (now - lastBurst < BURST_COOLDOWN_MS) return
-    lastBurst = now
-    engine.burst(chipOutputs.value)
-  }
-
   let intersectionObserver: IntersectionObserver | null = null
   let motionQuery: MediaQueryList | null = null
   const onMotionChange = () => (reducedMotion.value = !!motionQuery?.matches)
@@ -117,5 +107,5 @@ export function usePacketMotion(
     engine.destroy()
   })
 
-  return { mounted, reducedMotion, userPaused, toggleMotion, burst }
+  return { mounted, reducedMotion, userPaused, toggleMotion }
 }

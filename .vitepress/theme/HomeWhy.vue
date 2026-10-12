@@ -20,10 +20,12 @@ const reasons = [
 
 <template>
   <section class="ode-module" aria-labelledby="ode-mod-why">
-    <h2 id="ode-mod-why" class="visually-hidden">Why ODE4EC</h2>
+    <div class="ode-module__head">
+      <h2 id="ode-mod-why" class="ode-eyebrow">Why ODE4EC</h2>
+    </div>
     <ul class="ode-why">
       <li v-for="r in reasons" :key="r.title" class="ode-why__reason">
-        <svg class="ode-why__icon" width="28" height="28" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <svg class="ode-why__icon" width="24" height="24" viewBox="0 0 40 40" fill="none" aria-hidden="true">
           <template v-if="r.icon === 'globe'">
             <circle cx="20" cy="20" r="15" stroke="currentColor" stroke-width="2" />
             <ellipse cx="20" cy="20" rx="15" ry="6" stroke="currentColor" stroke-width="2" />
@@ -48,25 +50,9 @@ const reasons = [
 </template>
 
 <style scoped>
-/* the board stretches this module to line up with the chip: keep the
-   reasons centred in it */
-.ode-module {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-/* `.vp-doc h2` would put the hidden heading back in the flow */
-.vp-doc .visually-hidden {
-  position: absolute;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
 .ode-why {
   display: grid;
-  gap: clamp(10px, 1.8vh, 16px);
+  gap: clamp(6px, 1.2vh, 12px);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -75,7 +61,7 @@ const reasons = [
 .ode-why__reason {
   display: flex;
   align-items: flex-start;
-  gap: 14px;
+  gap: 12px;
   margin: 0;
 }
 

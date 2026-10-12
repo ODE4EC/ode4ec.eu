@@ -28,7 +28,7 @@ const tracesByTone = computed(() => {
   return groups
 })
 
-const { mounted, reducedMotion, userPaused, toggleMotion, burst } = usePacketMotion(root, packetLayer, circuit)
+const { mounted, reducedMotion, userPaused, toggleMotion } = usePacketMotion(root, packetLayer, circuit)
 
 function measure() {
   const el = root.value
@@ -124,20 +124,17 @@ onBeforeUnmount(() => {
           :style="{ left: `${p.x - 2.5}px`, top: `${p.y - 2.5}px`, width: `${p.w + 5}px`, height: `${p.h + 5}px` }"
         />
       </template>
-      <!-- the chip's outputs get extra slots for the CTA burst -->
-      <template v-for="t in circuit.traces" :key="`p-${t.id}`">
-        <span
-          v-for="k in t.flow === 'out' ? 3 : 1"
-          :key="k"
-          class="ode-packet"
-          :class="`tone--${t.tone}`"
-          :data-packet="t.id"
-        />
-      </template>
+      <span
+        v-for="t in circuit.traces"
+        :key="`p-${t.id}`"
+        class="ode-packet"
+        :class="`tone--${t.tone}`"
+        :data-packet="t.id"
+      />
     </div>
 
     <div class="ode-board__grid">
-      <HomeChip @burst="burst" />
+      <HomeChip />
       <div class="ode-board__side">
         <HomeWhy />
         <HomeEvents />
@@ -233,7 +230,10 @@ onBeforeUnmount(() => {
     padding-bottom: clamp(8px, 1.5vh, 20px);
   }
 
+  /* modules keep their own height; when the chip is the taller column the
+     spare room goes between them, not inside them */
   .ode-board__side {
+    align-content: space-between;
     gap: clamp(12px, 2.2vh, 22px);
   }
 }
