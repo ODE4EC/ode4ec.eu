@@ -5,7 +5,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
 import { useData } from 'vitepress'
 import HomeChip from './HomeChip.vue'
-import HomeProjects from './HomeProjects.vue'
+import HomeWhy from './HomeWhy.vue'
 import HomeEvents from './HomeEvents.vue'
 import HomeNews from './HomeNews.vue'
 import { buildCircuit, type Circuit, type Rect, type Trace } from './circuit/layout'
@@ -139,7 +139,7 @@ onBeforeUnmount(() => {
     <div class="ode-board__grid">
       <HomeChip @burst="burst" />
       <div class="ode-board__side">
-        <HomeProjects />
+        <HomeWhy />
         <HomeEvents />
         <HomeNews />
       </div>
@@ -224,7 +224,7 @@ onBeforeUnmount(() => {
 
 @media (min-width: 1152px) and (min-height: 600px) {
   .ode-board__grid {
-    grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     column-gap: clamp(76px, 7vw, 112px);
     /* the chip spans the module column top to bottom, so the pins on its
        right edge face the modules' pins and the traces run straight */

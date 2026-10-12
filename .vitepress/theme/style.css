@@ -295,7 +295,6 @@ h3,
   --board-control-edge: var(--vp-c-divider);
   --board-control-bg: var(--vp-c-bg);
 
-  --board-title: linear-gradient(120deg, var(--vp-c-brand-1) 30%, var(--vp-c-brand-3) 100%);
   --board-notch: radial-gradient(circle at 35% 35%, var(--vp-c-bg), var(--vp-c-gray-2));
 
   --board-trace-blue: var(--vp-c-brand-3);
@@ -341,7 +340,6 @@ h3,
   --board-control-edge: rgba(255, 255, 255, 0.28);
   --board-control-bg: rgba(255, 255, 255, 0.04);
 
-  --board-title: linear-gradient(120deg, var(--ode-c-trace-blue) 15%, var(--ode-c-accent-1) 100%);
   --board-notch: radial-gradient(circle at 35% 35%, var(--ode-c-panel), var(--ode-c-board-deep));
 
   --board-trace-blue: var(--ode-c-trace-blue);
@@ -370,7 +368,7 @@ html:not(.dark) .ode-board :is(.ode-chip, .ode-module) {
 /**
  * Homepage board modules
  *
- * The solid navy panels in the board's right-hand column (HomeProjects,
+ * The solid navy panels in the board's right-hand column (HomeWhy,
  * HomeEvents, HomeNews): a header row with the title, optional carousel
  * buttons and an "all" link, then the content. Always dark, like the board.
  * -------------------------------------------------------------------------- */

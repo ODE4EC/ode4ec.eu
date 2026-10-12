@@ -1,24 +1,8 @@
 <script setup lang="ts">
 // Its pins and traces are drawn around it by HomeBoard.vue.
-const emit = defineEmits<{ burst: [] }>()
+import HomeProjects from './HomeProjects.vue'
 
-const reasons = [
-  {
-    icon: 'globe',
-    title: 'Open Source',
-    text: 'Built on, and for, a healthy open source chip design ecosystem.',
-  },
-  {
-    icon: 'chip',
-    title: 'Grow Chip Design',
-    text: 'Attracting talent and making chip design more accessible.',
-  },
-  {
-    icon: 'stars',
-    title: 'Pan-European',
-    text: 'A joint effort of leading institutions across Europe.',
-  },
-]
+const emit = defineEmits<{ burst: [] }>()
 </script>
 
 <template>
@@ -35,32 +19,7 @@ const reasons = [
       </a>
     </div>
 
-    <section class="ode-chip__why" aria-labelledby="ode-why">
-      <h2 id="ode-why" class="ode-eyebrow ode-chip__why-heading">Why ODE4EC</h2>
-      <ul class="ode-chip__reasons">
-        <li v-for="r in reasons" :key="r.title" class="ode-chip__reason">
-          <svg class="ode-chip__icon" width="28" height="28" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-            <template v-if="r.icon === 'globe'">
-              <circle cx="20" cy="20" r="15" stroke="currentColor" stroke-width="2" />
-              <ellipse cx="20" cy="20" rx="15" ry="6" stroke="currentColor" stroke-width="2" />
-              <line x1="5" y1="20" x2="35" y2="20" stroke="currentColor" stroke-width="2" />
-            </template>
-            <template v-else-if="r.icon === 'chip'">
-              <rect x="13" y="13" width="14" height="14" rx="2" stroke="currentColor" stroke-width="2" />
-              <path d="M20 13V7M20 33v-6M13 20H7M33 20h-6M16 13v-3M24 13v-3M16 30v-3M24 30v-3M27 16h3M27 24h3M10 16h3M10 24h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-            </template>
-            <template v-else>
-              <circle cx="20" cy="20" r="15" stroke="currentColor" stroke-width="2" />
-              <circle v-for="i in 12" :key="i" :cx="20 + 11 * Math.sin((i * Math.PI) / 6)" :cy="20 - 11 * Math.cos((i * Math.PI) / 6)" r="1.6" fill="currentColor" />
-            </template>
-          </svg>
-          <div>
-            <h3 class="ode-chip__reason-title">{{ r.title }}</h3>
-            <p class="ode-chip__reason-text">{{ r.text }}</p>
-          </div>
-        </li>
-      </ul>
-    </section>
+    <HomeProjects class="ode-chip__projects" />
   </div>
 </template>
 
@@ -101,18 +60,7 @@ const reasons = [
   letter-spacing: 0;
   margin: 0 0 clamp(12px, 2vh, 18px);
   padding-bottom: clamp(14px, 2.2vh, 20px);
-  background: var(--board-title);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* forced colors drop background-clip text; fall back to plain text */
-@media (forced-colors: active) {
-  .vp-doc .ode-chip__title {
-    background: none;
-    -webkit-text-fill-color: CanvasText;
-  }
+  color: var(--board-text-1);
 }
 
 .ode-chip__lede {
@@ -182,7 +130,7 @@ const reasons = [
   .ode-btn:hover { transform: none; }
 }
 
-/* Stretched to the module column's height: Why ODE4EC sits at the bottom. */
+/* Stretched to the module column's height: the projects sit at the bottom. */
 @media (min-width: 1152px) and (min-height: 600px) {
   .ode-chip {
     display: flex;
@@ -193,59 +141,14 @@ const reasons = [
     margin-bottom: clamp(22px, 4vh, 40px);
   }
 
-  .ode-chip__why {
+  .ode-chip__projects {
     margin-top: auto;
   }
 }
 
-.ode-chip__why {
+.ode-chip__projects {
   margin-top: clamp(22px, 4vh, 40px);
   padding-top: clamp(18px, 3vh, 28px);
   border-top: 1px solid var(--board-panel-edge);
-}
-
-.vp-doc .ode-chip__why-heading {
-  margin-bottom: clamp(12px, 2vh, 18px);
-}
-
-.ode-chip__reasons {
-  display: grid;
-  gap: clamp(10px, 1.8vh, 16px);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.ode-chip__reason {
-  display: flex;
-  gap: 12px;
-  margin: 0;
-}
-
-@media (min-width: 640px) {
-  .ode-chip__reasons { grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .ode-chip__reason { flex-direction: column; gap: 8px; }
-}
-
-.ode-chip__icon {
-  flex-shrink: 0;
-  color: var(--board-icon);
-}
-
-.vp-doc .ode-chip__reason-title {
-  margin: 0 0 4px;
-  padding: 0;
-  border: none;
-  font-size: 0.96875rem;
-  line-height: 1.3;
-  letter-spacing: 0;
-  color: var(--board-text-1);
-}
-
-.ode-chip__reason-text {
-  margin: 0;
-  font-size: 0.84375rem;
-  line-height: 1.5;
-  color: var(--board-text-2);
 }
 </style>

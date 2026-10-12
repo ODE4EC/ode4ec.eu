@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// Lives inside the chip, in two columns where it fits, so a fourth project
+// fills the empty slot instead of making the board taller.
 const projects = [
   { code: 'AMS', name: 'ODE4EC-AMS', focus: 'Analog & mixed-signal', link: '/projects/ams/' },
   { code: 'DIG', name: 'ODE4EC-DIG', focus: 'Digital design', link: '/projects/dig/' },
@@ -7,7 +9,7 @@ const projects = [
 </script>
 
 <template>
-  <section class="ode-module" aria-labelledby="ode-mod-projects">
+  <section aria-labelledby="ode-mod-projects">
     <div class="ode-module__head">
       <h2 id="ode-mod-projects" class="ode-eyebrow">Projects</h2>
       <a class="ode-module__all" href="/projects/">All projects →</a>
@@ -30,7 +32,8 @@ const projects = [
 <style scoped>
 .ode-projects {
   display: grid;
-  gap: 6px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+  gap: 6px 28px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -103,21 +106,6 @@ const projects = [
 .ode-projects__row:hover .ode-projects__arrow {
   color: var(--board-accent);
   transform: translateX(3px);
-}
-
-/* short screens: name and focus share a line, to keep the board on one screen */
-@media (min-width: 1152px) and (max-height: 780px) {
-  .ode-projects__text {
-    flex-direction: row;
-    align-items: baseline;
-    gap: 10px;
-  }
-
-  .ode-projects__focus {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
