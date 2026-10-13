@@ -1,10 +1,11 @@
 ---
 title: ODE4EC-AMS
+description: ODE4EC-AMS makes open source EDA tools and open PDKs ready for analogue, mixed-signal and RF chip design on mature technology nodes. A Chips JU project with 26 partners from 12 countries.
 ---
 
 # ODE4EC-AMS
 
-ODE4EC-AMS targets open source EDA tools for analogue, mixed-signal (AMS) and RF designs.
+**Open source design tools for analogue, mixed-signal and RF chips.** ODE4EC-AMS makes open source EDA tools and open process design kits (PDKs) ready for real product development on mature technology nodes, so that start-ups, SMEs and universities can design analogue chips without expensive licences.
 
 <Card title="Key facts" link="https://cordis.europa.eu/project/id/101252962" linkText="Find on Cordis" target="new">
 
@@ -18,73 +19,71 @@ ODE4EC-AMS targets open source EDA tools for analogue, mixed-signal (AMS) and RF
 
 </Card>
 
-## Focus
+## Why it matters
 
-Open source tools already make digital chip design possible for small teams. For analogue, mixed-signal and RF circuits on mature technology nodes, important parts of the flow are still missing or not robust enough for product development. ODE4EC-AMS closes these gaps so that SMEs, start-ups and universities can design real AMS products without expensive licences.
+Open source tools already let small teams design digital chips. Analogue, mixed-signal and RF design is harder: important steps such as noise simulation, parasitic extraction and electromagnetic analysis are still missing or not robust enough, and analogue layout is still largely drawn by hand. ODE4EC-AMS closes these gaps and proves the result on real silicon.
 
-The work covers three areas. First, the project improves the open source tools themselves: circuit simulation, electromagnetic and RF simulation, parasitic extraction, and the interfaces between tools. Second, it automates analogue design with a modular framework for circuit generators, from transistor level up to system level. Third, it builds a library of reusable open source IP blocks, from hard macros to parameterised templates.
-
-The tools and PDKs are tested on real designs. Partners design IP blocks, fabricate them in two multi-project wafer (MPW) runs and measure them. Training material and tutorials help new users adopt the flow. All results are released under open source licences.
-
-## Objectives
+## What we are building
 
 <CardGrid>
 
-<Card title="Close tool gaps">
+<Card title="Better open source tools" link="/projects/ams/technology" linkText="See the tools">
 
-Improve the maturity and usability of open source tools for simulation, EM/RF analysis and parasitic extraction, so that AMS ASIC product development becomes possible.
-
-</Card>
-
-<Card title="Open PDKs">
-
-Provide open source process design kits for mature technologies that support the new tool features.
+Noise and mixed-signal simulation, parasitic extraction and electromagnetic field solvers that are robust enough for product development.
 
 </Card>
 
-<Card title="Design automation">
+<Card title="Analogue design automation" link="/projects/ams/technology" linkText="Learn more">
 
-Create a modular framework with analogue generators and parameterised IP templates for reuse across design projects.
-
-</Card>
-
-<Card title="Validated IP">
-
-Demonstrate the tools on analogue, RF and AMS designs fabricated in MPW runs, and feed the results back into tool and PDK development.
+A modular framework for analogue circuit generators, from transistor level up to system level, with layout generation and automated sizing.
 
 </Card>
 
-<Card title="Training and adoption">
+<Card title="Open PDKs and validated IP" link="/projects/ams/technology" linkText="Learn more">
 
-Bring open source EDA to academia, SMEs and industry through teaching material, tutorials and outreach.
-
-</Card>
-
-<Card title="Sustainability">
-
-Align with European initiatives and the EU design platform, and build a community that keeps the tools alive after the project.
+Process design kits that work with open source tools, and reusable analogue and RF IP blocks validated in silicon.
 
 </Card>
 
 </CardGrid>
 
-## Work packages
-
-| WP | Title | Lead |
-|----|-------|------|
-| WP1 | Analogue and RF Design Flow Improvements | University of Duisburg-Essen |
-| WP2 | Analogue Design Generation | Infineon Technologies Austria |
-| WP3 | PDK Setup and IP Verification | IHP |
-| WP4 | Commercial Validation | IMST |
-| WP5 | Design Development for Training Material and Tutorials | University of Southern Denmark |
-| WP6 | Dissemination, Communication and Exploitation | IHP |
-| WP7 | Project Management | IHP |
-
-## Contacts
+## Who it is for
 
 <CardGrid>
 
-<Card title="Rene Scholz" link="mailto:[email]" linkText="[email]">
+<Card title="Start-ups and SMEs">
+
+Design analogue and RF chips without the cost of commercial EDA licences.
+
+</Card>
+
+<Card title="Universities and students">
+
+Teaching material, tutorials and design examples for analogue, mixed-signal and RF design with open tools.
+
+</Card>
+
+<Card title="Industrial design teams">
+
+Reusable generators and validated IP that cut design time and can be shared across projects.
+
+</Card>
+
+<Card title="Open source developers">
+
+Contributions to established projects such as ngspice, OpenVAF, KLayout and Elmer.
+
+</Card>
+
+</CardGrid>
+
+## Get in touch
+
+Are you a company, university or developer interested in open source analogue design? We are happy to hear about your use cases. Follow the project on the [AMS news](/projects/ams/news) page.
+
+<CardGrid>
+
+<Card title="René Scholz" link="mailto:scholz@ihp-microelectronics.com" linkText="scholz@ihp-microelectronics.com">
 
 Project Coordinator, IHP
 
@@ -92,42 +91,35 @@ Project Coordinator, IHP
 
 <Card title="Karolos-Alexandros Tsakalos" link="mailto:tsakalos@ihp-microelectronics.com" linkText="tsakalos@ihp-microelectronics.com">
 
-Dissemination, Communication and Exploitation (WP6), IHP
+Dissemination, Communication and Exploitation, IHP
 
 </Card>
 
 </CardGrid>
 
-## Funding
+---
 
-<div class="funding-logos">
+<div class="funding-note">
   <img src="/img/logos/eu-cofunded.svg" alt="Co-funded by the European Union" />
   <img src="/img/logos/chips-ju.png" alt="Chips Joint Undertaking" />
 </div>
 
-ODE4EC-AMS has received funding from the Chips Joint Undertaking (Chips JU) under Grant Agreement No 101252962.
-
-Funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the Chips Joint Undertaking. Neither the European Union nor the granting authority can be held responsible for them.
+ODE4EC-AMS has received funding from the Chips Joint Undertaking (Chips JU) under Grant Agreement No 101252962. [Funding and disclaimer →](/projects/ams/funding)
 
 <style scoped>
-.funding-logos {
+.funding-note {
   display: flex;
   align-items: center;
-  justify-content: center;
   flex-wrap: wrap;
-  gap: 2rem 3rem;
-  margin: 2rem 0;
-  padding: 1.75rem 2rem;
+  gap: 1.5rem 2rem;
+  margin: 1.5rem 0 0.5rem;
+  padding: 1rem 1.25rem;
   background: #ffffff;
   border: 1px solid var(--vp-c-divider);
   border-radius: 8px;
 }
-.funding-logos img {
-  height: 56px;
+.funding-note img {
+  height: 40px;
   width: auto;
-}
-@media (max-width: 640px) {
-  .funding-logos { gap: 1.5rem; padding: 1.25rem; }
-  .funding-logos img { height: 44px; }
 }
 </style>
