@@ -29,15 +29,11 @@ Frankfurt (Oder), Germany
 
 <Badge type="tip" text="Coordinator" /> <Badge type="tip" text="WP3 · WP6 · WP7 lead" />
 
-Open source SG13G2 PDK and MPW runs, project management and dissemination.
-
 </Card>
 
 <Card title="Silicon Austria Labs" logo="/img/partners/sal.svg" flag="🇦🇹" link="https://silicon-austria-labs.com" linkText="silicon-austria-labs.com" target="_blank" rel="noopener">
 
-Villach, Austria
-
-Parasitic extraction with KLayout-PEX, design automation enablers and generators, RF training material.
+Granz, Austria
 
 </Card>
 
@@ -45,15 +41,11 @@ Parasitic extraction with KLayout-PEX, design automation enablers and generators
 
 Seville, Spain
 
-Machine-learning models and optimisation for analogue circuit sizing, at the Instituto de Microelectrónica de Sevilla (IMSE).
-
 </Card>
 
 <Card title="Fraunhofer IIS" logo="/img/partners/fraunhofer-iis.svg" flag="🇩🇪" link="https://www.iis.fraunhofer.de" linkText="iis.fraunhofer.de" target="_blank" rel="noopener">
 
 Dresden, Germany
-
-Template-based layout generation and interfaces for the MOSAIC framework.
 
 </Card>
 
@@ -61,15 +53,11 @@ Template-based layout generation and interfaces for the MOSAIC framework.
 
 Espoo, Finland
 
-Elmer FEM field solver for electromagnetic simulation of IC layouts.
-
 </Card>
 
 <Card title="Barcelona Supercomputing Center" logo="/img/partners/bsc.svg" flag="🇪🇸" link="https://www.bsc.es" linkText="bsc.es" target="_blank" rel="noopener">
 
 Barcelona, Spain
-
-Open source interface IP designed with an open tool flow.
 
 </Card>
 
@@ -83,15 +71,11 @@ Open source interface IP designed with an open tool flow.
 
 Zürich, Switzerland
 
-Training content on mixed-signal design, simulation and layout.
-
 </Card>
 
 <Card title="Universidad de Sevilla" logo="/img/partners/us.png" flag="🇪🇸" link="https://www.us.es" linkText="us.es" target="_blank" rel="noopener">
 
 Seville, Spain — affiliated entity of CSIC
-
-Machine-learning-based analogue sizing tools, together with CSIC at IMSE.
 
 </Card>
 
@@ -99,15 +83,11 @@ Machine-learning-based analogue sizing tools, together with CSIC at IMSE.
 
 Ljubljana, Slovenia
 
-OpenVAF and Verilog-A model conversion, simulation-based optimisation and yield-aware sizing.
-
 </Card>
 
 <Card title="Aalto University" logo="/img/partners/aalto.png" flag="🇫🇮" link="https://www.aalto.fi" linkText="aalto.fi" target="_blank" rel="noopener">
 
 Espoo, Finland
-
-MOSAIC, TheSyDeKick and Chip'nDale design environments, layout-in-the-loop optimisation.
 
 </Card>
 
@@ -117,15 +97,11 @@ Duisburg, Germany
 
 <Badge type="tip" text="WP1 lead" />
 
-ngspice: transient noise and mixed-signal simulation.
-
 </Card>
 
 <Card title="JKU Linz" logo="/img/partners/jku.svg" flag="🇦🇹" link="https://www.jku.at" linkText="jku.at" target="_blank" rel="noopener">
 
 Linz, Austria
-
-KLayout-based parasitic extraction and tutorials for AMS and RF design.
 
 </Card>
 
@@ -135,23 +111,17 @@ Odense, Denmark
 
 <Badge type="tip" text="WP5 lead" />
 
-Design examples, training material and tutorials.
-
 </Card>
 
 <Card title="University of Thessaly" logo="/img/partners/uth.png" flag="🇬🇷" link="https://www.uth.gr" linkText="uth.gr" target="_blank" rel="noopener">
 
 Volos, Greece
 
-FasterCap and floating-random-walk field-solver back-ends for KLayout.
-
 </Card>
 
 <Card title="Sorbonne Université" logo="/img/partners/sorbonne.svg" flag="🇫🇷" link="https://www.sorbonne-universite.fr" linkText="sorbonne-universite.fr" target="_blank" rel="noopener">
 
 Paris, France
-
-Procedural placement and routing with Coriolis, sizing methods and IP generators.
 
 </Card>
 
@@ -167,15 +137,11 @@ Villach, Austria
 
 <Badge type="tip" text="WP2 lead" />
 
-Analogue design automation with the MOSAIC framework.
-
 </Card>
 
 <Card title="Infineon Technologies" logo="/img/partners/ifag.svg" flag="🇩🇪" link="https://www.infineon.com" linkText="infineon.com" target="_blank" rel="noopener">
 
 Neubiberg, Germany
-
-Analogue design automation with the MOSAIC framework.
 
 </Card>
 
@@ -185,15 +151,11 @@ Kamp-Lintfort, Germany
 
 <Badge type="tip" text="WP4 lead" />
 
-RF and mixed-signal IP blocks designed with the open flow.
-
 </Card>
 
 <Card title="GMC Consulting" logo="/img/partners/gmc.svg" flag="🇨🇭">
 
-Switzerland
-
-Compact device models and Verilog-A integration for open PDKs.
+Commugny, Switzerland
 
 </Card>
 
@@ -201,15 +163,11 @@ Compact device models and Verilog-A integration for open PDKs.
 
 Turku, Finland
 
-Layout generators and industrial test cases for analogue design automation.
-
 </Card>
 
 <Card title="Saab Finland" logo="/img/partners/saab.svg" flag="🇫🇮" link="https://www.saab.com" linkText="saab.com" target="_blank" rel="noopener">
 
 Tampere, Finland
-
-End-user evaluation of open source design automation.
 
 </Card>
 
@@ -217,15 +175,11 @@ End-user evaluation of open source design automation.
 
 Espoo, Finland
 
-KLayout–Elmer workflow through KQCircuits and electromagnetic modelling.
-
 </Card>
 
 <Card title="Lime Microsystems" logo="/img/partners/lime.svg" flag="🇱🇹" link="https://limemicro.com" linkText="limemicro.com" target="_blank" rel="noopener">
 
 Vilnius, Lithuania
-
-RF IP blocks designed with open source tools.
 
 </Card>
 
@@ -233,23 +187,17 @@ RF IP blocks designed with open source tools.
 
 Denmark
 
-Analogue IP for sensor interfaces.
-
 </Card>
 
 <Card title="Pragmatic Semiconductor" logo="/img/partners/pragmatic.png" flag="🇬🇧" link="https://www.pragmaticsemi.com" linkText="pragmaticsemi.com" target="_blank" rel="noopener">
 
 Cambridge, United Kingdom
 
-Use of its FlexIC technology with open source EDA tools.
-
 </Card>
 
 <Card title="FibraServi" logo="/img/partners/fibraservi.svg" flag="🇧🇪">
 
-Belgium
-
-Development of open source PDKs.
+Heist-op-den-Berg, Belgium
 
 </Card>
 
