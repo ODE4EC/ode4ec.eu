@@ -91,7 +91,7 @@ Project Coordinator, IHP
 
 <Card title="Karolos-Alexandros Tsakalos" link="mailto:tsakalos@ihp-microelectronics.com" linkText="tsakalos@ihp-microelectronics.com">
 
-Dissemination, Communication and Exploitation, IHP
+Project Manager, IHP
 
 </Card>
 
