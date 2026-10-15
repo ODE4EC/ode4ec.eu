@@ -93,16 +93,18 @@ const shown = computed(() => props.home || frontmatter.value.layout !== 'home')
   width: auto;
 }
 
-/* the dark-mode plate adds padding: keep both logos on one line at 320px */
+/* keep both logos on one line at 320px */
 @media (max-width: 399px) {
   .ode-footer__logos { gap: 16px; }
   .ode-footer__logos img { height: 26px; }
 }
 
+/* drawn as a shadow spread, not padding, so the footer has the same size in
+   both themes and the homepage board doesn't shift when the theme changes */
 .dark .ode-footer__logos {
-  padding: 8px 14px;
-  border-radius: 8px;
+  border-radius: 2px;
   background: var(--ode-c-logo-plate);
+  box-shadow: 0 0 0 8px var(--ode-c-logo-plate);
 }
 
 .ode-footer__ack {

@@ -64,7 +64,8 @@ onMounted(() => {
   measure()
   resizeObserver = new ResizeObserver(scheduleMeasure)
   resizeObserver.observe(root.value!)
-  for (const el of root.value!.querySelectorAll('.ode-chip, .ode-module')) resizeObserver.observe(el)
+  // the footer too: when it changes height the chip moves without resizing
+  for (const el of root.value!.querySelectorAll('.ode-chip, .ode-module, .ode-board__foot')) resizeObserver.observe(el)
   document.fonts?.ready.then(scheduleMeasure)
 })
 
