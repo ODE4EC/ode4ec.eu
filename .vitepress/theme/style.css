@@ -50,7 +50,7 @@
   /* The plate partner logos sit on (see Card.vue): the light-mode card colour
      (--vp-c-bg-soft below) in both themes, so in light mode it melts into the
      card and in dark mode the logos keep the light ground they were made for. */
-  --ode-c-logo-plate: #f2efe8;
+  --ode-c-logo-plate: #f6f4f0;
 
   /* Soft blue-tinted panel background for subtle band separation on inner pages. */
   --ode-c-bg-tint: #f2f6fb;
@@ -62,8 +62,8 @@
 :root:not(.dark) {
   --vp-c-bg: #faf8f4;
   --vp-c-bg-elv: #faf8f4;
-  --vp-c-bg-alt: #f2efe8;
-  --vp-c-bg-soft: #f2efe8;
+  --vp-c-bg-alt: #f6f4f0;
+  --vp-c-bg-soft: #f6f4f0;
 }
 
 .dark {
@@ -444,7 +444,6 @@ html:not(.dark) .ode-board :is(.ode-chip, .ode-module) {
 
 .ode-module__nav button:hover:not(:disabled) {
   border-color: var(--board-accent);
-  color: var(--board-accent);
 }
 
 .ode-module__nav button:disabled {
@@ -524,6 +523,7 @@ html:not(.dark) .ode-board :is(.ode-chip, .ode-module) {
 }
 
 .vp-doc .ode-module__card:hover {
+  color: var(--board-text-1);
   border-color: var(--board-hover-edge);
 }
 

@@ -61,7 +61,6 @@ export const PIV_PARTNERS: Partner[] = [
   { name: 'INESC-ID', flag: '🇵🇹', city: 'Lisboa, Portugal' },
 ]
 
-// SensifAI Edge is left off the map until its city is known (Denmark).
 export const AMS_PARTNERS: Partner[] = [
   { name: 'IHP', flag: '🇩🇪', city: 'Frankfurt (Oder), Germany', role: 'Coordinator' },
   { name: 'Silicon Austria Labs', flag: '🇦🇹', city: 'Graz, Austria' },
@@ -86,6 +85,8 @@ export const AMS_PARTNERS: Partner[] = [
   { name: 'Saab Finland', flag: '🇫🇮', city: 'Tampere, Finland' },
   { name: 'IQM Quantum Computers', flag: '🇫🇮', city: 'Espoo, Finland' },
   { name: 'Lime Microsystems', flag: '🇱🇹', city: 'Vilnius, Lithuania' },
+  // city unknown: pinned in the middle of the country
+  { name: 'SensifAI Edge', flag: '🇩🇰', city: 'Denmark' },
   { name: 'Pragmatic Semiconductor', flag: '🇬🇧', city: 'Cambridge, United Kingdom' },
   { name: 'FibraServi', flag: '🇧🇪', city: 'Heist-op-den-Berg, Belgium' },
 ]

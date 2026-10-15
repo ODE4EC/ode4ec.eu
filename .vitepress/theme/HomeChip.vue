@@ -103,15 +103,12 @@ import HomeProjects from './HomeProjects.vue'
   color: var(--ode-c-board-deep);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -2px 0 rgba(0, 0, 0, 0.18),
-    0 6px 16px rgba(255, 214, 23, 0.22);
+    inset 0 -2px 0 rgba(0, 0, 0, 0.18);
 }
 
+/* keep the text colour: .vp-doc a:hover would turn it blue */
 .ode-btn--gold:hover {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -2px 0 rgba(0, 0, 0, 0.18),
-    0 8px 22px rgba(255, 214, 23, 0.32);
+  color: var(--ode-c-board-deep);
 }
 
 .ode-btn--ghost {
@@ -121,6 +118,7 @@ import HomeProjects from './HomeProjects.vue'
 }
 
 .ode-btn--ghost:hover {
+  color: var(--board-text-1);
   border-color: var(--board-accent);
   background: var(--board-row-hover);
 }

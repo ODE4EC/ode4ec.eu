@@ -188,6 +188,19 @@ const countryCount = computed(() => new Set(sites.value.map((s) => s.country)).s
             </template>
           </g>
 
+          <!-- every hit area sits under every marker, so a marker always wins
+               over a neighbour's larger hit area -->
+          <circle
+            v-for="s in sites"
+            :key="`h-${s.key}`"
+            class="pmap__hit"
+            :cx="s.x"
+            :cy="s.y"
+            :r="s.r + 4"
+            @click="select(s.key)"
+            @mouseenter="hoverKey = s.key"
+            @mouseleave="hoverKey = null"
+          />
           <g
             v-for="s in sites"
             :key="s.key"
@@ -200,7 +213,6 @@ const countryCount = computed(() => new Set(sites.value.map((s) => s.country)).s
             @mouseenter="hoverKey = s.key"
             @mouseleave="hoverKey = null"
           >
-            <circle class="pmap__hit" :cx="s.x" :cy="s.y" :r="s.r + 4" />
             <circle class="pmap__ring" :cx="s.x" :cy="s.y" :r="s.r + 1.8" />
             <circle class="pmap__marker" :cx="s.x" :cy="s.y" :r="s.r" />
             <text
@@ -329,9 +341,12 @@ const countryCount = computed(() => new Set(sites.value.map((s) => s.country)).s
 
 .pmap__hit {
   fill: transparent;
+  cursor: pointer;
 }
 
+
 .pmap__ring {
+  pointer-events: none;
   fill: none;
   stroke: #fff;
   stroke-width: 0.9;

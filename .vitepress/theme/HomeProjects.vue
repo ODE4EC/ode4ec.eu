@@ -57,6 +57,7 @@ const projects = [
 }
 
 .ode-projects__row:hover {
+  color: var(--board-text-1);
   background: var(--board-row-hover);
 }
 
@@ -104,7 +105,6 @@ const projects = [
 }
 
 .ode-projects__row:hover .ode-projects__arrow {
-  color: var(--board-accent);
   transform: translateX(3px);
 }
 

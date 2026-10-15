@@ -23,27 +23,7 @@ ODE4EC-PIV targets open source tools for productivity of chip design, integratio
 
 Open source chip design has reached the point where the individual tools are capable, but the path from an idea to a verified design still asks too much of the engineer walking it. Tools do not always agree on formats, flows have to be reassembled by hand for every project, and verification environments rarely meet the expectations that industrial teams bring with them. ODE4EC-PIV works on that seam of the ecosystem rather than on any single tool, so that what already exists becomes something a team can actually adopt.
 
-<CardGrid>
-
-<Card title="Productivity" link="/projects/piv/technology#productivity" linkText="Learn more">
-
-Design entry, IP management, generator-based flows and waveform analysis.
-
-</Card>
-
-<Card title="Interoperability" link="/projects/piv/technology#interoperability" linkText="Learn more">
-
-Modular frameworks, standardised interfaces and open data exchange formats.
-
-</Card>
-
-<Card title="Verification" link="/projects/piv/technology#verification" linkText="Learn more">
-
-Formal methods, UVM-inspired and Python-based environments, and continuous integration.
-
-</Card>
-
-</CardGrid>
+The work is organised around three concerns that reinforce each other. Productivity covers design entry, IP management and generator-based flows, along with the waveform and analysis tooling that engineers spend their days in. Interoperability covers the modular frameworks, standardised interfaces and open data exchange formats that let heterogeneous tools hand work to each other without a custom script in between. Verification covers formal methods, UVM-inspired and Python-based environments, hardware and software co-simulation, and the continuous integration practice that keeps all of it honest as designs evolve.
 
 Everything the project builds is evaluated against real use cases contributed by the consortium and released openly, so the results are usable beyond the lifetime of the grant.
 
