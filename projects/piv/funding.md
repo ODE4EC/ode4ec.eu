@@ -8,7 +8,7 @@ The ODE4EC-PIV project has received funding from the Chips Joint Undertaking (Ch
 
 <div class="funding-logos">
   <img src="/img/logos/eu-cofunded.svg" alt="Co-funded by the European Union" />
-  <img src="/img/logos/chips-ju.png" alt="Chips Joint Undertaking" />
+  <img src="/img/logos/chips-ju.svg" alt="Chips Joint Undertaking" />
 </div>
 
 <style scoped>

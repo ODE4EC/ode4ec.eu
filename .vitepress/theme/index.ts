@@ -10,12 +10,14 @@ import KeyFact from './KeyFact.vue'
 import KeyFacts from './KeyFacts.vue'
 import HomeBoard from './HomeBoard.vue'
 import PartnersMap from './PartnersMap.vue'
+import SiteFooter from './SiteFooter.vue'
 
 export default {
   extends: DefaultTheme,
   Layout: () => {
     return h(DefaultTheme.Layout, null, {
       'doc-before': () => h(PostTags),
+      'layout-bottom': () => h(SiteFooter),
     })
   },
   enhanceApp({ app }) {

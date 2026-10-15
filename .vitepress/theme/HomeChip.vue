@@ -11,8 +11,7 @@ import HomeProjects from './HomeProjects.vue'
     <p class="ode-chip__lede">Open Design Environment for European Chips</p>
     <p class="ode-chip__tagline">
       A coordinated initiative bringing together research institutions, universities and industry across Europe to
-      build an open source chip design environment, with open EDA tools, open process design kits and open
-      educational resources at its core.
+      build an open source chip design environment.
     </p>
     <div class="ode-chip__actions">
       <a class="ode-btn ode-btn--gold" href="/about/">About the initiative</a>

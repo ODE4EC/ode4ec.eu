@@ -3,16 +3,13 @@
 // drawn in real pixels from their measured positions, so every trace lands on
 // a pin at any viewport size.
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
-import { useData } from 'vitepress'
 import HomeChip from './HomeChip.vue'
 import HomeWhy from './HomeWhy.vue'
 import HomeEvents from './HomeEvents.vue'
 import HomeNews from './HomeNews.vue'
+import SiteFooter from './SiteFooter.vue'
 import { buildCircuit, type Circuit, type Rect, type Trace } from './circuit/layout'
 import { usePacketMotion } from './circuit/usePacketMotion'
-
-const { theme } = useData()
-const footerMessage = computed(() => theme.value.footer?.message as string | undefined)
 
 const root = ref<HTMLElement | null>(null)
 const packetLayer = ref<HTMLElement | null>(null)
@@ -142,25 +139,24 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <div class="ode-board__foot">
-      <p v-if="footerMessage" class="ode-board__credit" v-html="footerMessage" />
-      <button
-        v-if="mounted && !reducedMotion"
-        class="ode-board__motion"
-        type="button"
-        :aria-pressed="userPaused"
-        title="Pause background animation"
-        @click="toggleMotion"
-      >
-        <span class="visually-hidden">Pause background animation</span>
-        <svg v-if="userPaused" width="12" height="12" viewBox="0 0 14 14" aria-hidden="true">
-          <path d="M4 2.5v9l7.5-4.5z" fill="currentColor" />
-        </svg>
-        <svg v-else width="12" height="12" viewBox="0 0 14 14" aria-hidden="true">
-          <path d="M4 2.5v9M10 2.5v9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
-        </svg>
-      </button>
-    </div>
+    <SiteFooter home class="ode-board__foot">
+      <template #controls>
+        <button
+          v-if="mounted && !reducedMotion"
+          class="ode-board__motion"
+          type="button"
+          @click="toggleMotion"
+        >
+          <svg v-if="userPaused" width="12" height="12" viewBox="0 0 14 14" aria-hidden="true">
+            <path d="M4 2.5v9l7.5-4.5z" fill="currentColor" />
+          </svg>
+          <svg v-else width="12" height="12" viewBox="0 0 14 14" aria-hidden="true">
+            <path d="M4 2.5v9M10 2.5v9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+          </svg>
+          {{ userPaused ? 'Play' : 'Pause' }} background animation
+        </button>
+      </template>
+    </SiteFooter>
   </div>
 </template>
 
@@ -333,60 +329,34 @@ onBeforeUnmount(() => {
 
 .ode-packet.tone--gold { --packet: var(--ode-c-pin-hot); }
 
+/* above the wires and packets */
 .ode-board__foot {
-  position: relative;
   z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 clamp(24px, 5vw + 8px, 64px) 10px;
-}
-
-.vp-doc .ode-board__credit {
-  margin: 0;
-  font-size: 0.71875rem;
-  line-height: 1.5;
-  color: var(--board-text-2);
-}
-
-.vp-doc .ode-board__credit :deep(a) {
-  color: var(--board-text-2);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.vp-doc .ode-board__credit :deep(a:hover) {
-  color: var(--board-accent);
 }
 
 .ode-board__motion {
   flex-shrink: 0;
   margin-left: auto;
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border: 1.5px solid var(--board-control-edge);
-  border-radius: 50%;
-  background: var(--board-control-bg);
-  color: var(--board-text-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  padding: 0 12px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--vp-c-text-2);
+  font-size: 0.75rem;
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s;
 }
 
 .ode-board__motion:hover {
-  color: var(--board-text-1);
-  border-color: var(--board-accent);
+  color: var(--vp-c-text-1);
+  border-color: var(--vp-c-brand-1);
 }
 
 @media (pointer: coarse) {
-  .ode-board__motion {
-    width: 40px;
-    height: 40px;
-  }
+  .ode-board__motion { min-height: 40px; }
 }
 </style>

@@ -114,9 +114,5 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/fossi-foundation/ode4ec.eu.git' }
     ],
-
-    footer: {
-      message: '&copy; the authors and project partners of ODE4EC projects. Hosted by the <a href="https://www.fossi-foundation.org">FOSSi Foundation</a>.'
-    }
   }
 })
