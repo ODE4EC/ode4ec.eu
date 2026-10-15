@@ -127,6 +127,66 @@
     "Verona, Italy": {
       "x": 648.7,
       "y": 492.95
+    },
+    "Graz, Austria": {
+      "x": 673.25,
+      "y": 478.66
+    },
+    "Seville, Spain": {
+      "x": 538.05,
+      "y": 547.26
+    },
+    "Dresden, Germany": {
+      "x": 662.17,
+      "y": 446.67
+    },
+    "Espoo, Finland": {
+      "x": 703.27,
+      "y": 366.7
+    },
+    "Ljubljana, Slovenia": {
+      "x": 668.58,
+      "y": 487.26
+    },
+    "Duisburg, Germany": {
+      "x": 626.46,
+      "y": 443.69
+    },
+    "Odense, Denmark": {
+      "x": 644.77,
+      "y": 411.57
+    },
+    "Villach, Austria": {
+      "x": 664.61,
+      "y": 482.97
+    },
+    "Kamp-Lintfort, Germany": {
+      "x": 625.37,
+      "y": 443.07
+    },
+    "Commugny, Switzerland": {
+      "x": 621.34,
+      "y": 485.36
+    },
+    "Turku, Finland": {
+      "x": 693.25,
+      "y": 366.56
+    },
+    "Tampere, Finland": {
+      "x": 697.76,
+      "y": 357.25
+    },
+    "Vilnius, Lithuania": {
+      "x": 714.88,
+      "y": 410.01
+    },
+    "Cambridge, United Kingdom": {
+      "x": 593.6,
+      "y": 434.42
+    },
+    "Heist-op-den-Berg, Belgium": {
+      "x": 615.88,
+      "y": 445.97
     }
   }
 }

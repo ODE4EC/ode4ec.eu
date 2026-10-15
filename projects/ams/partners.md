@@ -19,6 +19,8 @@ ODE4EC-AMS brings together 26 organizations from 12 countries, covering the whol
 
 </Card>
 
+<PartnersMap project="ams" />
+
 ## Research organizations
 
 <CardGrid>
@@ -33,7 +35,7 @@ Frankfurt (Oder), Germany
 
 <Card title="Silicon Austria Labs" logo="/img/partners/sal.svg" flag="🇦🇹" link="https://silicon-austria-labs.com" linkText="silicon-austria-labs.com" target="_blank" rel="noopener">
 
-Granz, Austria
+Graz, Austria
 
 </Card>
 

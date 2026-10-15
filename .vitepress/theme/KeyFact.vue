@@ -21,7 +21,7 @@ dt {
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--vp-c-text-3);
+  color: var(--vp-c-text-2);
 }
 
 dd {

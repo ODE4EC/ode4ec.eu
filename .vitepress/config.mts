@@ -101,6 +101,7 @@ export default defineConfig({
           items: [
             { text: 'Overview', link: '/projects/dig/' },
             { text: 'Partners', link: '/projects/dig/partners' },
+            { text: 'News', link: '/projects/dig/news' },
           ],
         },
       ],
@@ -109,8 +110,11 @@ export default defineConfig({
           text: 'ODE4EC-PIV',
           items: [
             { text: 'Overview', link: '/projects/piv/' },
+            { text: 'Technology', link: '/projects/piv/technology' },
+            { text: 'Work plan', link: '/projects/piv/work-plan' },
             { text: 'Partners', link: '/projects/piv/partners' },
-            { text: 'Funding', link: '/projects/piv/funding' }
+            { text: 'News', link: '/projects/piv/news' },
+            { text: 'Funding', link: '/projects/piv/funding' },
           ],
         },
       ],

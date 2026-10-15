@@ -60,3 +60,32 @@ export const PIV_PARTNERS: Partner[] = [
   { name: 'EDALab', flag: '🇮🇹', city: 'Verona, Italy' },
   { name: 'INESC-ID', flag: '🇵🇹', city: 'Lisboa, Portugal' },
 ]
+
+// SensifAI Edge is left off the map until its city is known (Denmark).
+export const AMS_PARTNERS: Partner[] = [
+  { name: 'IHP', flag: '🇩🇪', city: 'Frankfurt (Oder), Germany', role: 'Coordinator' },
+  { name: 'Silicon Austria Labs', flag: '🇦🇹', city: 'Graz, Austria' },
+  { name: 'CSIC', flag: '🇪🇸', city: 'Seville, Spain' },
+  { name: 'Fraunhofer IIS', flag: '🇩🇪', city: 'Dresden, Germany' },
+  { name: 'CSC – IT Center for Science', flag: '🇫🇮', city: 'Espoo, Finland' },
+  { name: 'Barcelona Supercomputing Center', flag: '🇪🇸', city: 'Barcelona, Spain' },
+  { name: 'ETH Zürich', flag: '🇨🇭', city: 'Zürich, Switzerland' },
+  { name: 'Universidad de Sevilla', flag: '🇪🇸', city: 'Seville, Spain' },
+  { name: 'University of Ljubljana', flag: '🇸🇮', city: 'Ljubljana, Slovenia' },
+  { name: 'Aalto University', flag: '🇫🇮', city: 'Espoo, Finland' },
+  { name: 'University of Duisburg-Essen', flag: '🇩🇪', city: 'Duisburg, Germany' },
+  { name: 'JKU Linz', flag: '🇦🇹', city: 'Linz, Austria' },
+  { name: 'University of Southern Denmark', flag: '🇩🇰', city: 'Odense, Denmark' },
+  { name: 'University of Thessaly', flag: '🇬🇷', city: 'Volos, Greece' },
+  { name: 'Sorbonne Université', flag: '🇫🇷', city: 'Paris, France' },
+  { name: 'Infineon Technologies Austria', flag: '🇦🇹', city: 'Villach, Austria' },
+  { name: 'Infineon Technologies', flag: '🇩🇪', city: 'Neubiberg, Germany' },
+  { name: 'IMST', flag: '🇩🇪', city: 'Kamp-Lintfort, Germany' },
+  { name: 'GMC Consulting', flag: '🇨🇭', city: 'Commugny, Switzerland' },
+  { name: 'Kovilta', flag: '🇫🇮', city: 'Turku, Finland' },
+  { name: 'Saab Finland', flag: '🇫🇮', city: 'Tampere, Finland' },
+  { name: 'IQM Quantum Computers', flag: '🇫🇮', city: 'Espoo, Finland' },
+  { name: 'Lime Microsystems', flag: '🇱🇹', city: 'Vilnius, Lithuania' },
+  { name: 'Pragmatic Semiconductor', flag: '🇬🇧', city: 'Cambridge, United Kingdom' },
+  { name: 'FibraServi', flag: '🇧🇪', city: 'Heist-op-den-Berg, Belgium' },
+]

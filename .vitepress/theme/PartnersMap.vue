@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, useId } from 'vue'
 import mapData from './data/europe-map.json'
-import { DIG_PARTNERS, PIV_PARTNERS, type Partner } from './data/partners'
+import { AMS_PARTNERS, DIG_PARTNERS, PIV_PARTNERS, type Partner } from './data/partners'
 
 const props = defineProps<{
-  project: 'dig' | 'piv'
+  project: 'ams' | 'dig' | 'piv'
 }>()
 
-const partners = computed(() => (props.project === 'dig' ? DIG_PARTNERS : PIV_PARTNERS))
+const PARTNERS = { ams: AMS_PARTNERS, dig: DIG_PARTNERS, piv: PIV_PARTNERS }
+const partners = computed(() => PARTNERS[props.project])
 
 type Point = { x: number; y: number }
 const CITIES = mapData.cities as Record<string, Point>

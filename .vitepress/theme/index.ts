@@ -10,6 +10,9 @@ import KeyFact from './KeyFact.vue'
 import KeyFacts from './KeyFacts.vue'
 import HomeBoard from './HomeBoard.vue'
 import PartnersMap from './PartnersMap.vue'
+import ProjectNews from './ProjectNews.vue'
+import WorkFlow from './WorkFlow.vue'
+import FlowStep from './FlowStep.vue'
 import SiteFooter from './SiteFooter.vue'
 
 export default {
@@ -27,5 +30,8 @@ export default {
     app.component('KeyFacts', KeyFacts)
     app.component('HomeBoard', HomeBoard)
     app.component('PartnersMap', PartnersMap)
+    app.component('ProjectNews', ProjectNews)
+    app.component('WorkFlow', WorkFlow)
+    app.component('FlowStep', FlowStep)
   }
 } satisfies Theme
