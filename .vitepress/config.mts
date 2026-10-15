@@ -87,6 +87,11 @@ export default defineConfig({
           text: 'ODE4EC-AMS',
           items: [
             { text: 'Overview', link: '/projects/ams/' },
+            { text: 'Technology', link: '/projects/ams/technology' },
+            { text: 'Work plan', link: '/projects/ams/work-plan' },
+            { text: 'Partners', link: '/projects/ams/partners' },
+            { text: 'News', link: '/projects/ams/news' },
+            { text: 'Funding', link: '/projects/ams/funding' },
           ],
         },
       ],
