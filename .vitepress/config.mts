@@ -38,9 +38,6 @@ export default defineConfig({
   description: "This is the central website for projects under the ODE4EC umbrella.",
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
-    ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
-    ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
-    ['link', { href: 'https://fonts.googleapis.com/css2?family=Domine:wght@400;600;700&display=swap', rel: 'stylesheet' }],
   ],
   themeConfig: {
     logo: '/img/ode4ec-logo.svg',

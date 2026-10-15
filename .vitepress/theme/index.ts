@@ -2,6 +2,7 @@
 import { h } from 'vue'
 import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
+import '@fontsource-variable/domine'
 import './style.css'
 import PostTags from './PostTags.vue'
 import Card from './Card.vue'

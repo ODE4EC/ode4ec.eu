@@ -4,7 +4,7 @@ import HomeProjects from './HomeProjects.vue'
 </script>
 
 <template>
-  <div class="ode-chip">
+  <div class="ode-chip" data-board-part="chip">
     <span class="ode-chip__notch" aria-hidden="true" />
 
     <h1 class="ode-chip__title">ODE4EC</h1>

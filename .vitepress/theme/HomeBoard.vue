@@ -8,13 +8,13 @@ import HomeWhy from './HomeWhy.vue'
 import HomeEvents from './HomeEvents.vue'
 import HomeNews from './HomeNews.vue'
 import SiteFooter from './SiteFooter.vue'
-import { buildCircuit, type Circuit, type Rect, type Trace } from './circuit/layout'
+import { buildCircuit, TONES, type Circuit, type Rect, type Trace } from './circuit/layout'
 import { usePacketMotion } from './circuit/usePacketMotion'
+import './board.css'
 
 const root = ref<HTMLElement | null>(null)
 const packetLayer = ref<HTMLElement | null>(null)
 const size = ref({ w: 0, h: 0 })
-const TONES = ['deep', 'blue', 'gold'] as const
 // Empty on the server and on first client render (hydration must match);
 // filled in after mount.
 const circuit = shallowRef<Circuit | null>(null)
@@ -29,10 +29,10 @@ const { mounted, reducedMotion, userPaused, toggleMotion } = usePacketMotion(roo
 
 function measure() {
   const el = root.value
-  const chipEl = el?.querySelector('.ode-chip')
+  const chipEl = el?.querySelector('[data-board-part=chip]')
   if (!el || !chipEl) return
-  const moduleEls = [...el.querySelectorAll('.ode-module')]
-  const footEl = el.querySelector('.ode-board__foot')
+  const moduleEls = [...el.querySelectorAll('[data-board-part=module]')]
+  const footEl = el.querySelector('[data-board-part=foot]')
 
   const box = el.getBoundingClientRect()
   const rel = (r: DOMRect): Rect => ({ x: r.left - box.left, y: r.top - box.top, w: r.width, h: r.height })
@@ -65,7 +65,7 @@ onMounted(() => {
   resizeObserver = new ResizeObserver(scheduleMeasure)
   resizeObserver.observe(root.value!)
   // the footer too: when it changes height the chip moves without resizing
-  for (const el of root.value!.querySelectorAll('.ode-chip, .ode-module, .ode-board__foot')) resizeObserver.observe(el)
+  for (const el of root.value!.querySelectorAll('[data-board-part]')) resizeObserver.observe(el)
   document.fonts?.ready.then(scheduleMeasure)
 })
 
@@ -140,7 +140,7 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <SiteFooter home class="ode-board__foot">
+    <SiteFooter home class="ode-board__foot" data-board-part="foot">
       <template #controls>
         <button
           v-if="mounted && !reducedMotion"

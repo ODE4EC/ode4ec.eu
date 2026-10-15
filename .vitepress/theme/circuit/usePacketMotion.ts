@@ -48,7 +48,6 @@ export function usePacketMotion(
     await nextTick()
     if (!c || !packetLayer.value) return
     engine.attach(packetLayer.value, c.traces, navFade())
-    if (running.value) engine.start()
   })
 
   let lastActive = 0

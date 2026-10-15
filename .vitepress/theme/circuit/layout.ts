@@ -23,7 +23,8 @@ export interface Rect {
 }
 
 export type Side = 'top' | 'right' | 'bottom' | 'left'
-export type Tone = 'gold' | 'blue' | 'deep'
+export const TONES = ['deep', 'blue', 'gold'] as const
+export type Tone = (typeof TONES)[number]
 
 export interface Pin {
   id: string
@@ -82,6 +83,17 @@ const PIN_W = 6
 const CORNER_INSET = 36
 /** how far traces run past the board edge, so their ends are never visible */
 const BLEED = 24
+/** below this board width, pins sit closer together */
+const COMPACT_W = 640
+const PITCH = 18
+const PITCH_COMPACT = 16
+/** a chip with fewer pins than this on its top/left edge gets no traces at all */
+const MIN_TOP_PINS = 8
+const MIN_LEFT_PINS = 7
+/** straight run out of a pin before a bus bends */
+const STUB = 26
+/** no vias above this y, in the navbar band where the traces fade out */
+const NAV_BAND = 110
 
 function sub(a: Pt, b: Pt): Pt {
   return { x: a.x - b.x, y: a.y - b.y }
@@ -224,8 +236,7 @@ function routeBus(spec: BusSpec, out: Circuit) {
       pinId: pin.id,
       flow: spec.flow,
     })
-    // no vias up in the navbar band, where the traces fade out
-    if (spec.viaOn === i && pts.length > 3 && pts[2].y > 110) out.vias.push({ ...pts[2], tone })
+    if (spec.viaOn === i && pts.length > 3 && pts[2].y > NAV_BAND) out.vias.push({ ...pts[2], tone })
   })
 }
 
@@ -326,8 +337,7 @@ function laneRoute(a: Pt, b: Pt, x: number): Pt[] {
 
 export function buildCircuit(L: BoardLayout): Circuit {
   const { chip, width: W, height: H } = L
-  const compact = W < 640
-  const pitch = compact ? 16 : 18
+  const pitch = W < COMPACT_W ? PITCH_COMPACT : PITCH
   const out: Circuit = { pins: [], traces: [], vias: [] }
 
   const top = pinsOnSide(chip, 'top', pitch)
@@ -335,22 +345,21 @@ export function buildCircuit(L: BoardLayout): Circuit {
   const left = pinsOnSide(chip, 'left', pitch)
   const right = pinsOnSide(chip, 'right', pitch)
   out.pins = [...top, ...right, ...bottom, ...left]
-  if (top.length < 8 || left.length < 7) return out
+  if (top.length < MIN_TOP_PINS || left.length < MIN_LEFT_PINS) return out
 
   const nt = top.length
   const nl = left.length
-  const stub = 26
 
   // chip, top: two diagonal fans up and out (they fade under the navbar)
   const topFan = (pins: Pin[], dir: -1 | 1, id: string) => {
     const c = mean(pins)
-    const rise = c.y - stub
+    const rise = c.y - STUB
     const run = clamp(Math.min(chip.x, 170), 0, Math.max(0, rise - 20))
     routeBus(
       {
         id,
         pins,
-        center: clean([c, { x: c.x, y: c.y - stub }, { x: c.x + dir * run, y: c.y - stub - run }, { x: c.x + dir * run, y: -BLEED }]),
+        center: clean([c, { x: c.x, y: c.y - STUB }, { x: c.x + dir * run, y: c.y - STUB - run }, { x: c.x + dir * run, y: -BLEED }]),
         tones: ['deep', 'gold', 'blue'],
         flow: 'in',
         viaOn: 1,
@@ -367,15 +376,15 @@ export function buildCircuit(L: BoardLayout): Circuit {
     const c = mean(pins)
     const edgeX = dir < 0 ? -BLEED : W + BLEED
     const avail = dir < 0 ? c.x : W - c.x
-    const run = avail < 90 ? 0 : clamp((avail - stub) * 0.4, 0, 120)
+    const run = avail < 90 ? 0 : clamp((avail - STUB) * 0.4, 0, 120)
     routeBus(
       {
         id,
         pins,
         center: clean([
           c,
-          { x: c.x + dir * stub, y: c.y },
-          { x: c.x + dir * (stub + run), y: c.y + vdir * run },
+          { x: c.x + dir * STUB, y: c.y },
+          { x: c.x + dir * (STUB + run), y: c.y + vdir * run },
           { x: edgeX, y: c.y + vdir * run },
         ]),
         tones: vdir < 0 ? ['gold', 'blue', 'deep'] : ['deep', 'blue', 'gold'],
@@ -401,7 +410,7 @@ export function buildCircuit(L: BoardLayout): Circuit {
     // folds back into a loop. When room is tight, shorten the drop before the
     // diagonal; with too little room for both, leave the fan out.
     const room = L.floor - 22 - c.y
-    const drop = clamp(room - 24, 14, stub)
+    const drop = clamp(room - 24, 14, STUB)
     const run = Math.min(24, room - drop)
     if (run >= 18) {
       routeBus(

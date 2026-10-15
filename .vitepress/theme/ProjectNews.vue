@@ -2,6 +2,7 @@
 // A project's news list: every post tagged ode4ec-<project>, newest first.
 import { computed } from 'vue'
 import { data as posts } from '../../news/posts.data'
+import { formatDate } from './format'
 
 const props = defineProps<{ project: 'ams' | 'dig' | 'piv' }>()
 
@@ -13,7 +14,7 @@ const projectPosts = computed(() => posts.filter((p) => p.tags.includes(projectT
   <div>
     <div v-for="post in projectPosts" :key="post.url" class="post-entry">
       <div class="post-head">
-        <span class="date">{{ post.date }}</span>
+        <time class="date" :datetime="post.date">{{ formatDate(post.date) }}</time>
         <a :href="post.url">{{ post.title }}</a>
       </div>
       <div class="tags" v-if="post.tags.length">

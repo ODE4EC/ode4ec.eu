@@ -1,4 +1,5 @@
 import { existsSync } from 'fs'
+import { fileURLToPath } from 'url'
 import { createContentLoader } from 'vitepress'
 
 export interface Post {
@@ -29,10 +30,11 @@ export default createContentLoader('news/posts/*.md', {
 })
 
 // `image` must be a site-root path to a file in public/, e.g. /img/news/foo.png.
-// Anything else would render a broken thumbnail on the homepage, so warn at build.
+// Anything else is dropped with a warning, so the homepage draws its fallback thumbnail.
 function checkImage(image: string | undefined, url: string) {
-  if (image && (!image.startsWith('/') || !existsSync(`public${image}`))) {
+  if (image && (!image.startsWith('/') || !existsSync(fileURLToPath(new URL(`../public${image}`, import.meta.url))))) {
     console.warn(`[news] ${url}: image "${image}" is not a file under public/ (use e.g. /img/news/foo.png)`)
+    return undefined
   }
   return image
 }

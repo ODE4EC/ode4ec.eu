@@ -6,6 +6,10 @@ on:
 
   workflow_dispatch:
 
+  # rebuild daily so events move from upcoming to past on their own
+  #schedule:
+  #  - cron: '0 3 * * *'
+  #
 jobs:
   build:
     runs-on: ubuntu-latest

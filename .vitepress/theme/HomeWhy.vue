@@ -19,7 +19,7 @@ const reasons = [
 </script>
 
 <template>
-  <section class="ode-module" aria-labelledby="ode-mod-why">
+  <section class="ode-module" data-board-part="module" aria-labelledby="ode-mod-why">
     <div class="ode-module__head">
       <h2 id="ode-mod-why" class="ode-eyebrow">Why ODE4EC</h2>
     </div>

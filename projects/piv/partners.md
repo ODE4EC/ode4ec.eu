@@ -149,7 +149,7 @@ Zürich, Switzerland
 
 </Card>
 
-<Card title="Lubis EDA" logo="/img/partners/leda.png" flag="🇩🇪" link="https://www.lubis-eda.com" linkText="lubis-eda.com" target="_blank" rel="noopener">
+<Card title="Lubis EDA" logo="/img/partners/leda.png" flag="🇩🇪" link="https://lubis-eda.com" linkText="lubis-eda.com" target="_blank" rel="noopener">
 
 Kaiserslautern, Germany
 

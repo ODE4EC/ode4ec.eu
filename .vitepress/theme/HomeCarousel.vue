@@ -18,7 +18,7 @@ const { atStart, atEnd, step, update } = useCarousel(track)
 </script>
 
 <template>
-  <section class="ode-module" :aria-labelledby="`${id}-title`">
+  <section class="ode-module" data-board-part="module" :aria-labelledby="`${id}-title`">
     <div class="ode-module__head">
       <h2 :id="`${id}-title`" class="ode-eyebrow">{{ title }}</h2>
       <div v-if="items.length" class="ode-module__nav">
