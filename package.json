@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.42.3",
+    "esbuild": "^0.28.2",
     "vitepress": "^2.0.0-alpha.15",
     "wrangler": "^4.105.0"
   },
