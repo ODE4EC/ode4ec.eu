@@ -32,7 +32,7 @@ The technical work moves in three steps: a baseline of today's tools, then two p
 
 | When | Milestone |
 |------|-----------|
-| November 2026 | Baseline definition: roadmap and tools baseline |
+| November 2026 | Baseline definition: roadmap and baseline of today's tools |
 | February 2027 | Work setup: use cases defined |
 | November 2027 | First snapshot of the tools |
 | May 2028 | Preliminary evaluation on the use cases |

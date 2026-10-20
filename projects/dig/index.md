@@ -12,7 +12,7 @@ ODE4EC-DIG targets open source EDA tools for digital designs.
   <KeyFact label="Start date" value="1 June 2026" />
   <KeyFact label="End date" value="31 May 2029" />
   <KeyFact label="Funded by" value="Chips JU" />
-  <KeyFact label="Partners" value="23 organizations" />
+  <KeyFact label="Partners" value="23 organisations" />
   <KeyFact label="Total cost" value="€19,178,973" />
 </KeyFacts>
 

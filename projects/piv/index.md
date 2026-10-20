@@ -13,7 +13,7 @@ ODE4EC-PIV targets open source tools for productivity of chip design, integratio
   <KeyFact label="Start date" value="1 June 2026" />
   <KeyFact label="End date" value="31 May 2029" />
   <KeyFact label="Funded by" value="Chips JU" />
-  <KeyFact label="Partners" value="24 organizations" />
+  <KeyFact label="Partners" value="24 organisations" />
   <KeyFact label="Total cost" value="€14,537,084" />
 </KeyFacts>
 

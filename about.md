@@ -18,19 +18,19 @@ To increase Europe's impact and share on the global semiconductor markets and Eu
 
 Europe cannot rely on closed, proprietary tools and supply chains to build sovereign semiconductor capability. ODE4EC's vision is a chip design landscape where open source is a solid base of chip ambitions: open EDA tools, open design IP, and open process design kits together remove the friction that today keeps talented engineers, researchers, and SMEs from designing chips. When designing a chip is as accessible as writing software, Europe gains a self-reinforcing cycle: more designers, more innovation, more chips.
 
-## Ecosystem 
+## Ecosystem
 
-Open source chip design is not a single project but an ecosystem. ODE4EC brings together industry, academia, and research organizations that share a commitment to openness, and creates the conditions for them to collaborate effectively. Rather than building in isolation, ODE4EC acts as a connective layer: aligning efforts, closing gaps, and amplifying what the community is already building. The result is an ecosystem that is more than the sum of its parts — one that is resilient, interoperable, and positioned to grow.
+Open source chip design is not a single project but an ecosystem. ODE4EC brings together industry, academia, and research organisations that share a commitment to openness, and creates the conditions for them to collaborate effectively. Rather than building in isolation, ODE4EC acts as a connective layer: aligning efforts, closing gaps, and amplifying what the community is already building. The result is an ecosystem that is more than the sum of its parts — one that is resilient, interoperable, and positioned to grow.
 
-Support actions to support the ecosystem are performed as [advocacy](/advocacy) and through collaborative projects. Activities are performed with strong support by [FOSSi Foundation](https://fossi-foundation.org), the leading open source chip design non-profit.
+The ecosystem is supported through [advocacy](/advocacy) and through collaborative projects. Activities are performed with strong support by [FOSSi Foundation](https://fossi-foundation.org), the leading open source chip design non-profit.
 
 ## Projects
 
-The first batch of ODE4EC projects will launch in summer 2026:
+The first batch of ODE4EC projects launched in June 2026:
 
- * **ODE4EC-AMS** will target open source EDA tools for analog and mixed signal designs
- * **ODE4EC-DIG** will target open source EDA tools for digital designs
- * **ODE4EC-PIV** will target open source tools for productivity of chip design, integration into flows and verification of chip designs
+ * **ODE4EC-AMS** targets open source EDA tools for analogue and mixed-signal designs
+ * **ODE4EC-DIG** targets open source EDA tools for digital designs
+ * **ODE4EC-PIV** targets open source tools for productivity of chip design, integration into flows and verification of chip designs
 
 ## Leadership
 
@@ -42,6 +42,6 @@ General activities and the overall coordination are led by:
 
 The leadership team is completed by the coordinators of the ODE4EC projects:
 
-- Rene Scholz - IHP, Germany (ODE4EC-AMS coordinator)
-- Christian Pilato - Politecnico Milano, Italy (ODE4EC-DIG coordinator)
-- Luis Miguel Pinho - INESC TEC, Portugal (ODE4EC-PIV coordinator)
+- René Scholz - IHP, Germany (ODE4EC-AMS coordinator)
+- Christian Pilato - Politecnico di Milano, Italy (ODE4EC-DIG coordinator)
+- Luís Miguel Pinho - INESC TEC, Portugal (ODE4EC-PIV coordinator)

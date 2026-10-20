@@ -10,7 +10,7 @@ ODE4EC engages on multiple fronts: presenting at industry and academic events, c
 
 ## Ecosystem Events
 
-ODE4EC is present at key events in the chip design and open source community. These are the spaces where practitioners meet, ideas are exchanged, and collaborations begin. By organizing workshops, giving talks, and facilitating discussions, ODE4EC helps connect the people building the open source chip design ecosystem and keeps the community informed about the initiative's progress and goals.
+ODE4EC is present at key events in the chip design and open source community. These are the spaces where practitioners meet, ideas are exchanged, and collaborations begin. By organising workshops, giving talks, and facilitating discussions, ODE4EC helps connect the people building the open source chip design ecosystem and keeps the community informed about the initiative's progress and goals.
 
 ## Funding Bodies and Policy Makers
 

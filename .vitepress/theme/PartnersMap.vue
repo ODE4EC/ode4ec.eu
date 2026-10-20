@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, useId } from 'vue'
 import mapData from './data/europe-map.json'
-import { AMS_PARTNERS, DIG_PARTNERS, PIV_PARTNERS, type Partner } from './data/partners'
+import { PARTNERS, type Partner, type ProjectId } from './data/partners'
 
 const props = defineProps<{
-  project: 'ams' | 'dig' | 'piv'
+  project: ProjectId
 }>()
 
-const PARTNERS = { ams: AMS_PARTNERS, dig: DIG_PARTNERS, piv: PIV_PARTNERS }
 const partners = computed(() => PARTNERS[props.project])
 
 type Point = { x: number; y: number }
@@ -269,7 +268,7 @@ const countryCount = computed(() => new Set(sites.value.map((s) => s.country)).s
 </template>
 
 <style scoped>
-/* The map is always a dark board, in both color schemes. */
+/* The map is always a dark board, in both colour schemes. */
 .pmap {
   --pmap-gold: var(--ode-c-accent-1);
   --pmap-trace: var(--ode-c-trace-blue);

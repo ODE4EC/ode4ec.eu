@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { data } from '../../events/events.data.ts'
 import HomeCarousel from './HomeCarousel.vue'
+import { HOME_ITEMS } from './useCarousel'
 import { formatDate } from './format'
 
 // Upcoming first, then the latest past ones, so the row never runs empty.
 const events = [
   ...data.upcoming.map((e) => ({ ...e, past: false })),
   ...data.past.map((e) => ({ ...e, past: true })),
-].slice(0, 3)
+].slice(0, HOME_ITEMS)
 </script>
 
 <template>
@@ -18,7 +19,7 @@ const events = [
           <time class="ode-events__date" :datetime="e.date">{{ formatDate(e.date) }}</time>
           <span class="ode-events__status" :class="{ 'is-past': e.past }">{{ e.past ? 'Past' : 'Upcoming' }}</span>
         </span>
-        <span class="ode-events__title">{{ e.title }}</span>
+        <span class="ode-events__title ode-clamp">{{ e.title }}</span>
         <span v-if="e.location" class="ode-events__location">{{ e.location }}</span>
       </a>
     </template>
@@ -26,10 +27,6 @@ const events = [
 </template>
 
 <style scoped>
-.ode-events :deep(.ode-module__track > li) {
-  flex: 0 0 min(340px, 88%);
-}
-
 .ode-events__card {
   flex-direction: column;
   gap: clamp(3px, 0.6vh, 6px);
@@ -67,11 +64,7 @@ const events = [
   font-weight: 600;
   font-size: 0.96875rem;
   line-height: 1.35;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  --clamp-lines: 2;
 }
 
 .ode-events__location {

@@ -10,6 +10,7 @@ import CardGrid from './CardGrid.vue'
 import KeyFact from './KeyFact.vue'
 import KeyFacts from './KeyFacts.vue'
 import HomeBoard from './HomeBoard.vue'
+import PartnerCards from './PartnerCards.vue'
 import PartnersMap from './PartnersMap.vue'
 import ProjectNews from './ProjectNews.vue'
 import WorkFlow from './WorkFlow.vue'
@@ -30,6 +31,7 @@ export default {
     app.component('KeyFact', KeyFact)
     app.component('KeyFacts', KeyFacts)
     app.component('HomeBoard', HomeBoard)
+    app.component('PartnerCards', PartnerCards)
     app.component('PartnersMap', PartnersMap)
     app.component('ProjectNews', ProjectNews)
     app.component('WorkFlow', WorkFlow)

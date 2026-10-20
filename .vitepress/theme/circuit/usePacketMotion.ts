@@ -12,9 +12,12 @@ const ACTIVITY_EVENTS = ['pointermove', 'pointerdown', 'wheel', 'scroll', 'keydo
 const NAV_FADE_TOP = 40
 const NAV_FADE_BELOW_NAV = 56
 
-/** At 960px+ the traces fade out under the transparent navbar; packets fade over the same band. */
+/** VitePress's desktop breakpoint; keep in step with the `min-width: 960px` queries in HomeBoard.vue. */
+const DESKTOP_MIN_PX = 960
+
+/** From DESKTOP_MIN_PX up the traces fade out under the transparent navbar; packets fade over the same band. */
 function navFade(): FadeBand {
-  if (!window.matchMedia('(min-width: 960px)').matches) return null
+  if (!window.matchMedia(`(min-width: ${DESKTOP_MIN_PX}px)`).matches) return null
   const nav = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--vp-nav-height')) || 64
   return [NAV_FADE_TOP, nav + NAV_FADE_BELOW_NAV]
 }

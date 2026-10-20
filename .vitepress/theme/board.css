@@ -14,6 +14,8 @@
   --board-icon: var(--ode-c-gold-dark);
   --board-eyebrow: var(--vp-c-brand-1);
   --board-focus: var(--vp-c-brand-1);
+  /* width of one news or event card in a carousel */
+  --board-card-basis: min(340px, 88%);
 
   --board-panel-bg: var(--vp-c-bg-soft);
   --board-panel-edge: var(--vp-c-divider);
@@ -230,6 +232,7 @@ html:not(.dark) .ode-board :is(.ode-chip, .ode-module) {
 }
 
 .vp-doc .ode-module__track > li {
+  flex: 0 0 var(--board-card-basis);
   margin: 0;
   scroll-snap-align: start;
 }
@@ -272,3 +275,12 @@ html:not(.dark) .ode-board :is(.ode-chip, .ode-module) {
   color: var(--board-accent);
 }
 
+
+/* Cut a card title after --clamp-lines lines. */
+.ode-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: var(--clamp-lines);
+  line-clamp: var(--clamp-lines);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

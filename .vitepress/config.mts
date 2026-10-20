@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 import { readdirSync, readFileSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { partnerStats, type ProjectId } from './theme/data/partners'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -32,13 +33,48 @@ const topLevel = [
   { text: 'Projects', link: '/projects', items: [] },
 ]
 
+const hostname = 'https://ode4ec.eu'
+const siteTitle = 'ODE4EC'
+const siteDescription = 'This is the central website for projects under the ODE4EC initiative.'
+// Scaffold pages with no content yet: kept out of the sitemap (and noindex in their frontmatter).
+const unpublished = ['/projects/dig/work-plan', '/projects/dig/technology', '/projects/dig/funding']
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "ODE4EC",
-  description: "This is the central website for projects under the ODE4EC umbrella.",
+  lang: 'en',
+  title: siteTitle,
+  description: siteDescription,
+  sitemap: {
+    hostname,
+    transformItems: (items) => items.filter((i) => !unpublished.some((u) => i.url.startsWith(u.slice(1)))),
+  },
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
+    // the site's page background in light and dark (see style.css and VitePress's --vp-c-bg)
+    ['meta', { name: 'theme-color', content: '#faf8f4', media: '(prefers-color-scheme: light)' }],
+    ['meta', { name: 'theme-color', content: '#1b1b1f', media: '(prefers-color-scheme: dark)' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:image', content: `${hostname}/img/og-image.png` }],
+    ['meta', { property: 'og:image:width', content: '1200' }],
+    ['meta', { property: 'og:image:height', content: '630' }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
   ],
+  // The partners pages' description carries counts from the partner data.
+  transformPageData(pageData) {
+    const project = pageData.relativePath.match(/^projects\/(ams|dig|piv)\/partners\.md$/)?.[1] as ProjectId | undefined
+    if (project) {
+      const { organisations, countries } = partnerStats(project)
+      const what = 'universities, research organisations and companies'
+      pageData.description = pageData.frontmatter.description = `The ${organisations} ${what} from ${countries} countries behind ODE4EC-${project.toUpperCase()}.`
+    }
+  },
+  transformHead({ pageData }) {
+    const title = pageData.frontmatter.title ?? pageData.title ?? siteTitle
+    return [
+      ['meta', { property: 'og:title', content: title }],
+      ['meta', { property: 'og:description', content: pageData.frontmatter.description ?? pageData.description ?? siteDescription }],
+    ]
+  },
   themeConfig: {
     logo: '/img/ode4ec-logo.svg',
 

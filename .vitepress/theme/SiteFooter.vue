@@ -93,6 +93,13 @@ const shown = computed(() => props.home || frontmatter.value.layout !== 'home')
   width: auto;
 }
 
+/* phones: the logos get their own centred row, well clear of the text (the
+   dark plate spreads 8px past them) */
+@media (max-width: 639px) {
+  .ode-footer__funding { gap: 32px; }
+  .ode-footer__logos { width: 100%; justify-content: center; }
+}
+
 /* keep both logos on one line at 320px */
 @media (max-width: 399px) {
   .ode-footer__logos { gap: 16px; }

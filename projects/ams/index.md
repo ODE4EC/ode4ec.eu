@@ -13,7 +13,7 @@ description: ODE4EC-AMS makes open source EDA tools and open PDKs ready for anal
   <KeyFact label="Start date" value="1 June 2026" />
   <KeyFact label="End date" value="31 May 2029" />
   <KeyFact label="Funded by" value="Chips JU" />
-  <KeyFact label="Partners" value="26 organizations" />
+  <KeyFact label="Partners" value="26 organisations" />
   <KeyFact label="Total cost" value="€14,500,644" />
 </KeyFacts>
 

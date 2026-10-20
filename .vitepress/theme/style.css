@@ -19,7 +19,6 @@
 
   /* ODE4EC brand gold, the logo's "4" — used sparingly as an accent, never for body text. */
   --ode-c-accent-1: #ffd617;
-  --ode-c-accent-soft: rgba(255, 214, 23, 0.18);
 
   /* Gold shades for bevels and pins: highlight, shade, and dark metal. */
   --ode-c-gold-light: #ffe158;
@@ -52,8 +51,15 @@
      card and in dark mode the logos keep the light ground they were made for. */
   --ode-c-logo-plate: #f6f4f0;
 
-  /* Soft blue-tinted panel background for subtle band separation on inner pages. */
-  --ode-c-bg-tint: #f2f6fb;
+  /* Card elevation at rest and on hover (Card.vue). */
+  --ode-shadow-card:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 1px 2px rgba(2, 8, 20, 0.05),
+    0 8px 20px rgba(2, 8, 20, 0.06);
+  --ode-shadow-card-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 4px 8px rgba(2, 8, 20, 0.07),
+    0 16px 36px rgba(2, 8, 20, 0.12);
 }
 
 /* Light mode sits on warm paper rather than pure white: softer next to the
@@ -73,7 +79,14 @@
   --vp-c-brand-3: #2f6fd6;
   --vp-c-brand-soft: rgba(127, 176, 255, 0.16);
 
-  --ode-c-bg-tint: #131b2c;
+  --ode-shadow-card:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 2px 4px rgba(0, 0, 0, 0.25),
+    0 10px 24px rgba(0, 0, 0, 0.3);
+  --ode-shadow-card-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 16px 36px rgba(0, 0, 0, 0.4);
 }
 
 /**
@@ -249,11 +262,10 @@ h3,
   width: 40px;
   height: 3px;
   border-radius: 2px;
-  background: var(--ode-heading-trace, var(--vp-c-brand-2));
+  background: var(--vp-c-brand-2);
 }
 
-/* …ending in a gold via. Its hollow centre takes the surface color, which
-   dark sections override through --ode-heading-via-bg. */
+/* …ending in a gold via. Its hollow centre takes the surface colour. */
 .vp-doc > div > h2::after,
 .ode-heading::after {
   content: '';
@@ -264,7 +276,7 @@ h3,
   height: 11px;
   box-sizing: border-box;
   border-radius: 50%;
-  background: var(--ode-heading-via-bg, var(--vp-c-bg));
+  background: var(--vp-c-bg);
   border: 2.5px solid var(--ode-c-accent-1);
 }
 
@@ -272,4 +284,24 @@ h3,
 .vp-doc th {
   background-color: var(--vp-c-brand-soft);
   color: var(--vp-c-text-1);
+}
+
+/* Post tag pill, used by PostTags and ProjectNews. */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 1.5rem;
+  padding: 0 0.6rem;
+  background: var(--vp-c-default-soft);
+  color: var(--vp-c-text-2);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.tag:hover {
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand-1);
 }

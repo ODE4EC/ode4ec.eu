@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { data as posts } from '../../news/posts.data.ts'
 import HomeCarousel from './HomeCarousel.vue'
+import { HOME_ITEMS } from './useCarousel'
 import { formatDate } from './format'
 
-const latest = posts.slice(0, 3)
+const latest = posts.slice(0, HOME_ITEMS)
 </script>
 
 <template>
@@ -25,7 +26,7 @@ const latest = posts.slice(0, 3)
         </span>
         <span class="ode-news__body">
           <time class="ode-news__date" :datetime="post.date">{{ formatDate(post.date) }}</time>
-          <span class="ode-news__title">{{ post.title }}</span>
+          <span class="ode-news__title ode-clamp">{{ post.title }}</span>
         </span>
       </a>
     </template>
@@ -33,10 +34,6 @@ const latest = posts.slice(0, 3)
 </template>
 
 <style scoped>
-.ode-news :deep(.ode-module__track > li) {
-  flex: 0 0 min(340px, 88%);
-}
-
 .ode-news__card {
   gap: 12px;
   padding: 10px;
@@ -86,10 +83,6 @@ const latest = posts.slice(0, 3)
   font-weight: 600;
   font-size: 0.9375rem;
   line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  --clamp-lines: 3;
 }
 </style>

@@ -1,5 +1,8 @@
 import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue'
 
+/** how many news posts / events the homepage shows before "All …" */
+export const HOME_ITEMS = 3
+
 /**
  * Prev/next state for a horizontally scrolling, scroll-snapped track: steps
  * by exactly one item (its width plus the track gap) and reports whether the

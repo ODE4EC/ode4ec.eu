@@ -1,13 +1,14 @@
 <script setup lang="ts">
-// A project's news list: every post tagged ode4ec-<project>, newest first.
+// The news list, newest first: every post, or only those tagged ode4ec-<project>.
 import { computed } from 'vue'
 import { data as posts } from '../../news/posts.data'
 import { formatDate } from './format'
+import type { ProjectId } from './data/partners'
 
-const props = defineProps<{ project: 'ams' | 'dig' | 'piv' }>()
+const props = defineProps<{ project?: ProjectId }>()
 
-const projectTag = computed(() => `ode4ec-${props.project}`)
-const projectPosts = computed(() => posts.filter((p) => p.tags.includes(projectTag.value)))
+const projectTag = computed(() => props.project && `ode4ec-${props.project}`)
+const projectPosts = computed(() => (projectTag.value ? posts.filter((p) => p.tags.includes(projectTag.value!)) : posts))
 </script>
 
 <template>
@@ -47,18 +48,6 @@ const projectPosts = computed(() => posts.filter((p) => p.tags.includes(projectT
   flex-wrap: wrap;
   justify-content: flex-end;
   margin-top: 0.35rem;
-}
-.tag {
-  display: inline-flex;
-  align-items: center;
-  height: 1.5rem;
-  padding: 0 0.6rem;
-  background: var(--vp-c-default-soft);
-  color: var(--vp-c-text-2);
-  border-radius: 999px;
-  font-size: 0.75rem;
-  line-height: 1;
-  white-space: nowrap;
 }
 .tag.current {
   background: var(--vp-c-brand-soft);

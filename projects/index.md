@@ -4,13 +4,13 @@ title: Projects
 
 # ODE4EC Projects
 
-The first batch of ODE4EC projects will launch in summer 2026. Each project covers a different part of the open source chip design flow — together they form one open design environment.
+The first batch of ODE4EC projects launched in June 2026. Each project covers a different part of the open source chip design flow — together they form one open design environment.
 
 <CardGrid>
 
 <Card title="ODE4EC-AMS" link="/projects/ams/" linkText="View project">
 
-**Analog & mixed-signal** — open source EDA tools for analog and mixed signal designs.
+**Analogue & mixed-signal** — open source EDA tools for analogue and mixed-signal designs.
 
 </Card>
 
