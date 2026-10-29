@@ -76,7 +76,7 @@ const AMS_PARTNERS: Partner[] = [
   { name: 'IHP', flag: '🇩🇪', city: 'Frankfurt (Oder), Germany', type: 'research', role: 'Coordinator', wps: ['WP3', 'WP6', 'WP7'], logo: '/img/partners/ihp.svg', url: 'https://www.ihp-microelectronics.com' },
   { name: 'Silicon Austria Labs', flag: '🇦🇹', city: 'Graz, Austria', type: 'research', logo: '/img/partners/sal.svg', url: 'https://silicon-austria-labs.com' },
   { name: 'CSIC', flag: '🇪🇸', city: 'Seville, Spain', type: 'research', logo: '/img/partners/csic.svg', url: 'https://www.csic.es' },
-  { name: 'Fraunhofer IIS', flag: '🇩🇪', city: 'Dresden, Germany', type: 'research', logo: '/img/partners/fraunhofer-iis.svg', url: 'https://www.iis.fraunhofer.de' },
+  { name: 'Fraunhofer IIS', flag: '🇩🇪', city: 'Dresden, Germany', type: 'research', logo: '/img/partners/fraunhofer-iis.svg', url: 'https://www.eas.iis.fraunhofer.de' },
   { name: 'CSC – IT Center for Science', flag: '🇫🇮', city: 'Espoo, Finland', type: 'research', logo: '/img/partners/csc.svg', url: 'https://www.csc.fi' },
   { name: 'Barcelona Supercomputing Center', flag: '🇪🇸', city: 'Barcelona, Spain', type: 'research', logo: '/img/partners/bsc.svg', url: 'https://www.bsc.es' },
   { name: 'ETH Zürich', flag: '🇨🇭', city: 'Zürich, Switzerland', type: 'university', logo: '/img/partners/eth.svg', url: 'https://ethz.ch' },
