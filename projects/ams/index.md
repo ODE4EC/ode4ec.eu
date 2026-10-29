@@ -13,7 +13,7 @@ description: ODE4EC-AMS makes open source EDA tools and open PDKs ready for anal
   <KeyFact label="Start date" value="1 June 2026" />
   <KeyFact label="End date" value="31 May 2029" />
   <KeyFact label="Funded by" value="Chips JU" />
-  <KeyFact label="Partners" value="26 organizations" />
+  <KeyFact label="Partners" value="26 organisations" />
   <KeyFact label="Total cost" value="€14,500,644" />
 </KeyFacts>
 
@@ -99,27 +99,4 @@ Project Manager, IHP
 
 ---
 
-<div class="funding-note">
-  <img src="/img/logos/eu-cofunded.svg" alt="Co-funded by the European Union" />
-  <img src="/img/logos/chips-ju.png" alt="Chips Joint Undertaking" />
-</div>
-
 ODE4EC-AMS has received funding from the Chips Joint Undertaking (Chips JU) under Grant Agreement No 101252962. [Funding and disclaimer →](/projects/ams/funding)
-
-<style scoped>
-.funding-note {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1.5rem 2rem;
-  margin: 1.5rem 0 0.5rem;
-  padding: 1rem 1.25rem;
-  background: #ffffff;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
-}
-.funding-note img {
-  height: 40px;
-  width: auto;
-}
-</style>

@@ -1,7 +1,4 @@
 <script setup lang="ts">
-// Generic reusable card. Reuses VitePress's built-in feature-card styling
-// (--vp-c-* variables → free dark mode + brand hover) and adds a default
-// slot so any markdown can be placed inside it.
 defineProps<{
   icon?: string
   logo?: string
@@ -11,6 +8,8 @@ defineProps<{
   linkText?: string
   target?: string
   rel?: string
+  /** Heading level for the title; defaults to h3 so cards nest under a page's h2s. */
+  headingLevel?: 2 | 3 | 4
 }>()
 </script>
 
@@ -25,11 +24,20 @@ defineProps<{
   >
     <article class="box">
       <div v-if="logo || flag" class="logo">
-        <img v-if="logo" :src="logo" :alt="title" />
+        <!-- logos sit on their own light plate: most partner logos are dark
+             artwork made for white backgrounds, unreadable on a dark card -->
+        <span v-if="logo" class="logo-plate">
+          <img :src="logo" :alt="title ? '' : 'Logo'" />
+        </span>
         <span v-if="flag" class="flag">{{ flag }}</span>
       </div>
       <div v-else-if="icon" class="icon" v-html="icon"></div>
-      <h2 v-if="title" class="title" v-html="title"></h2>
+      <component
+        :is="`h${headingLevel ?? 3}`"
+        v-if="title"
+        class="title"
+        v-html="title"
+      />
       <div class="details">
         <slot />
       </div>
@@ -45,17 +53,31 @@ defineProps<{
 <style scoped>
 .Card {
   display: block;
-  border: 1px solid var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
   border-radius: 12px;
   height: 100%;
   background-color: var(--vp-c-bg-soft);
   text-decoration: none;
   color: inherit;
-  transition: border-color 0.25s, background-color 0.25s;
+  box-shadow: var(--ode-shadow-card);
+  transition: border-color 0.25s, background-color 0.25s, transform 0.25s, box-shadow 0.25s;
+}
+
+.Card.link:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 3px;
 }
 
 .Card.link:hover {
   border-color: var(--vp-c-brand-1);
+  transform: translateY(-3px);
+  box-shadow: var(--ode-shadow-card-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .Card.link:hover {
+    transform: none;
+  }
 }
 
 .box {
@@ -82,16 +104,29 @@ defineProps<{
   position: relative;
   display: flex;
   align-items: center;
-  height: 48px;
+  min-height: 48px;
   margin-bottom: 16px;
 }
 
+.logo-plate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 164px;
+  height: 60px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background: var(--ode-c-logo-plate);
+}
+
 .logo img {
-  max-height: 48px;
-  max-width: 140px;
-  width: auto;
+  display: block;
+  /* a definite height lets dimensionless SVGs size from their viewBox */
+  height: 40px;
+  width: 100%;
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
 }
 
 .flag {
@@ -119,7 +154,6 @@ defineProps<{
   color: var(--vp-c-text-2);
 }
 
-/* Keep nested markdown tidy inside the card */
 .details :deep(> :first-child) {
   margin-top: 0;
 }

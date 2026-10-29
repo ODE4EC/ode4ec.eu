@@ -1,5 +1,6 @@
 ---
 title: ODE4EC-PIV
+description: ODE4EC-PIV improves the productivity, interoperability and verification of open source chip design tools. A Chips JU project with 24 partners from 9 countries.
 ---
 
 # ODE4EC-PIV
@@ -12,7 +13,7 @@ ODE4EC-PIV targets open source tools for productivity of chip design, integratio
   <KeyFact label="Start date" value="1 June 2026" />
   <KeyFact label="End date" value="31 May 2029" />
   <KeyFact label="Funded by" value="Chips JU" />
-  <KeyFact label="Partners" value="24 organizations" />
+  <KeyFact label="Partners" value="24 organisations" />
   <KeyFact label="Total cost" value="€14,537,084" />
 </KeyFacts>
 
@@ -68,16 +69,9 @@ Open, standards-based design infrastructure in the critical stages of the EDA fl
 
 </CardGrid>
 
-## Work packages
+## Work plan
 
-| WP | Title | Lead |
-|----|-------|------|
-| WP1 | Use Cases and Evaluation | E4 Computer Engineering |
-| WP2 | Modular Frameworks for Design Entry and Flow Integration | HM University of Applied Sciences Munich |
-| WP3 | Industry-Standard Verification | Barcelona Supercomputing Center |
-| WP4 | AI-Driven Novel Methodologies for Hardware Design | Politecnico di Torino |
-| WP5 | Dissemination, Exploitation, and Ecosystem Sustainability | Politecnico di Milano |
-| WP6 | Project Management | INESC TEC |
+Six work packages take the project from industrial use cases to verified, openly released tools. [See the work plan →](/projects/piv/work-plan)
 
 ## Contacts
 
@@ -102,3 +96,7 @@ Project Manager, INESC TEC
 </Card>
 
 </CardGrid>
+
+---
+
+ODE4EC-PIV has received funding from the Chips Joint Undertaking (Chips JU) under Grant Agreement No 101252356. [Funding and disclaimer →](/projects/piv/funding)
