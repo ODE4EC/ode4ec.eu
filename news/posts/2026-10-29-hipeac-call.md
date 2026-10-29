@@ -12,6 +12,7 @@ tags:
 # Call for lightning talks: ODE4EC Workshop at HiPEAC 2027
 
 **Tuesday, 19 January 2027 · 10:00–17:30 (local time, GMT) · Glasgow, UK**
+
 **Submission deadline: 15 November 2026**
 
 What are you building for open chip design? We want to hear about it.
