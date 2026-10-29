@@ -1,6 +1,7 @@
 ---
 title: "Call for lightning talks: ODE4EC Workshop at HiPEAC 2027"
 date: 2026-10-29
+image: /img/2026-10-29-hipeac-call-flyer.png
 tags:
   - events
   - ode4ec-ams
