@@ -43,7 +43,7 @@ Seville, Spain
 
 </Card>
 
-<Card title="Fraunhofer IIS" logo="/img/partners/fraunhofer-iis.svg" flag="🇩🇪" link="https://www.iis.fraunhofer.de" linkText="iis.fraunhofer.de" target="_blank" rel="noopener">
+<Card title="Fraunhofer IIS" logo="/img/partners/fraunhofer-iis.svg" flag="🇩🇪" link="https://www.eas.iis.fraunhofer.de" linkText="eas.iis.fraunhofer.de" target="_blank" rel="noopener">
 
 Dresden, Germany
 
