@@ -33,6 +33,7 @@ const shown = computed(() => props.home || frontmatter.value.layout !== 'home')
         <p class="ode-footer__credit">
           &copy; the authors and project partners of ODE4EC projects. Hosted by the
           <a href="https://www.fossi-foundation.org">FOSSi Foundation</a>.
+          <a href="/privacy">Privacy</a>
         </p>
         <slot name="controls" />
       </div>

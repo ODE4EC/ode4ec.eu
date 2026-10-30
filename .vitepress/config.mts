@@ -59,6 +59,9 @@ export default defineConfig({
     ['meta', { property: 'og:image:width', content: '1200' }],
     ['meta', { property: 'og:image:height', content: '630' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    // Cloudflare Web Analytics, for the stats page (see privacy.md for what it collects);
+    // the token is public: Analytics & Logs → Web Analytics → ode4ec.eu → Manage site
+    ['script', { type: 'module', src: 'https://static.cloudflareinsights.com/beacon.min.js', 'data-cf-beacon': '{"token": "b7552edafe154e798792fe1c320e8b0b"}' }],
   ],
   // The partners pages' description carries counts from the partner data.
   transformPageData(pageData) {
