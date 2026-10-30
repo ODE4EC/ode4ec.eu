@@ -36,8 +36,9 @@ const topLevel = [
 const hostname = 'https://ode4ec.eu'
 const siteTitle = 'ODE4EC'
 const siteDescription = 'This is the central website for projects under the ODE4EC initiative.'
-// Scaffold pages with no content yet: kept out of the sitemap (and noindex in their frontmatter).
-const unpublished = ['/projects/dig/work-plan', '/projects/dig/technology', '/projects/dig/funding']
+// Scaffold pages with no content yet, and the unlisted stats page: kept out of the
+// sitemap (and noindex in their frontmatter).
+const unpublished = ['/projects/dig/work-plan', '/projects/dig/technology', '/projects/dig/funding', '/stats']
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({

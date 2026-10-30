@@ -10,6 +10,7 @@
     "build": "vitepress build",
     "preview": "npm run build && wrangler dev",
     "deploy": "npm run build && wrangler deploy",
+    "stats": "node scripts/cf-stats.mjs",
     "test": "esbuild .vitepress/theme/circuit/layout.test.ts --bundle --platform=node --format=esm --log-level=warning | node --input-type=module"
   },
   "dependencies": {
