@@ -1,0 +1,41 @@
+name: stats
+
+# Cloudflare keeps exact Web Analytics data for only seven days, so fetch every day
+# and commit it to stats/daily/. The stats page sums the days up per month.
+on:
+  schedule:
+    - cron: '17 3 * * *'
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: stats
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22.x
+
+    - name: Fetch visitor statistics
+      run: node scripts/cf-stats.mjs
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+    - name: Commit new days
+      run: |
+        git add stats/daily
+        git diff --cached --quiet && exit 0
+        git config user.name 'github-actions[bot]'
+        git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+        git commit -m "Visitor statistics up to $(date -u -d yesterday +%F)"
+        git push
