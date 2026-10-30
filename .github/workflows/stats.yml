@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency: stats
 
@@ -18,7 +18,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # main only takes pull requests; the deploy key may bypass that rule, and its
+    # pushes (unlike those of GITHUB_TOKEN) start the deploy
     - uses: actions/checkout@v4
+      with:
+        ssh-key: ${{ secrets.STATS_DEPLOY_KEY }}
 
     - name: Use Node.js
       uses: actions/setup-node@v4
