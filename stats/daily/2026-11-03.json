@@ -1,0 +1,95 @@
+{
+  "date": "2026-11-03",
+  "host": "ode4ec.eu",
+  "sampleInterval": 1,
+  "pages": {
+    "/": {
+      "views": 28,
+      "visits": 23
+    },
+    "/projects/piv/": {
+      "views": 17,
+      "visits": 5
+    },
+    "/projects/ams/": {
+      "views": 8,
+      "visits": 1
+    },
+    "/projects/piv/partners": {
+      "views": 7,
+      "visits": 0
+    },
+    "/about": {
+      "views": 6,
+      "visits": 2
+    },
+    "/projects/dig/": {
+      "views": 5,
+      "visits": 3
+    },
+    "/projects/piv/work-plan": {
+      "views": 4,
+      "visits": 0
+    },
+    "/projects/piv/funding": {
+      "views": 4,
+      "visits": 0
+    },
+    "/about/": {
+      "views": 4,
+      "visits": 0
+    },
+    "/news/posts/2026-10-29-hipeac-call": {
+      "views": 3,
+      "visits": 3
+    },
+    "/projects/": {
+      "views": 3,
+      "visits": 1
+    },
+    "/projects/ams/partners": {
+      "views": 2,
+      "visits": 0
+    },
+    "/projects/piv/news": {
+      "views": 2,
+      "visits": 0
+    },
+    "/privacy": {
+      "views": 2,
+      "visits": 0
+    },
+    "/projects/ams/technology": {
+      "views": 2,
+      "visits": 0
+    },
+    "/news/posts/2026-01-28-hipeac": {
+      "views": 1,
+      "visits": 0
+    },
+    "/events/posts/2027-01-19-hipeac": {
+      "views": 1,
+      "visits": 0
+    },
+    "/advocacy": {
+      "views": 1,
+      "visits": 0
+    },
+    "/stats/": {
+      "views": 1,
+      "visits": 0
+    },
+    "/projects/dig/partners": {
+      "views": 1,
+      "visits": 0
+    },
+    "/advocacy/": {
+      "views": 1,
+      "visits": 0
+    },
+    "/projects/ams/news": {
+      "views": 1,
+      "visits": 0
+    }
+  }
+}
