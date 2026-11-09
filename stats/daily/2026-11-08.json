@@ -1,0 +1,63 @@
+{
+  "date": "2026-11-08",
+  "host": "ode4ec.eu",
+  "sampleInterval": 1,
+  "pages": {
+    "/projects/piv/": {
+      "views": 6,
+      "visits": 4
+    },
+    "/projects/dig/partners": {
+      "views": 5,
+      "visits": 0
+    },
+    "/": {
+      "views": 4,
+      "visits": 2
+    },
+    "/projects/dig/": {
+      "views": 4,
+      "visits": 0
+    },
+    "/projects/": {
+      "views": 3,
+      "visits": 2
+    },
+    "/projects/piv/funding": {
+      "views": 3,
+      "visits": 0
+    },
+    "/news/posts/2026-10-29-hipeac-call": {
+      "views": 2,
+      "visits": 1
+    },
+    "/projects/dig/news": {
+      "views": 2,
+      "visits": 0
+    },
+    "/events/": {
+      "views": 1,
+      "visits": 0
+    },
+    "/projects/ams/": {
+      "views": 1,
+      "visits": 0
+    },
+    "/about": {
+      "views": 1,
+      "visits": 1
+    },
+    "/news/posts/2026-09-14-f2f": {
+      "views": 1,
+      "visits": 0
+    },
+    "/news/": {
+      "views": 1,
+      "visits": 1
+    },
+    "/news/posts/2026-01-28-hipeac": {
+      "views": 1,
+      "visits": 0
+    }
+  }
+}
