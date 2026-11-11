@@ -5,7 +5,7 @@ description: How the ODE4EC-PIV work packages fit together, from industrial use 
 
 # Work plan
 
-Three technical work packages build the tools: design entry and flow integration, verification, and AI-driven design. A use-case work package measures them against real designs from the consortium, and two more share the results and keep the project running.
+Three technical work packages build the tools: design entry and flow interoperability, verification, and AI-driven design. A use-case work package measures them against real designs from the consortium, and two more share the results and keep the project running.
 
 <WorkFlow>
   <FlowStep title="Use cases">Partners' real designs set a baseline with today's open source tools, then measure every snapshot of the new ones against it.</FlowStep>
@@ -24,7 +24,7 @@ Three technical work packages build the tools: design entry and flow integration
 | WP3 | Industry-Standard Verification | Verification efficiency, cross-domain and formal verification | Barcelona Supercomputing Center |
 | WP4 | AI-Driven Novel Methodologies for Hardware Design | High-level design, RTL design and design space exploration | Politecnico di Torino |
 | WP5 | Dissemination, Exploitation, and Ecosystem Sustainability | Outreach, training, exploitation and long-term sustainability | Politecnico di Milano |
-| WP6 | Project Management | Coordination, technical management and cross-stream work | INESC TEC |
+| WP6 | Project Management | Coordination, technical management and collaboration with ODE4EC-AMS and ODE4EC-DIG | INESC TEC |
 
 ## Milestones
 
@@ -33,7 +33,7 @@ The technical work moves in three steps: a baseline of today's tools, then two p
 | When | Milestone |
 |------|-----------|
 | November 2026 | Baseline definition: roadmap and baseline of today's tools |
-| February 2027 | Work setup: use cases defined |
+| February 2027 | Use cases defined |
 | November 2027 | First snapshot of the tools |
 | May 2028 | Preliminary evaluation on the use cases |
 | November 2028 | Second snapshot of the tools |

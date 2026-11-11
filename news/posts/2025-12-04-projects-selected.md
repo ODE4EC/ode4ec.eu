@@ -16,6 +16,6 @@ umbrella have been [selected](https://cms.efecs.eu/uploads/Session_7_2_Anton_Chi
 
  * **ODE4EC-AMS** will target open source EDA tools for analogue and mixed-signal designs
  * **ODE4EC-DIG** will target open source EDA tools for digital designs
- * **ODE4EC-PIV** will target open source tools for productivity of chip design, integration into flows and verification of chip designs
+ * **ODE4EC-PIV** will target open source tools for productivity of chip design, interoperability between flows and verification of chip designs
 
 The goal is to come to a grant agreement and start mid 2026.

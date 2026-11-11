@@ -13,7 +13,8 @@ export interface Partner {
   /** work packages the partner leads, e.g. ['WP3', 'WP6'] */
   wps?: string[]
   logo?: string
-  url?: string
+  /** one link, or several (then the links are clickable, not the card) */
+  url?: string | string[]
 }
 
 // City keys must match a key in ./europe-map.json's "cities" map (x/y in
@@ -27,7 +28,7 @@ const DIG_PARTNERS: Partner[] = [
   { name: 'INESC TEC', flag: '🇵🇹', city: 'Porto, Portugal', type: 'research', logo: '/img/partners/inesc-tec.svg', url: 'https://www.inesctec.pt' },
   { name: 'Politecnico di Milano', flag: '🇮🇹', city: 'Milano, Italy', type: 'university', role: 'Coordinator', logo: '/img/partners/polimi.svg', url: 'https://www.polimi.it' },
   { name: 'Sorbonne Université', flag: '🇫🇷', city: 'Paris, France', type: 'university', logo: '/img/partners/sorbonne.svg', url: 'https://www.sorbonne-universite.fr' },
-  { name: 'ETH Zürich', flag: '🇨🇭', city: 'Zürich, Switzerland', type: 'university', logo: '/img/partners/eth.svg', url: 'https://ethz.ch' },
+  { name: 'ETH Zürich', flag: '🇨🇭', city: 'Zürich, Switzerland', type: 'university', logo: '/img/partners/eth.svg', url: ['https://ethz.ch', 'https://pulp-platform.org'] },
   { name: 'University of Thessaly', flag: '🇬🇷', city: 'Volos, Greece', type: 'university', logo: '/img/partners/uth.png', url: 'https://www.uth.gr' },
   { name: 'Politecnico di Torino', flag: '🇮🇹', city: 'Torino, Italy', type: 'university', logo: '/img/partners/polito.svg', url: 'https://www.polito.it' },
   { name: 'Munich University of Applied Sciences', flag: '🇩🇪', city: 'Munich, Germany', type: 'university', logo: '/img/partners/hm-munich.png', url: 'https://www.hm.edu' },
@@ -51,7 +52,7 @@ const PIV_PARTNERS: Partner[] = [
   { name: 'CEA', flag: '🇫🇷', city: 'Paris, France', type: 'research', logo: '/img/partners/cea.jpg', url: 'https://www.cea.fr' },
   { name: 'INESC-ID', flag: '🇵🇹', city: 'Lisboa, Portugal', type: 'research', logo: '/img/partners/inesc-id.svg', url: 'https://www.inesc-id.pt' },
   { name: 'Munich University of Applied Sciences', flag: '🇩🇪', city: 'Munich, Germany', location: 'München, Germany', type: 'university', role: 'Technical Manager', wps: ['WP2'], logo: '/img/partners/hm-munich.png', url: 'https://www.hm.edu' },
-  { name: 'ETH Zürich', flag: '🇨🇭', city: 'Zürich, Switzerland', type: 'university', logo: '/img/partners/eth.svg', url: 'https://ethz.ch' },
+  { name: 'ETH Zürich', flag: '🇨🇭', city: 'Zürich, Switzerland', type: 'university', logo: '/img/partners/eth.svg', url: ['https://ethz.ch', 'https://pulp-platform.org'] },
   { name: 'Politecnico di Milano', flag: '🇮🇹', city: 'Milano, Italy', type: 'university', wps: ['WP5'], logo: '/img/partners/polimi.svg', url: 'https://www.polimi.it' },
   { name: 'Politecnico di Torino', flag: '🇮🇹', city: 'Torino, Italy', type: 'university', wps: ['WP4'], logo: '/img/partners/polito.svg', url: 'https://www.polito.it' },
   { name: 'Linköping University', flag: '🇸🇪', city: 'Linköping, Sweden', type: 'university', logo: '/img/partners/liu.svg', url: 'https://liu.se' },
@@ -79,7 +80,7 @@ const AMS_PARTNERS: Partner[] = [
   { name: 'Fraunhofer IIS', flag: '🇩🇪', city: 'Dresden, Germany', type: 'research', logo: '/img/partners/fraunhofer-iis.svg', url: 'https://www.eas.iis.fraunhofer.de' },
   { name: 'CSC – IT Center for Science', flag: '🇫🇮', city: 'Espoo, Finland', type: 'research', logo: '/img/partners/csc.svg', url: 'https://www.csc.fi' },
   { name: 'Barcelona Supercomputing Center', flag: '🇪🇸', city: 'Barcelona, Spain', type: 'research', logo: '/img/partners/bsc.svg', url: 'https://www.bsc.es' },
-  { name: 'ETH Zürich', flag: '🇨🇭', city: 'Zürich, Switzerland', type: 'university', logo: '/img/partners/eth.svg', url: 'https://ethz.ch' },
+  { name: 'ETH Zürich', flag: '🇨🇭', city: 'Zürich, Switzerland', type: 'university', logo: '/img/partners/eth.svg', url: ['https://ethz.ch', 'https://pulp-platform.org'] },
   { name: 'Universidad de Sevilla', flag: '🇪🇸', city: 'Seville, Spain', location: 'Seville, Spain — affiliated entity of CSIC', type: 'university', logo: '/img/partners/us.png', url: 'https://www.us.es' },
   { name: 'University of Ljubljana', flag: '🇸🇮', city: 'Ljubljana, Slovenia', type: 'university', logo: '/img/partners/ul.png', url: 'https://www.fe.uni-lj.si' },
   { name: 'Aalto University', flag: '🇫🇮', city: 'Espoo, Finland', type: 'university', logo: '/img/partners/aalto.png', url: 'https://www.aalto.fi' },
