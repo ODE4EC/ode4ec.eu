@@ -5,6 +5,8 @@ defineProps<{
   flag?: string
   title?: string
   link?: string
+  /** hover lift and outline without being a link (links inside the card) */
+  hover?: boolean
   linkText?: string
   target?: string
   rel?: string
@@ -17,7 +19,7 @@ defineProps<{
   <component
     :is="link ? 'a' : 'div'"
     class="Card"
-    :class="{ link: !!link }"
+    :class="{ link: !!link || hover }"
     :href="link"
     :target="target"
     :rel="rel"

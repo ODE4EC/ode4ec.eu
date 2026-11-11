@@ -10,19 +10,19 @@ The first batch of ODE4EC projects launched in June 2026. Each project covers a 
 
 <Card title="ODE4EC-AMS" link="/projects/ams/" linkText="View project">
 
-**Analogue & mixed-signal** — open source EDA tools for analogue and mixed-signal designs.
+**Analog and Mixed-Signal Design** — open source EDA tools for analogue and mixed-signal designs.
 
 </Card>
 
 <Card title="ODE4EC-DIG" link="/projects/dig/" linkText="View project">
 
-**Digital design** — open source EDA tools for digital designs.
+**Digital SoC Design** — open source EDA tools for digital designs.
 
 </Card>
 
 <Card title="ODE4EC-PIV" link="/projects/piv/" linkText="View project">
 
-**Productivity, integration & verification** — open source tools for productivity, integration into flows and verification of chip designs.
+**Productivity, interoperability & verification** — open source tools for productivity, interoperability between flows and verification of chip designs.
 
 </Card>
 

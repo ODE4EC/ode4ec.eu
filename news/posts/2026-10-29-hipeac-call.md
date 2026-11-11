@@ -53,8 +53,8 @@ Send us a 100-word abstract of your talk through the submission form:
 
 ## The ODE4EC projects
 
-- [ODE4EC-AMS](/projects/ams/) – analogue and mixed-signal design
-- [ODE4EC-DIG](/projects/dig/) – digital system-on-chip design
+- [ODE4EC-AMS](/projects/ams/) – Analog and Mixed-Signal Design
+- [ODE4EC-DIG](/projects/dig/) – Digital SoC Design
 - [ODE4EC-PIV](/projects/piv/) – productivity, interoperability and verification
 
 ## More information

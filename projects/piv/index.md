@@ -5,9 +5,9 @@ description: ODE4EC-PIV improves the productivity, interoperability and verifica
 
 # ODE4EC-PIV
 
-ODE4EC-PIV targets open source tools for productivity of chip design, integration into flows and verification.
+ODE4EC-PIV develops open source tools that make chip design more productive, let design flows work together and bring verification up to industrial standards.
 
-<Card title="Key facts" link="https://cordis.europa.eu/project/id/101252356" linkText="Find on Cordis" target="new">
+<Card title="Key facts" link="https://cordis.europa.eu/project/id/101252356" linkText="View on CORDIS" target="new">
 
 <KeyFacts>
   <KeyFact label="Start date" value="1 June 2026" />
@@ -21,11 +21,11 @@ ODE4EC-PIV targets open source tools for productivity of chip design, integratio
 
 ## Focus
 
-Open source chip design has reached the point where the individual tools are capable, but the path from an idea to a verified design still asks too much of the engineer walking it. Tools do not always agree on formats, flows have to be reassembled by hand for every project, and verification environments rarely meet the expectations that industrial teams bring with them. ODE4EC-PIV works on that seam of the ecosystem rather than on any single tool, so that what already exists becomes something a team can actually adopt.
+Open source chip design has reached the point where the individual tools are capable, but the path from an idea to a verified design still asks too much of the engineer. Tools do not always agree on formats, flows have to be reassembled by hand for every project, and verification environments rarely meet the expectations that industrial teams bring with them. ODE4EC-PIV works on the gaps between tools rather than on any single tool, so that teams can adopt what already exists.
 
-The work is organised around three concerns that reinforce each other. Productivity covers design entry, IP management and generator-based flows, along with the waveform and analysis tooling that engineers spend their days in. Interoperability covers the modular frameworks, standardised interfaces and open data exchange formats that let heterogeneous tools hand work to each other without a custom script in between. Verification covers formal methods, UVM-inspired and Python-based environments, hardware and software co-simulation, and the continuous integration practice that keeps all of it honest as designs evolve.
+The work is organised around three themes. Productivity covers design entry, IP management and generator-based flows, along with the waveform and analysis tooling that engineers use every day. Interoperability covers the modular frameworks, standardised interfaces and open data exchange formats that let heterogeneous tools exchange data without custom scripts. Verification covers formal methods, UVM-inspired and Python-based environments, hardware and software co-simulation, and the continuous integration practice that keeps everything stable as designs evolve.
 
-Everything the project builds is evaluated against real use cases contributed by the consortium and released openly, so the results are usable beyond the lifetime of the grant.
+Everything the project builds is evaluated on real use cases from the consortium and released as open source, so the results stay usable after the project ends.
 
 ## Objectives
 

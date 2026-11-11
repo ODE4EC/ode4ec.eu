@@ -2,9 +2,9 @@
 // Lives inside the chip, in two columns where it fits, so a fourth project
 // fills the empty slot instead of making the board taller.
 const projects = [
-  { code: 'AMS', name: 'ODE4EC-AMS', focus: 'Analogue & mixed-signal', link: '/projects/ams/' },
-  { code: 'DIG', name: 'ODE4EC-DIG', focus: 'Digital design', link: '/projects/dig/' },
-  { code: 'PIV', name: 'ODE4EC-PIV', focus: 'Productivity, integration & verification', link: '/projects/piv/' },
+  { code: 'AMS', name: 'ODE4EC-AMS', focus: 'Analog and Mixed-Signal Design', link: '/projects/ams/' },
+  { code: 'DIG', name: 'ODE4EC-DIG', focus: 'Digital SoC Design', link: '/projects/dig/' },
+  { code: 'PIV', name: 'ODE4EC-PIV', focus: 'Productivity, interoperability & verification', link: '/projects/piv/' },
 ]
 </script>
 
