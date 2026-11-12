@@ -30,14 +30,13 @@ defineProps<{ label?: string; link?: string; linkText?: string }>()
 }
 
 .key-facts__link {
-  position: relative;
   display: flex;
   align-items: center;
   gap: 6px;
   min-height: 44px;
   margin-top: 18px;
   padding: 0 12px;
-  border: 1px solid var(--vp-c-divider);
+  border: 1px solid var(--ode-c-card-edge);
   border-radius: 10px;
   background: var(--vp-c-bg-soft);
   color: var(--vp-c-text-1);
@@ -46,25 +45,6 @@ defineProps<{ label?: string; link?: string; linkText?: string }>()
   text-decoration: none;
   transition: border-color 0.2s;
 }
-
-/* Same chip as the facts, pins included; the arrow says it's a link. */
-.key-facts__link::before,
-.key-facts__link::after {
-  content: '';
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  height: 3px;
-  background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--ode-c-gold-shade) 70%, transparent) 0 4px, transparent 4px 9px);
-}
-
-.dark .key-facts__link::before,
-.dark .key-facts__link::after {
-  background: repeating-linear-gradient(90deg, var(--ode-c-gold-dark) 0 4px, transparent 4px 9px);
-}
-
-.key-facts__link::before { top: -4px; }
-.key-facts__link::after { bottom: -4px; }
 
 .key-facts__link:hover {
   border-color: var(--vp-c-brand-1);

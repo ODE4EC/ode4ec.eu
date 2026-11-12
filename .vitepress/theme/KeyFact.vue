@@ -6,7 +6,7 @@ defineProps<{ label: string; value: string }>()
 // Each chip picks its own pins and rhythm, after hydration so server and client markup agree.
 const pins = ref<Record<string, string>>({})
 onMounted(() => {
-  const pin = () => `${Math.floor(Math.random() * 8) * 9}px`
+  const pin = () => `${Math.floor(Math.random() * 5) * 14}px`
   const secs = (min: number, max: number) => `${(min + Math.random() * (max - min)).toFixed(2)}s`
   pins.value = {
     '--pa1': pin(), '--pa2': pin(), '--pb1': pin(), '--pb2': pin(),
@@ -34,7 +34,7 @@ onMounted(() => {
   flex-direction: column;
   gap: 2px;
   padding: 10px 12px;
-  border: 1px solid var(--vp-c-divider);
+  border: 1px solid var(--ode-c-card-edge);
   border-radius: 10px;
   background: var(--vp-c-bg-soft);
 }
@@ -44,7 +44,7 @@ onMounted(() => {
   --pin-hot: var(--ode-c-pin-hot);
 }
 
-/* Pins on a 9px pitch. The first layer is one lit pin, parked off-chip until
+/* Pins on a 14px pitch. The first layer is one lit pin, parked off-chip until
    the hover animation steps it onto a pin. */
 .key-fact::before,
 .key-fact::after {
@@ -55,7 +55,7 @@ onMounted(() => {
   height: 3px;
   background:
     linear-gradient(var(--pin-hot), var(--pin-hot)) -20px 0 / 4px 3px no-repeat,
-    repeating-linear-gradient(90deg, var(--pin) 0 4px, transparent 4px 9px);
+    repeating-linear-gradient(90deg, var(--pin) 0 4px, transparent 4px 14px);
 }
 
 .key-fact::before { top: -4px; }
@@ -67,16 +67,16 @@ onMounted(() => {
 .key-fact:hover::after { animation: key-fact-pins-b var(--db, 4.1s) step-end var(--wb, 0.7s) infinite; }
 
 @keyframes key-fact-pins-a {
-  0% { background-position: var(--pa1, 27px) 0, 0 0; }
+  0% { background-position: var(--pa1, 28px) 0, 0 0; }
   6% { background-position: -20px 0, 0 0; }
-  45% { background-position: var(--pa2, 63px) 0, 0 0; }
+  45% { background-position: var(--pa2, 56px) 0, 0 0; }
   51% { background-position: -20px 0, 0 0; }
 }
 
 @keyframes key-fact-pins-b {
-  0% { background-position: var(--pb1, 45px) 0, 0 0; }
+  0% { background-position: var(--pb1, 42px) 0, 0 0; }
   5% { background-position: -20px 0, 0 0; }
-  60% { background-position: var(--pb2, 9px) 0, 0 0; }
+  60% { background-position: var(--pb2, 14px) 0, 0 0; }
   65% { background-position: -20px 0, 0 0; }
 }
 
