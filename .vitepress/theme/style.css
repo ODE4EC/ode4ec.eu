@@ -391,3 +391,11 @@ button:focus-visible {
   outline: 2px solid var(--vp-c-brand-1);
   outline-offset: 2px;
 }
+
+/* The sidebar nav fills the sidebar's height as a column, so SidebarArt (its
+   last item) can sit at the foot. */
+.VPSidebar .nav {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}

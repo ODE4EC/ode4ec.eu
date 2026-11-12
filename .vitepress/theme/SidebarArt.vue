@@ -1,9 +1,9 @@
 <script setup lang="ts">
-// Decorative circuitry under the sidebar links: two chips with traces in the
-// board's 45° routing, some leaving off the sides. It sits in the normal flow
-// after the last link, so adding links moves it down instead of under them.
-// The drawing itself spans the whole sidebar (its padding varies with width),
-// so side traces run out to both edges; the chips keep 40 units clear of the right edge.
+// Decorative circuitry at the foot of the sidebar: two chips with traces in the
+// board's 45° routing, rising from the bottom edge. It is the last item in the
+// sidebar's nav column and is pushed to the bottom (see style.css), so added
+// links push it down rather than run under it. Wires leave only through the
+// bottom and right edges; on the left every wire ends in a via.
 type Pt = [number, number]
 
 const pins = (x0: number, y0: number, size: number, step: number) => {
@@ -16,61 +16,67 @@ const pins = (x0: number, y0: number, size: number, step: number) => {
 }
 
 const chips = [
-  { x: 88, y: 78, size: 64, pins: pins(88, 78, 64, 10) },
-  { x: 110, y: 250, size: 40, pins: pins(110, 250, 40, 10) },
+  { x: 120, y: 110, size: 40, pins: pins(120, 110, 40, 10) },
+  { x: 100, y: 230, size: 64, pins: pins(100, 230, 64, 10) },
 ]
 
 const traces: { d: string; tone: 'blue' | 'gold' }[] = [
-  { d: 'M98 74 V44 l-24 -24 H-600', tone: 'blue' },
-  { d: 'M128 74 V30', tone: 'gold' },
-  { d: 'M156 98 H190 l20 -20 V40', tone: 'blue' },
-  { d: 'M156 118 H840', tone: 'gold' },
-  { d: 'M84 108 H44 l-16 16 V170', tone: 'gold' },
-  { d: 'M108 146 V180 l22 22 V246', tone: 'blue' },
-  { d: 'M138 146 V170 l30 30 H840', tone: 'blue' },
-  { d: 'M106 270 H64 l-20 20 V340', tone: 'blue' },
-  { d: 'M130 294 V330 l24 24 V380', tone: 'gold' },
-  { d: 'M154 260 H196 l40 -40 H840', tone: 'gold' },
+  { d: 'M118 298 V460', tone: 'blue' },
+  { d: 'M148 298 V340 l24 24 V460', tone: 'gold' },
+  { d: 'M168 256 H200 l30 -30 H900', tone: 'gold' },
+  { d: 'M168 278 H900', tone: 'blue' },
+  { d: 'M96 250 H50 l-20 -20 V170', tone: 'blue' },
+  { d: 'M96 274 H60 l-20 20 V330', tone: 'gold' },
+  { d: 'M132 226 V154', tone: 'blue' },
+  { d: 'M140 106 V60', tone: 'gold' },
+  { d: 'M128 106 V80 l-24 -24 V30', tone: 'blue' },
+  { d: 'M164 130 H210 l20 -20 V70', tone: 'blue' },
+  { d: 'M116 130 H80 l-20 20 V200', tone: 'gold' },
 ]
 
-const vias: Pt[] = [[128, 30], [210, 40], [28, 170], [44, 340], [154, 380]]
+const vias: Pt[] = [[30, 170], [40, 330], [140, 60], [104, 30], [230, 70], [60, 200]]
 </script>
 
 <template>
   <div class="sidebar-art" aria-hidden="true">
-  <svg viewBox="0 0 280 400" preserveAspectRatio="xMaxYMin meet" focusable="false">
-    <defs>
-      <linearGradient id="sidebar-art-fade" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0.55" stop-color="#fff" />
-        <stop offset="1" stop-color="#fff" stop-opacity="0" />
-      </linearGradient>
-      <mask id="sidebar-art-mask">
-        <rect x="-600" width="1440" height="400" fill="url(#sidebar-art-fade)" />
-      </mask>
-    </defs>
-    <g mask="url(#sidebar-art-mask)">
-      <path v-for="t in traces" :key="t.d" :d="t.d" :class="`tone--${t.tone}`" />
-      <g v-for="c in chips" :key="c.x">
-        <rect v-for="(p, i) in c.pins" :key="i" class="pin" :x="p.x" :y="p.y" :width="p.w" :height="p.h" />
-        <rect class="chip" :x="c.x" :y="c.y" :width="c.size" :height="c.size" rx="7" />
-        <circle class="notch" :cx="c.x + 9" :cy="c.y + 9" r="2.5" />
+    <svg viewBox="0 0 280 400" preserveAspectRatio="xMaxYMax meet" focusable="false">
+      <defs>
+        <linearGradient id="sidebar-art-fade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#fff" stop-opacity="0" />
+          <stop offset="0.4" stop-color="#fff" />
+        </linearGradient>
+        <mask id="sidebar-art-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="500">
+          <rect width="1200" height="500" fill="url(#sidebar-art-fade)" />
+        </mask>
+      </defs>
+      <g mask="url(#sidebar-art-mask)">
+        <path v-for="t in traces" :key="t.d" :d="t.d" :class="`tone--${t.tone}`" />
+        <g v-for="c in chips" :key="c.x">
+          <rect v-for="(p, i) in c.pins" :key="i" class="pin" :x="p.x" :y="p.y" :width="p.w" :height="p.h" />
+          <rect class="chip" :x="c.x" :y="c.y" :width="c.size" :height="c.size" rx="7" />
+          <circle class="notch" :cx="c.x + 9" :cy="c.y + 9" r="2.5" />
+        </g>
+        <circle v-for="[cx, cy] in vias" :key="`${cx},${cy}`" class="via" :cx="cx" :cy="cy" r="3.5" />
       </g>
-      <circle v-for="[cx, cy] in vias" :key="`${cx},${cy}`" class="via" :cx="cx" :cy="cy" r="3.5" />
-    </g>
-  </svg>
+    </svg>
   </div>
 </template>
 
 <style scoped>
+/* A placeholder at the foot of the nav column: with the sidebar's 96px bottom
+   padding it reserves the 400px drawing plus a 48px gap above it, so links can
+   never run under the art. */
 .sidebar-art {
-  height: 400px;
-  margin-top: 40px;
+  flex: none;
+  height: 352px;
+  margin-top: auto;
 }
 
-/* No top: it keeps its place in the flow, while left/right resolve against the
-   fixed sidebar, so the drawing spans edge to edge whatever the padding. */
+/* The drawing pins to the fixed sidebar's bottom edge and spans its full width,
+   whatever the padding at this screen size. */
 .sidebar-art svg {
   position: absolute;
+  bottom: 0;
   left: 0;
   width: 100%;
   height: 400px;
