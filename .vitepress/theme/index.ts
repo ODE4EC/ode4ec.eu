@@ -16,6 +16,7 @@ import ProjectNews from './ProjectNews.vue'
 import WorkFlow from './WorkFlow.vue'
 import FlowStep from './FlowStep.vue'
 import SiteFooter from './SiteFooter.vue'
+import SidebarArt from './SidebarArt.vue'
 
 export default {
   extends: DefaultTheme,
@@ -23,6 +24,7 @@ export default {
     return h(DefaultTheme.Layout, null, {
       'doc-before': () => h(PostTags),
       'layout-bottom': () => h(SiteFooter),
+      'sidebar-nav-after': () => h(SidebarArt),
     })
   },
   enhanceApp({ app }) {
