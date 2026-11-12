@@ -3,8 +3,8 @@ defineProps<{ label: string; link?: string }>()
 </script>
 
 <template>
-  <div class="key-facts-block">
-    <dl class="key-facts" :aria-label="label">
+  <div class="key-facts-block" role="group" :aria-label="label">
+    <dl class="key-facts">
       <slot />
     </dl>
     <a v-if="link" class="key-facts__link no-icon" :href="link" target="_blank" rel="noreferrer">

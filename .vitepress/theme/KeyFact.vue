@@ -7,7 +7,7 @@ defineProps<{ label: string; value: string }>()
 // markup agree; written straight to the element, so no re-render.
 const chip = useTemplateRef<HTMLElement>('chip')
 onMounted(() => {
-  const pin = () => `${Math.floor(Math.random() * 5) * 14}px`
+  const pin = () => `${Math.floor(Math.random() * 4) * 14}px`
   const secs = (min: number, max: number) => `${(min + Math.random() * (max - min)).toFixed(2)}s`
   const vars = {
     '--pa1': pin(), '--pa2': pin(), '--pb1': pin(), '--pb2': pin(),
@@ -66,7 +66,7 @@ onMounted(() => {
 /* On hover, single pins flash now and then: two random pins per edge, each
    edge on its own random period and delay, with long dark gaps between. */
 /* Each edge feeds its own two random pins into the shared keyframes. */
-.key-fact::before { --p1: var(--pa1, 28px); --p2: var(--pa2, 56px); }
+.key-fact::before { --p1: var(--pa1, 28px); --p2: var(--pa2, 42px); }
 .key-fact::after { --p1: var(--pb1, 42px); --p2: var(--pb2, 14px); }
 .key-fact:hover::before { animation: key-fact-pins var(--da, 3.2s) step-end var(--wa, 0s) infinite; }
 .key-fact:hover::after { animation: key-fact-pins var(--db, 4.1s) step-end var(--wb, 0.7s) infinite; }

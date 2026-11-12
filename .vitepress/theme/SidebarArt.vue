@@ -62,12 +62,14 @@ const vias: Pt[] = [[30, 170], [40, 330], [140, 60], [104, 30], [230, 70], [60, 
   margin-top: auto;
 }
 
-/* The drawing pins to the fixed sidebar's bottom edge and spans its full width,
-   whatever the padding at this screen size. */
+/* No top: the drawing keeps its place in the flow (48px into the placeholder,
+   so it ends at the sidebar's bottom edge and scrolls with the links), while
+   left/width resolve against the fixed sidebar to span it edge to edge. */
 .sidebar-art svg {
   position: absolute;
-  bottom: 0;
   left: 0;
+  margin-top: 48px;
+  pointer-events: none;
   width: 100%;
   height: var(--art-h);
   overflow: hidden;

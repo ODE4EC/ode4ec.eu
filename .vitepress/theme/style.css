@@ -362,7 +362,13 @@ h3,
 }
 
 .VPDocAsideOutline .outline-link {
-  line-height: 44px !important;
+  padding: 6px 0 !important;
+}
+
+/* VitePress places the active marker at a fixed offset from the link's top
+   edge; move it down by the padding above so it stays centred. */
+.VPDocAsideOutline .outline-marker {
+  translate: 0 6px;
 }
 
 /* The anchor sits in the page gutter: grow its area into the heading, not off-screen. */
@@ -372,6 +378,13 @@ h3,
 }
 
 /* List titles sit right under a heading: grow down over their own meta line instead. */
+/* "All news" sits right above the carousel: grow up into the module header. */
+.vp-doc .ode-module__all::after {
+  top: auto;
+  bottom: 0;
+  transform: translateX(-50%);
+}
+
 .vp-doc :is(.post-head a, .event-entry a)::after {
   top: 0;
   transform: translateX(-50%);
