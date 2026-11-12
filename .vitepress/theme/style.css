@@ -53,7 +53,7 @@
   /* The plate partner logos sit on (see Card.vue): the light-mode card colour
      (--vp-c-bg-soft below) in both themes, so in light mode it melts into the
      card and in dark mode the logos keep the light ground they were made for. */
-  --ode-c-logo-plate: #f6f4f0;
+  --ode-c-logo-plate: #f1ece2;
 
   /* Card elevation at rest and on hover (Card.vue). */
   --ode-shadow-card:
@@ -72,10 +72,10 @@
 :root:not(.dark) {
   --vp-c-bg: #faf8f4;
   --vp-c-bg-elv: #faf8f4;
-  /* Creamier paper for the sidebar and code blocks: the same ~1.1 step from the
-     page that dark mode has, and every text colour on it stays at 7:1. */
+  /* Creamier paper for the sidebar, cards and chips: the same ~1.1 step from
+     the page that dark mode has, and every text colour on it stays at 7:1. */
   --vp-c-bg-alt: #f1ece2;
-  --vp-c-bg-soft: #f6f4f0;
+  --vp-c-bg-soft: #f1ece2;
 
   /* Lighter navy so panels don't punch holes in the paper; the lightest that
      keeps white text, labels and secondary text at AAA 7:1. */

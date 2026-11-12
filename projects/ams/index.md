@@ -7,17 +7,13 @@ description: ODE4EC-AMS makes open source EDA tools and open PDKs ready for anal
 
 **Open source design tools for analogue, mixed-signal and RF chips.** ODE4EC-AMS makes open source EDA tools and open process design kits (PDKs) ready for real product development on mature technology nodes, so that start-ups, SMEs and universities can design analogue chips without expensive licences.
 
-<Card title="Key facts" link="https://cordis.europa.eu/project/id/101252962" linkText="Find on Cordis" target="new">
-
-<KeyFacts>
+<KeyFacts label="Key facts" link="https://cordis.europa.eu/project/id/101252962">
   <KeyFact label="Start date" value="1 June 2026" />
   <KeyFact label="End date" value="31 May 2029" />
   <KeyFact label="Funded by" value="Chips JU" />
   <KeyFact label="Partners" value="26 organisations" />
   <KeyFact label="Total cost" value="€14,500,644" />
 </KeyFacts>
-
-</Card>
 
 ## Why it matters
 
