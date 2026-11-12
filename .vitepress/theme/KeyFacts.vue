@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{ label?: string; link?: string; linkText?: string }>()
+defineProps<{ label?: string; link?: string }>()
 </script>
 
 <template>
@@ -8,7 +8,7 @@ defineProps<{ label?: string; link?: string; linkText?: string }>()
       <slot />
     </dl>
     <a v-if="link" class="key-facts__link no-icon" :href="link" target="_blank" rel="noreferrer">
-      {{ linkText ?? 'View on CORDIS' }}
+      View on CORDIS
       <span class="vpi-arrow-right" aria-hidden="true" />
       <span class="visually-hidden">(opens in a new tab)</span>
     </a>
