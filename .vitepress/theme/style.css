@@ -329,3 +329,45 @@ h3,
   background: var(--vp-c-brand-soft);
   color: var(--vp-c-brand-1);
 }
+
+/**
+ * Pointer targets (WCAG 2.5.5 AAA, 44×44)
+ *
+ * Small isolated controls get an invisible hit area centred on them, so they
+ * keep their look. Stacked lists can't (the areas would overlap the next row),
+ * so their rows are spaced to a 44px pitch instead.
+ * -------------------------------------------------------------------------- */
+
+:is(.VPSocialLink, .VPSwitch, .ode-module__all, .ode-module__nav button, .post-head a, .event-entry a) {
+  position: relative;
+}
+
+:is(.VPSocialLink, .VPSwitch, .ode-module__all, .ode-module__nav button, .post-head a, .event-entry a, .vp-doc .header-anchor)::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+
+.VPSidebarItem .item .text {
+  padding: 10px 0 !important;
+}
+
+.VPDocAsideOutline .outline-link {
+  line-height: 44px !important;
+}
+
+/* The anchor sits in the page gutter: grow its area into the heading, not off-screen. */
+.vp-doc .header-anchor::after {
+  left: 0;
+  transform: translateY(-50%);
+}
+
+/* List titles sit right under a heading: grow down over their own meta line instead. */
+.vp-doc :is(.post-head a, .event-entry a)::after {
+  top: 0;
+  transform: translateX(-50%);
+}

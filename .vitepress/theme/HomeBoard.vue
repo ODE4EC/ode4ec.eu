@@ -341,8 +341,8 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 28px;
-  padding: 0 12px;
+  min-height: 44px;
+  padding: 0 14px;
   border: 1px solid var(--vp-c-divider);
   border-radius: 999px;
   background: transparent;
@@ -355,9 +355,5 @@ onBeforeUnmount(() => {
 .ode-board__motion:hover {
   color: var(--vp-c-text-1);
   border-color: var(--vp-c-brand-1);
-}
-
-@media (pointer: coarse) {
-  .ode-board__motion { min-height: 40px; }
 }
 </style>

@@ -152,13 +152,13 @@ html:not(.dark) .ode-board :is(.ode-chip, .ode-module) {
 
 .ode-module__nav {
   display: flex;
-  gap: 6px;
+  gap: 12px; /* with 32px buttons, a 44px pitch so hit areas never overlap */
   margin-left: auto;
 }
 
 .ode-module__nav button {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 999px;
   border: 1px solid var(--board-control-edge);
   background: var(--board-control-bg);
@@ -167,13 +167,6 @@ html:not(.dark) .ode-board :is(.ode-chip, .ode-module) {
   line-height: 1;
   cursor: pointer;
   transition: border-color 0.2s, color 0.2s;
-}
-
-@media (pointer: coarse) {
-  .ode-module__nav button {
-    width: 40px;
-    height: 40px;
-  }
 }
 
 .ode-module__nav button:hover:not(:disabled) {
