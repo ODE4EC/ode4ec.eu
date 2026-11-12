@@ -373,3 +373,18 @@ h3,
   top: 0;
   transform: translateX(-50%);
 }
+
+/**
+ * Focus (WCAG 2.4.13 AAA)
+ *
+ * One solid 2px ring in the brand blue everywhere: ≥7:1 on every page surface
+ * in both themes. The board, cards and map set their own rings for their
+ * surfaces and win on specificity.
+ * -------------------------------------------------------------------------- */
+
+/* `button` matches the specificity of VitePress's own button ring, which is near-black */
+:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+}
