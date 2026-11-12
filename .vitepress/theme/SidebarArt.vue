@@ -40,35 +40,25 @@ const vias: Pt[] = [[30, 170], [40, 330], [140, 60], [104, 30], [230, 70], [60, 
 <template>
   <div class="sidebar-art" aria-hidden="true">
     <svg viewBox="0 0 280 400" preserveAspectRatio="xMaxYMax meet" focusable="false">
-      <defs>
-        <linearGradient id="sidebar-art-fade" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#fff" stop-opacity="0" />
-          <stop offset="0.4" stop-color="#fff" />
-        </linearGradient>
-        <mask id="sidebar-art-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="500">
-          <rect width="1200" height="500" fill="url(#sidebar-art-fade)" />
-        </mask>
-      </defs>
-      <g mask="url(#sidebar-art-mask)">
-        <path v-for="t in traces" :key="t.d" :d="t.d" :class="`tone--${t.tone}`" />
-        <g v-for="c in chips" :key="c.x">
-          <rect v-for="(p, i) in c.pins" :key="i" class="pin" :x="p.x" :y="p.y" :width="p.w" :height="p.h" />
-          <rect class="chip" :x="c.x" :y="c.y" :width="c.size" :height="c.size" rx="7" />
-          <circle class="notch" :cx="c.x + 9" :cy="c.y + 9" r="2.5" />
-        </g>
-        <circle v-for="[cx, cy] in vias" :key="`${cx},${cy}`" class="via" :cx="cx" :cy="cy" r="3.5" />
+      <path v-for="t in traces" :key="t.d" :d="t.d" :class="`tone--${t.tone}`" />
+      <g v-for="c in chips" :key="c.x">
+        <rect v-for="(p, i) in c.pins" :key="i" class="pin" :x="p.x" :y="p.y" :width="p.w" :height="p.h" />
+        <rect class="chip" :x="c.x" :y="c.y" :width="c.size" :height="c.size" rx="7" />
+        <circle class="notch" :cx="c.x + 9" :cy="c.y + 9" r="2.5" />
       </g>
+      <circle v-for="[cx, cy] in vias" :key="`${cx},${cy}`" class="via" :cx="cx" :cy="cy" r="3.5" />
     </svg>
   </div>
 </template>
 
 <style scoped>
-/* A placeholder at the foot of the nav column: with the sidebar's 96px bottom
-   padding it reserves the 400px drawing plus a 48px gap above it, so links can
-   never run under the art. */
+/* A placeholder at the foot of the nav column: with VitePress's 96px sidebar
+   bottom padding it reserves the drawing plus a 48px gap above it, so links
+   can never run under the art. */
 .sidebar-art {
+  --art-h: 400px;
   flex: none;
-  height: 352px;
+  height: calc(var(--art-h) + 48px - 96px);
   margin-top: auto;
 }
 
@@ -79,8 +69,9 @@ const vias: Pt[] = [[30, 170], [40, 330], [140, 60], [104, 30], [230, 70], [60, 
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 400px;
+  height: var(--art-h);
   overflow: hidden;
+  mask-image: linear-gradient(transparent, #000 40%);
   fill: none;
   stroke-width: 1.5;
   stroke-linecap: round;

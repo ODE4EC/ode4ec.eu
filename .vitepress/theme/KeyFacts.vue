@@ -1,10 +1,10 @@
 <script setup lang="ts">
-defineProps<{ label?: string; link?: string }>()
+defineProps<{ label: string; link?: string }>()
 </script>
 
 <template>
   <div class="key-facts-block">
-    <dl class="key-facts" :aria-label="label ?? 'Key facts'">
+    <dl class="key-facts" :aria-label="label">
       <slot />
     </dl>
     <a v-if="link" class="key-facts__link no-icon" :href="link" target="_blank" rel="noreferrer">
