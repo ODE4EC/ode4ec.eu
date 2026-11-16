@@ -224,7 +224,8 @@ onBeforeUnmount(() => {
        right edge face the modules' pins and the traces run straight */
     align-items: stretch;
     padding-top: calc(var(--vp-nav-height) + clamp(8px, 2vh, 32px));
-    padding-bottom: clamp(8px, 1.5vh, 20px);
+    /* never less than the 10px pins (PIN_LEN in circuit/layout.ts) plus a clear gap above the footer */
+    padding-bottom: clamp(24px, 2.5vh, 32px);
   }
 
   /* modules keep their own height; when the chip is the taller column the
