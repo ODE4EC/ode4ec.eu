@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-17",
+  "host": "ode4ec.eu",
+  "sampleInterval": 1,
+  "pages": {
+    "/projects/ams/": {
+      "views": 11,
+      "visits": 8
+    },
+    "/": {
+      "views": 11,
+      "visits": 8
+    },
+    "/projects/dig/": {
+      "views": 7,
+      "visits": 2
+    },
+    "/projects/piv/": {
+      "views": 5,
+      "visits": 3
+    },
+    "/events/": {
+      "views": 3,
+      "visits": 1
+    },
+    "/news/posts/2026-01-28-hipeac": {
+      "views": 3,
+      "visits": 3
+    },
+    "/advocacy": {
+      "views": 3,
+      "visits": 0
+    },
+    "/projects/": {
+      "views": 3,
+      "visits": 1
+    },
+    "/advocacy/": {
+      "views": 3,
+      "visits": 0
+    },
+    "/about": {
+      "views": 2,
+      "visits": 1
+    },
+    "/news/posts/2026-10-29-hipeac-call": {
+      "views": 2,
+      "visits": 2
+    },
+    "/projects/dig/partners": {
+      "views": 2,
+      "visits": 1
+    },
+    "/events/posts/2026-04-22-date": {
+      "views": 1,
+      "visits": 1
+    },
+    "/projects": {
+      "views": 1,
+      "visits": 0
+    },
+    "/about/": {
+      "views": 1,
+      "visits": 0
+    },
+    "/events/posts/2026-09-11-orconf": {
+      "views": 1,
+      "visits": 0
+    },
+    "/events/posts/2027-01-19-hipeac": {
+      "views": 1,
+      "visits": 0
+    }
+  }
+}
