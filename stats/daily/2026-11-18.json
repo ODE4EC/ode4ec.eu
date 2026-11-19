@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-18",
+  "host": "ode4ec.eu",
+  "sampleInterval": 1,
+  "pages": {
+    "/projects/ams/": {
+      "views": 14,
+      "visits": 8
+    },
+    "/": {
+      "views": 12,
+      "visits": 6
+    },
+    "/news/posts/2026-10-29-hipeac-call": {
+      "views": 5,
+      "visits": 5
+    },
+    "/projects/piv/": {
+      "views": 3,
+      "visits": 2
+    },
+    "/projects/ams/partners": {
+      "views": 2,
+      "visits": 0
+    },
+    "/projects/dig/": {
+      "views": 2,
+      "visits": 1
+    },
+    "/projects/ams/work-plan": {
+      "views": 2,
+      "visits": 0
+    },
+    "/about": {
+      "views": 1,
+      "visits": 0
+    },
+    "/projects/ams/funding": {
+      "views": 1,
+      "visits": 0
+    },
+    "/news/posts/2026-09-14-f2f": {
+      "views": 1,
+      "visits": 1
+    },
+    "/news/posts/MjAyNi0xMC": {
+      "views": 1,
+      "visits": 1
+    },
+    "/projects/ams/technology": {
+      "views": 1,
+      "visits": 0
+    },
+    "/about/": {
+      "views": 1,
+      "visits": 0
+    }
+  }
+}
