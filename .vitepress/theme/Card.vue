@@ -55,7 +55,7 @@ defineProps<{
 <style scoped>
 .Card {
   display: block;
-  border: 1px solid var(--vp-c-divider);
+  border: 1px solid var(--ode-c-card-edge);
   border-radius: 12px;
   height: 100%;
   background-color: var(--vp-c-bg-soft);

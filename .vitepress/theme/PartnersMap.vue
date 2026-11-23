@@ -430,7 +430,7 @@ const countryCount = computed(() => new Set(sites.value.map((s) => s.country)).s
   display: block;
   font-style: normal;
   font-size: 12.5px;
-  color: var(--pmap-trace);
+  color: var(--ode-c-label-blue);
 }
 
 .pmap__sites-label {

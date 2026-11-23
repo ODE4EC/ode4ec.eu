@@ -21,6 +21,7 @@ defineProps<{ title: string }>()
   margin: 0;
   padding: 1rem;
   background: var(--vp-c-bg-soft);
+  border: 1px solid var(--ode-c-card-edge);
   border-radius: 12px;
   counter-increment: step;
 }

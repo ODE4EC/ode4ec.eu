@@ -15,7 +15,8 @@
   --vp-c-brand-1: #004494;
   --vp-c-brand-2: #0a5abf;
   --vp-c-brand-3: #0768d1;
-  --vp-c-brand-soft: rgba(0, 68, 148, 0.12);
+  /* Kept faint: tinted chips and badges read soft on paper, and brand-1 on it stays at 7:1. */
+  --vp-c-brand-soft: rgba(0, 68, 148, 0.07);
 
   /* ODE4EC brand gold, the logo's "4" — used sparingly as an accent, never for body text. */
   --ode-c-accent-1: #ffd617;
@@ -39,7 +40,10 @@
   /* Solid navy panels sitting on a board (the chip card, feature cards). */
   --ode-c-panel-top: #102c5c;
   --ode-c-panel: #0a2148;
-  --ode-c-panel-deep: #081b3c;
+  --ode-c-panel-deep: #0c2450;
+
+  /* Small labels (eyebrows) on navy panels: AAA 7:1 against the panel. */
+  --ode-c-label-blue: #9cc2ff;
 
   /* The partners map: sea, land and its darkest edge. */
   --ode-c-board: #001f47;
@@ -68,16 +72,41 @@
 :root:not(.dark) {
   --vp-c-bg: #faf8f4;
   --vp-c-bg-elv: #faf8f4;
-  --vp-c-bg-alt: #f6f4f0;
+  /* The sidebar a soft cream step from the page. Cards and chips stay near the
+     page colour and are drawn by a warm edge instead, so logos sit on near-white. */
+  --vp-c-bg-alt: #f3efe8;
   --vp-c-bg-soft: #f6f4f0;
+  --ode-c-card-edge: #d6cfc2;
+
+  /* Lighter navy so panels don't punch holes in the paper; the lightest that
+     keeps white text, labels and secondary text at AAA 7:1. */
+  --ode-c-panel-top: #1b3f7a;
+  --ode-c-panel: #1a3c75;
+  --ode-c-panel-deep: #193a70;
+  --ode-c-board: #1a3c75;
+  --ode-c-board-land: #24508f;
+  --ode-c-board-deep: #163566;
+  --ode-c-label-blue: #c2d8ff;
+
+  /* VitePress greys sit at 5:1; darkened for AAA 7:1 on every light surface. */
+  --vp-c-text-2: #4b4b50;
 }
 
 .dark {
+  --ode-c-card-edge: var(--vp-c-divider);
+
+  /* VitePress greys sit at 6:1; lightened for AAA 7:1 on every dark surface. */
+  --vp-c-text-2: #b4b4ba;
+
   /* Lighter tints of the same blue so text/links keep contrast on dark backgrounds. */
   --vp-c-brand-1: #7fb0ff;
   --vp-c-brand-2: #5c98f2;
   --vp-c-brand-3: #2f6fd6;
   --vp-c-brand-soft: rgba(127, 176, 255, 0.16);
+
+  /* Small blue text on tinted surfaces (badges, inline code) needs a lighter blue for 7:1. */
+  --vp-c-tip-1: #a9caff;
+  --vp-code-color: #a9caff;
 
   --ode-shadow-card:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
@@ -165,6 +194,15 @@ h3,
 
 .Layout.ode-home .VPContent {
   overflow-x: clip;
+}
+
+/* VitePress clips the nav's x-overflow; Safari and Chrome on macOS clip the
+   y-axis too, cutting off the Projects dropdown below the navbar. Only from
+   960px, where the nav is fixed; narrower, the clip stops sideways scroll. */
+@media (min-width: 960px) {
+  .VPNav {
+    overflow-x: visible !important;
+  }
 }
 
 /**
@@ -304,4 +342,82 @@ h3,
 .tag:hover {
   background: var(--vp-c-brand-soft);
   color: var(--vp-c-brand-1);
+}
+
+/**
+ * Pointer targets (WCAG 2.5.5 AAA, 44×44)
+ *
+ * Small isolated controls get an invisible hit area centred on them, so they
+ * keep their look. Stacked lists can't (the areas would overlap the next row),
+ * so their rows are spaced to a 44px pitch instead.
+ * -------------------------------------------------------------------------- */
+
+:is(.VPSocialLink, .VPSwitch, .ode-module__all, .ode-module__nav button, .post-head a, .event-entry a) {
+  position: relative;
+}
+
+:is(.VPSocialLink, .VPSwitch, .ode-module__all, .ode-module__nav button, .post-head a, .event-entry a, .vp-doc .header-anchor)::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+
+.VPSidebarItem .item .text {
+  padding: 10px 0 !important;
+}
+
+.VPDocAsideOutline .outline-link {
+  padding: 6px 0 !important;
+}
+
+/* VitePress places the active marker at a fixed offset from the link's top
+   edge; move it down by the padding above so it stays centred. */
+.VPDocAsideOutline .outline-marker {
+  translate: 0 6px;
+}
+
+/* The anchor sits in the page gutter: grow its area into the heading, not off-screen. */
+.vp-doc .header-anchor::after {
+  left: 0;
+  transform: translateY(-50%);
+}
+
+/* List titles sit right under a heading: grow down over their own meta line instead. */
+/* "All news" sits right above the carousel: grow up into the module header. */
+.vp-doc .ode-module__all::after {
+  top: auto;
+  bottom: 0;
+  transform: translateX(-50%);
+}
+
+.vp-doc :is(.post-head a, .event-entry a)::after {
+  top: 0;
+  transform: translateX(-50%);
+}
+
+/**
+ * Focus (WCAG 2.4.13 AAA)
+ *
+ * One solid 2px ring in the brand blue everywhere: ≥7:1 on every page surface
+ * in both themes. The board, cards and map set their own rings for their
+ * surfaces and win on specificity.
+ * -------------------------------------------------------------------------- */
+
+/* `button` matches the specificity of VitePress's own button ring, which is near-black */
+:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+}
+
+/* The sidebar nav fills the sidebar's height as a column, so SidebarArt (its
+   last item) can sit at the foot. */
+.VPSidebar .nav {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
 }
