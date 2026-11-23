@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-22",
+  "host": "ode4ec.eu",
+  "sampleInterval": 1,
+  "pages": {
+    "/": {
+      "views": 5,
+      "visits": 4
+    },
+    "/projects/ams/": {
+      "views": 4,
+      "visits": 4
+    },
+    "/events/posts/2027-01-19-hipeac": {
+      "views": 3,
+      "visits": 1
+    },
+    "/events/posts/2026-04-22-date": {
+      "views": 1,
+      "visits": 0
+    },
+    "/projects/piv/": {
+      "views": 1,
+      "visits": 1
+    },
+    "/projects/ams/partners": {
+      "views": 1,
+      "visits": 1
+    },
+    "/events/posts/2026-01-28-hipeac": {
+      "views": 1,
+      "visits": 0
+    },
+    "/projects/dig/": {
+      "views": 1,
+      "visits": 1
+    },
+    "/projects/": {
+      "views": 1,
+      "visits": 1
+    },
+    "/events/posts/2026-09-11-orconf": {
+      "views": 1,
+      "visits": 0
+    },
+    "/news/posts/2026-01-28-hipeac": {
+      "views": 1,
+      "visits": 0
+    }
+  }
+}
